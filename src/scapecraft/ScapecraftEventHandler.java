@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.EntityPlayer;
@@ -25,12 +26,15 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.world.WorldEvent;
 
+import scapecraft.block.ScapecraftBlocks;
+import scapecraft.block.BlockBlockSpawner;
 import scapecraft.client.ClientProxy;
 import scapecraft.economy.EconomyHandler;
 import scapecraft.entity.Drop;
 import scapecraft.entity.EntityScapecraft;
 import scapecraft.item.ItemArmorScapecraft;
 import scapecraft.item.ItemWeapon;
+import scapecraft.item.ScapecraftItems;
 import scapecraft.network.StatsPacket;
 import scapecraft.util.CombatXpHelper;
 
@@ -116,7 +120,7 @@ public class ScapecraftEventHandler
 			EntityPlayer player = (EntityPlayer) event.source.getEntity();
 			if(player.capabilities.isCreativeMode)
 				return;
-			Stats.addCombatXp(player, CombatXpHelper.getAmount(event.entityLiving));
+			Stats.addXp(player, "combat", CombatXpHelper.getAmount(event.entityLiving));
 		}
 	}
 
@@ -192,12 +196,6 @@ public class ScapecraftEventHandler
 		}
 	}
 
-	@SubscribeEvent
-	public void onPlayerLoaded(PlayerEvent.LoadFromFile event)
-	{
-		Stats.convertFromOldSystem(event.entityPlayer);
-	}
-
 	public void setMoveSpeed(EntityPlayer player, float speed)
 	{
 		if(player.capabilities.getWalkSpeed() == speed)
@@ -234,5 +232,19 @@ public class ScapecraftEventHandler
 			player.setHealth((float) maxHealth);
 		//System.out.println(maxHealth + " " + player.getHealth());
 
+	}
+
+	@SubscribeEvent
+	public void onPlayerBreakBlock(PlayerEvent.BreakSpeed event)
+	{
+		Block block = event.block instanceof BlockBlockSpawner ? ((BlockBlockSpawner) event.block).fullBlock : event.block;
+		System.out.println(Stats.getMiningLevel(event.entityPlayer));
+		if(Scapecraft.requireLevels && 
+				(event.entityPlayer.getHeldItem() != null && ScapecraftItems.toolLevels.get(event.entityPlayer.getHeldItem().getItem()) != null && ScapecraftItems.toolLevels.get(event.entityPlayer.getHeldItem().getItem()) > Stats.getMiningLevel(event.entityPlayer)) || 
+				ScapecraftBlocks.blockLevels.get(block) != null && Stats.getMiningLevel(event.entityPlayer) < ScapecraftBlocks.blockLevels.get(block))
+		{
+			System.out.println("Removing speed for " + block);
+			event.newSpeed = -1F;
+		}
 	}
 }

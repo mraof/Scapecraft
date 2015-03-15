@@ -19,7 +19,7 @@ public class MobSpawnerPacket implements IMessage, IMessageHandler<MobSpawnerPac
 {
 	public NBTTagCompound tagCompound;
 	public int dimensionId;
-	public int playerId;
+	public String username;
 	public MobSpawnerPacket(){}
 
 	@SideOnly(Side.CLIENT)
@@ -28,7 +28,7 @@ public class MobSpawnerPacket implements IMessage, IMessageHandler<MobSpawnerPac
 		tagCompound = new NBTTagCompound();
 		te.writeToNBT(tagCompound);
 		dimensionId = te.getWorld().provider.dimensionId;
-		playerId = Minecraft.getMinecraft().thePlayer.getEntityId();
+		username = Minecraft.getMinecraft().thePlayer.getCommandSenderName();
 	}
 
 	@Override
@@ -36,7 +36,7 @@ public class MobSpawnerPacket implements IMessage, IMessageHandler<MobSpawnerPac
 	{
 		tagCompound = ByteBufUtils.readTag(buf);
 		dimensionId = buf.readInt();
-		playerId = buf.readInt();
+		username = ByteBufUtils.readUTF8String(buf);
 	}
 
 	@Override
@@ -44,15 +44,15 @@ public class MobSpawnerPacket implements IMessage, IMessageHandler<MobSpawnerPac
 	{
 		ByteBufUtils.writeTag(buf, tagCompound);
 		buf.writeInt(dimensionId);
-		buf.writeInt(playerId);
+		ByteBufUtils.writeUTF8String(buf, username);
 	}
 
 	@Override
 	public IMessage onMessage(MobSpawnerPacket message, MessageContext ctx)
 	{
-		EntityPlayer player = (EntityPlayer) MinecraftServer.getServer().worldServers[message.dimensionId].getEntityByID(message.playerId);
+		EntityPlayer player = MinecraftServer.getServer().getConfigurationManager().getPlayerByUsername(message.username);
 
-		if(player.capabilities.isCreativeMode)
+		if(player != null && player.capabilities.isCreativeMode)
 			MinecraftServer.getServer().worldServers[message.dimensionId].getTileEntity(message.tagCompound.getInteger("x"), message.tagCompound.getInteger("y"), message.tagCompound.getInteger("z")).readFromNBT(message. tagCompound);
 
 		return null;

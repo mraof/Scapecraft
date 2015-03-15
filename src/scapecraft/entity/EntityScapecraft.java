@@ -1,6 +1,8 @@
 package scapecraft.entity;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map.Entry;
@@ -19,12 +21,14 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
 import scapecraft.Stats;
+import scapecraft.economy.EconomyHandler;
 import scapecraft.tileentity.TileEntityScapecraftMobSpawner;
 
 public abstract class EntityScapecraft extends EntityMob implements XpDropper, IEntitySelector
 {
 	protected HashMap<EntityPlayer, Float> attackers = new HashMap<EntityPlayer, Float>();
 	public static HashMap<Class<? extends EntityScapecraft>, ArrayList<Drop>> drops = new HashMap<Class<? extends EntityScapecraft>, ArrayList<Drop>>();
+	public static HashMap<Class<? extends EntityScapecraft>, List<Integer>> moneyDrops = new HashMap<Class<? extends EntityScapecraft>, List<Integer>>();
 	protected int lifespan;
 	public Set<Class<? extends EntityLivingBase>> targetClasses = new HashSet<Class<? extends EntityLivingBase>>();
 	public boolean passive = false;
@@ -38,6 +42,7 @@ public abstract class EntityScapecraft extends EntityMob implements XpDropper, I
 
 	public void giveXp()
 	{
+		double money = rand.nextInt(10) == 0 ? moneyDrops.get(this.getClass()).get(rand.nextInt(moneyDrops.get(this.getClass()).size())) : 0;
 		float damageTaken = 0;
 		for(Float damage : attackers.values())
 		{
@@ -46,7 +51,11 @@ public abstract class EntityScapecraft extends EntityMob implements XpDropper, I
 
 		for(Entry<EntityPlayer, Float> entry : attackers.entrySet())
 		{
-			Stats.addCombatXp(entry.getKey(), (int) (damageTaken / entry.getValue() * this.getXpValue()));
+			Stats.addXp(entry.getKey(), "combat", (int) (damageTaken / entry.getValue() * this.getXpValue()));
+			if(money > 0)
+			{
+				EconomyHandler.deposit(entry.getKey().getUniqueID(), damageTaken / entry.getValue() * money);
+			}
 		}
 	}
 
@@ -75,6 +84,11 @@ public abstract class EntityScapecraft extends EntityMob implements XpDropper, I
 			list = new ArrayList<Drop>();
 		list.add(drop);
 		drops.put(entityClass, list);
+	}
+
+	public static void setMoney(Class<? extends EntityScapecraft> entityClass, Integer... money)
+	{
+		moneyDrops.put(entityClass, Arrays.asList(money));
 	}
 
 	@Override

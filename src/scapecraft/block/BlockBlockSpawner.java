@@ -26,7 +26,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockBlockSpawner extends Block implements ITileEntityProvider
 {
-	Block fullBlock;
+	public Block fullBlock;
 	int xp;
 	public int regenTime;
 	public int fullSize = 15;
@@ -177,7 +177,7 @@ public class BlockBlockSpawner extends Block implements ITileEntityProvider
 	@Override
 	public float getBlockHardness(World world, int x, int y, int z)
 	{
-		return world.getBlockMetadata(x, y, z) < fullSize ? 1000F : fullBlock.getBlockHardness(world, x, y, z);
+		return world.getBlockMetadata(x, y, z) < fullSize ? -1F : fullBlock.getBlockHardness(world, x, y, z);
 	}
 
 	@Override

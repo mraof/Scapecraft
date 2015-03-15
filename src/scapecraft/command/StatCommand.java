@@ -39,14 +39,7 @@ public class StatCommand extends CommandBase
 		else if(args[1].equalsIgnoreCase("set") && args.length >= 4)
 		{
 			Stats.setStat(player, args[2].toLowerCase() + "xp", Integer.parseInt(args[3]));
-			if(args[2].toLowerCase().equals("combat"))
-			{
-				Stats.setStat(player, "combatLevel", Stats.getLevelFromXp(Integer.parseInt(args[3])));
-			}
-			else
-			{
-				Stats.setStat(player, args[2].toLowerCase() + "Level", Stats.getOldLevelFromXp(Integer.parseInt(args[3])));
-			}
+			Stats.setStat(player, args[2].toLowerCase() + "Level", Stats.getLevelFromXp(Integer.parseInt(args[3])));
 			getCommandSenderAsPlayer(sender).addChatMessage(new ChatComponentText(player.getCommandSenderName() + " is level " + Stats.getStat(player, args[2].toLowerCase() + "Level") + " (" + Stats.getStat(player, args[2].toLowerCase() + "xp") + "xp) for " + args[2]));
 		}
 	}

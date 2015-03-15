@@ -13,6 +13,7 @@ public class ItemScapecraftFood extends ItemFood
 	{
 		super(healAmount, 0.6f, true);
 		this.healAmount = healAmount;
+		this.setMaxStackSize(2);
 	}
 
 	@Override

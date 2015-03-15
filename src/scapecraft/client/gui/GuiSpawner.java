@@ -44,6 +44,7 @@ public class GuiSpawner extends GuiScreen
 		int yOffset = (this.height / 2) - (guiHeight / 2);
 		this.entityNameTextField = new GuiTextField(this.fontRendererObj, this.width / 2 - 100, yOffset + 25, 200, 20);
 		this.entityNameTextField.setFocused(true);
+		this.entityNameTextField.setMaxStringLength(120);
 		this.entityNameTextField.setText(this.te.entityName);
 
 		this.spawnIntervalTextField = new GuiTextField(this.fontRendererObj, this.width / 2 - 40, yOffset + 50, 40, 20);

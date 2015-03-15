@@ -15,6 +15,7 @@ import net.minecraftforge.common.MinecraftForge;
 
 import scapecraft.block.ScapecraftBlocks;
 import scapecraft.client.gui.GuiHandler;
+import scapecraft.command.StatCommand;
 import scapecraft.economy.EconomyHandler;
 import scapecraft.economy.ScapecraftEconomy;
 import scapecraft.entity.ScapecraftEntities;
@@ -199,6 +200,7 @@ public class Scapecraft
 		}
 
 		//event.registerServerCommand(new TestingCommand());
+		event.registerServerCommand(new StatCommand());
 	}
 
 	@EventHandler

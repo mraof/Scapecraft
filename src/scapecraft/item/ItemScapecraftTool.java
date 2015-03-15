@@ -4,6 +4,7 @@ import java.util.Set;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
@@ -95,6 +96,17 @@ public class ItemScapecraftTool extends ItemTool
 		if(Scapecraft.requireLevels && Stats.getCombatLevel(player) < this.toolMaterial.getMinLevel() && !player.capabilities.isCreativeMode)
 		{
 			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean onEntitySwing(EntityLivingBase entityLiving, ItemStack stack)
+	{
+		if(entityLiving instanceof EntityPlayer)
+		{
+			EntityPlayer player = (EntityPlayer) entityLiving;
+			return Scapecraft.requireLevels && !player.capabilities.isCreativeMode && Stats.getCombatLevel(player) < this.toolMaterial.getMinLevel() && Stats.getMiningLevel(player) < this.toolMaterial.getMinLevel();
 		}
 		return false;
 	}

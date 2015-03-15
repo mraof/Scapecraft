@@ -20,7 +20,7 @@ public enum ScapecraftArmorMaterial
 	BLACKD(100, new int[]{3, 5, 3, 2}, 20, 25, 14D),
 	BLACKG(5000, new int[]{3, 5, 3, 2}, 30, 15, 16D),
 	CDRAGON(90, new int[]{3, 5, 3, 2}, 10, 10, 24D),
-	DHAROK(10000, new int[]{3, 5, 3, 2}, 30, 70 30D),
+	DHAROK(10000, new int[]{3, 5, 3, 2}, 30, 70, 30D),
 	DRAGON(5000, new int[]{3, 5, 3, 2}, 30, 60, 30D),
 	NEIT(8000, new int[]{3, 5, 3, 2}, 30, 50, 40D),
 	DRAGONL(50000, new int[]{3, 5, 3, 2}, 50, 60, 38D),

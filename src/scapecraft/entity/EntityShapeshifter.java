@@ -56,7 +56,6 @@ public class EntityShapeshifter extends EntityScapecraft implements IEntityAddit
 		this.tasks.addTask(5, new EntityAIWander(this, 1D));
 		this.tasks.addTask(6, new EntityAILookIdle(this));
 		this.tasks.addTask(6, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
-		this.addTargets(copiedMob.getClass());
 	}
 
 	public static String randomMobName()
@@ -124,6 +123,7 @@ public class EntityShapeshifter extends EntityScapecraft implements IEntityAddit
 		}
 
 		this.mobName = mobName;
+		this.addTargets(copiedMob.getClass());
 		this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(copiedMob.getEntityAttribute(SharedMonsterAttributes.maxHealth).getAttributeValue());
 	}
 
@@ -145,10 +145,10 @@ public class EntityShapeshifter extends EntityScapecraft implements IEntityAddit
 	@Override
 	public boolean attackEntityFrom(DamageSource source, float amount)
 	{
-		if(source.getSourceOfDamage() != null && source.getSourceOfDamage() != this)
+		if(source.getSourceOfDamage() != null && !(source.getSourceOfDamage() instanceof EntityShapeshifter))
 		{
 			amount /= 2;
-			source.getSourceOfDamage().attackEntityFrom(source, amount);
+			source.getSourceOfDamage().attackEntityFrom(DamageSource.causeMobDamage(this), amount);
 		}
 		return super.attackEntityFrom(source, amount);
 	}

@@ -9,8 +9,14 @@ import net.minecraft.world.gen.feature.WorldGenerator;
 public class BlockTreeSpawner extends BlockBlockSpawner
 {
 	private WorldGenerator treeGen;
+	private int fullMetadata = 0;
 
 	public BlockTreeSpawner(Block fullBlock, int regenTime, WorldGenerator treeGen)
+	{
+		this(fullBlock, regenTime, treeGen, 0);
+	}
+
+	public BlockTreeSpawner(Block fullBlock, int regenTime, WorldGenerator treeGen, int xp)
 	{
 		super(fullBlock, regenTime);
 		this.treeGen = treeGen;
@@ -36,10 +42,10 @@ public class BlockTreeSpawner extends BlockBlockSpawner
 		for(; top < 256 && world.getBlock(x, top + 1, z).equals(this.fullBlock); top++);
 		if(top != y)
 		{
-			this.fullBlock.harvestBlock(world, player, x, y, z, 0);
+			this.fullBlock.harvestBlock(world, player, x, y, z, fullMetadata);
 			world.setBlockToAir(x, top, z);
 		}
 		else
-			super.harvestBlock(world, player, x, y, z, meta);
+			super.harvestBlock(world, player, x, y, z, fullMetadata);
 	}
 }

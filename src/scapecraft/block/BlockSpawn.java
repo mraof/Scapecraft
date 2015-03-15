@@ -11,6 +11,8 @@ import net.minecraft.world.World;
 import scapecraft.Scapecraft;
 import scapecraft.network.MobSpawnerGuiPacket;
 import scapecraft.tileentity.TileEntityScapecraftMobSpawner;
+import scapecraft.entity.ScapecraftEntities;
+import scapecraft.item.ScapecraftItems;
 
 public class BlockSpawn extends BlockContainer
 {
@@ -49,6 +51,10 @@ public class BlockSpawn extends BlockContainer
 		{
 			if(!world.isRemote)
 			{
+				if(player.getHeldItem() != null && player.getHeldItem().getItem() == ScapecraftItems.scapecraftSpawnEgg)
+				{
+					((TileEntityScapecraftMobSpawner) world.getTileEntity(x, y, z)).entityName = ScapecraftEntities.entities.get(player.getHeldItem().getMetadata());
+				}
 				MobSpawnerGuiPacket packet = new MobSpawnerGuiPacket(world.getTileEntity(x, y, z));
 				Scapecraft.network.sendTo(packet, (EntityPlayerMP) player);
 			}

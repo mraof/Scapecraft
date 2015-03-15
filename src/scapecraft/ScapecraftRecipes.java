@@ -26,7 +26,6 @@ public class ScapecraftRecipes
 		GameRegistry.addRecipe(new ItemStack(ScapecraftItems.cutCabbage, 1), new Object[] {"X", 'X', ScapecraftBlocks.cabbage});
 		GameRegistry.addRecipe(new ItemStack(ScapecraftItems.fishPieUncooked, 1), new Object[] {" X ", " Y ", 'X', Items.cooked_fish, 'Y', Items.bread});
 		GameRegistry.addRecipe(new ItemStack(ScapecraftItems.greenDLeather, 1), new Object[] {" X ", " Y ", 'X', Items.gold_ingot, 'Y', ScapecraftItems.greenDHide});
-		GameRegistry.addRecipe(new ItemStack(ScapecraftItems.magicBoat, 1), new Object[] { "X X", "XXX", 'X', ScapecraftBlocks.magicPlank});
 		GameRegistry.addRecipe(new ItemStack(ScapecraftItems.magicBow, 1), new Object[] { " XY", "X Y", " XY", 'X', ScapecraftItems.magicStick, 'Y', Items.string});
 		GameRegistry.addRecipe(new ItemStack(ScapecraftBlocks.magicPlank, 2), new Object[] { "X", 'X', ScapecraftBlocks.magicLog});
 		GameRegistry.addRecipe(new ItemStack(ScapecraftBlocks.magicSapling, 1), new Object[] { "XXX", "XYX", "XXX", 'Y', Items.diamond, 'X', ScapecraftBlocks.yewSapling});

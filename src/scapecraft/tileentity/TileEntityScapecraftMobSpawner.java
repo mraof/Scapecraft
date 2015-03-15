@@ -12,8 +12,8 @@ import scapecraft.entity.ScapecraftEntities;
 
 public class TileEntityScapecraftMobSpawner extends TileEntity
 {
-	public String entityName = "Shapeshifter";
-	public int spawnInterval = 120;
+	public String entityName = "";
+	public int spawnInterval = 1200;
 	public int maxSpawn = 1;
 	public List<Integer> spawnedIds = new ArrayList<Integer>();
 
@@ -52,10 +52,22 @@ public class TileEntityScapecraftMobSpawner extends TileEntity
 					{
 						Entity entity = this.worldObj.getEntityByID(spawnedIds.get(i));
 						if(entity == null || entity.isDead)
-							spawnedIds.remove(spawnedIds.get(i));
+						{
+							spawnedIds.remove(i);
+							i--;
+
+							if(spawnedIds.size() < maxSpawn && this.worldObj.getBlockMetadata(this.xCoord, this.yCoord, this.zCoord) == 1)
+							{
+								this.worldObj.setBlockMetadataWithNotify(this.xCoord, this.yCoord, this.zCoord, 0, 3);
+							}
+						}
 					}
 
 					String name = entityName;
+					if(name == null || name.isEmpty())
+					{
+						return;
+					}
 					int index = -1;
 					ArrayList<String> args = new ArrayList<String>();
 					while((index = name.indexOf(' ')) != -1)
@@ -67,7 +79,10 @@ public class TileEntityScapecraftMobSpawner extends TileEntity
 
 					EntityScapecraft entity = ScapecraftEntities.spawnScapecraftEntity(args.get(0), this.worldObj);
 					if(entity == null)
+					{
+						System.out.printf("Mob Spawner at %d, %d, %d spawned null entity \"%s\"", this.xCoord, this.yCoord, this.zCoord, entityName);
 						return;
+					}
 					int y = this.yCoord + 1;
 					while( y < 256 && this.worldObj.getBlock(this.xCoord, y, this.zCoord).isOpaqueCube())
 					{

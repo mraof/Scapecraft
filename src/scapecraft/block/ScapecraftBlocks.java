@@ -1,5 +1,7 @@
 package scapecraft.block;
 
+import java.util.HashMap;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
@@ -20,6 +22,8 @@ import cpw.mods.fml.common.registry.GameRegistry;
 
 public class ScapecraftBlocks
 {
+	public static HashMap<Block, Integer> blockLevels;
+
 	public static Block coffin;
 
 	public static Block blueCobble;
@@ -27,6 +31,7 @@ public class ScapecraftBlocks
 
 	public static Block tinOre;
 	public static Block copperOre;
+	public static Block bluriteOre;
 	public static Block mithOre;
 	public static Block addyOre;
 	public static Block runeOre;
@@ -38,6 +43,7 @@ public class ScapecraftBlocks
 	
 	public static Block tinOreSpawn;
 	public static Block copperOreSpawn;
+	public static Block bluriteOreSpawn;
 	public static Block mithOreSpawn;
 	public static Block addyOreSpawn;
 	public static Block runeOreSpawn;
@@ -112,6 +118,7 @@ public class ScapecraftBlocks
 
 		tinOre = new BlockScapecraft(Material.rock).setHarvest("pickaxe", 0).setTextureName("scapecraft:TinOre").setHardness(10.0F).setResistance(5.0F).setUnlocalizedName("tinOre");
 		copperOre = new BlockScapecraft(Material.rock).setHarvest("pickaxe", 0).setTextureName("scapecraft:CopperOre").setHardness(10.0F).setResistance(5.0F).setUnlocalizedName("copperOre");
+		bluriteOre = new BlockScapecraft(Material.rock).setHarvest("pickaxe", 0).setTextureName("scapecraft:BluriteOre").setHardness(10.0F).setResistance(5.0F).setUnlocalizedName("bluriteOre");
 		mithOre = new BlockScapecraft(Material.rock).setHarvest("pickaxe", 1).setTextureName("scapecraft:MithOre").setHardness(30.0F).setResistance(5.0F).setUnlocalizedName("mithOre");
 		addyOre = new BlockScapecraft(Material.rock).setHarvest("pickaxe", 2).setTextureName("scapecraft:AddyOre").setHardness(60.0F).setResistance(5.0F).setUnlocalizedName("addyOre");
 		runeOre = new BlockScapecraft(Material.rock).setHarvest("pickaxe", 2).setTextureName("scapecraft:RuneOre").setHardness(80.0F).setResistance(50.0F).setUnlocalizedName("runeOre");
@@ -120,18 +127,19 @@ public class ScapecraftBlocks
 		addyBlock = new BlockScapecraft(Material.rock).setBeaconBase(true).setTextureName("scapecraft:AdamantBlock").setHardness(60.0F).setResistance(25.0F).setUnlocalizedName("addyBlock");
 		runeBlock = new BlockScapecraft(Material.rock).setBeaconBase(true).setTextureName("scapecraft:RuneBlock").setHardness(80.0F).setResistance(50.0F).setUnlocalizedName("runeBlock");
 
-		tinOreSpawn = new BlockBlockSpawner(tinOre, 90, 2);
-		copperOreSpawn = new BlockBlockSpawner(copperOre, 90, 2);
-		mithOreSpawn = new BlockBlockSpawner(mithOre, 1200, 5);
-		addyOreSpawn = new BlockBlockSpawner(addyOre, 2400, 10);
-		runeOreSpawn = new BlockBlockSpawner(runeOre, 3600, 20);
-		coalOreSpawn = new BlockBlockSpawner(Blocks.coal_ore, 120, 2);
-		diamondOreSpawn = new BlockBlockSpawner(Blocks.diamond_ore, 1800, 8);
-		redstoneOreSpawn = new BlockBlockSpawner(Blocks.redstone_ore, 600, 3);
-		goldOreSpawn = new BlockBlockSpawner(Blocks.gold_ore, 1200, 4);
-		ironOreSpawn = new BlockBlockSpawner(Blocks.iron_ore, 300, 2);
-		emeraldOreSpawn = new BlockBlockSpawner(Blocks.emerald_ore, 4500, 25);
-		cobblestoneSpawn = new BlockBlockSpawner(Blocks.cobblestone, 10, 1);
+		cobblestoneSpawn = new BlockBlockSpawner(Blocks.cobblestone, 10, 3);
+		tinOreSpawn = new BlockBlockSpawner(tinOre, 90, 35);
+		copperOreSpawn = new BlockBlockSpawner(copperOre, 90, 35);
+		bluriteOreSpawn = new BlockBlockSpawner(bluriteOre, 90, 35);
+		redstoneOreSpawn = new BlockBlockSpawner(Blocks.redstone_ore, 600, 50);
+		ironOreSpawn = new BlockBlockSpawner(Blocks.iron_ore, 300, 70);
+		coalOreSpawn = new BlockBlockSpawner(Blocks.coal_ore, 120, 100);
+		diamondOreSpawn = new BlockBlockSpawner(Blocks.diamond_ore, 1800, 100);
+		emeraldOreSpawn = new BlockBlockSpawner(Blocks.emerald_ore, 4500, 120);
+		goldOreSpawn = new BlockBlockSpawner(Blocks.gold_ore, 1200, 130);
+		mithOreSpawn = new BlockBlockSpawner(mithOre, 1200, 160);
+		addyOreSpawn = new BlockBlockSpawner(addyOre, 2400, 180);
+		runeOreSpawn = new BlockBlockSpawner(runeOre, 3600, 250);
 		sandstoneSpawn = new BlockBlockSpawner(Blocks.sandstone, 3);
 		sandSpawn = new BlockBlockSpawner(Blocks.sand, 2);
 		dirtSpawn = new BlockBlockSpawner(Blocks.dirt, 2);
@@ -149,9 +157,9 @@ public class ScapecraftBlocks
 		agilityLevelWall = new BlockStatWall("agilityLevel").setTextureName("scapecraft:AgilityWall");
 		combatLevelWall = new BlockStatWall("combatLevel").setTextureName("scapecraft:CombatWall");
 
-		agilityBlock = new BlockAgility(1);
-		agilityBlock2 = new BlockAgility(5);
-		agilityBlock3 = new BlockAgility(20);
+		agilityBlock = new BlockAgility(3);
+		agilityBlock2 = new BlockAgility(16);
+		agilityBlock3 = new BlockAgility(70);
 
 		kosTele = new BlockRedstoneCost(new ItemStack(Items.gold_ingot)).setUnlocalizedName("KosTele").setTextureName("minecraft:endframe_top");
 		woolGate = new BlockRedstoneCost(new ItemStack(Blocks.wool, 20)).setUnlocalizedName("woolGate").setTextureName("minecraft:wool_colored_white");
@@ -180,9 +188,9 @@ public class ScapecraftBlocks
 		mobSpawner = new BlockSpawn();
 		scapecraftFire = new BlockScapecraftFire();
 
-		oakTreeSpawn = new BlockTreeSpawner(Blocks.log, 100, new WorldGenTrees(true));
-		yewTreeSpawn = new BlockTreeSpawner(yewLog, 1200, new WorldGenYewTree(true));
-		magicTreeSpawn = new BlockTreeSpawner(magicLog, 1800, new WorldGenMagicTree(true));
+		oakTreeSpawn = new BlockTreeSpawner(Blocks.log, 100, new WorldGenTrees(true), 4);
+		yewTreeSpawn = new BlockTreeSpawner(yewLog, 1200, new WorldGenYewTree(true), 50);
+		magicTreeSpawn = new BlockTreeSpawner(magicLog, 1800, new WorldGenMagicTree(true), 100);
 
 		unbreakableAnvil = new BlockUnbreakableAnvil();
 
@@ -193,6 +201,7 @@ public class ScapecraftBlocks
 
 		GameRegistry.registerBlock(tinOre, "tinOre");
 		GameRegistry.registerBlock(copperOre, "copperOre");
+		GameRegistry.registerBlock(bluriteOre, "bluriteOre");
 		GameRegistry.registerBlock(mithOre, "mithOre");
 		GameRegistry.registerBlock(addyOre, "addyOre");
 		GameRegistry.registerBlock(runeOre, "runeOre");
@@ -204,6 +213,7 @@ public class ScapecraftBlocks
 
 		GameRegistry.registerBlock(tinOreSpawn, "tinOreSpawn");
 		GameRegistry.registerBlock(copperOreSpawn, "copperOreSpawn");
+		GameRegistry.registerBlock(bluriteOreSpawn, "bluriteOreSpawn");
 		GameRegistry.registerBlock(mithOreSpawn, "mithOreSpawn");
 		GameRegistry.registerBlock(addyOreSpawn, "addyOreSpawn");
 		GameRegistry.registerBlock(runeOreSpawn, "runeOreSpawn");
@@ -291,5 +301,22 @@ public class ScapecraftBlocks
 		GameRegistry.registerTileEntity(TileEntityScapecraftMobSpawner.class, "scapecraftMobSpawner");
 		GameRegistry.registerTileEntity(TileEntityStall.class, "stall");
 		GameRegistry.registerTileEntity(TileEntityFire.class, "scapecraftFire");
+
+		blockLevels = new HashMap<Block, Integer>();
+
+		setBlockLevel(Blocks.iron_ore, 10);
+		setBlockLevel(bluriteOre, 10);
+		setBlockLevel(Blocks.coal_ore, 20);
+		setBlockLevel(mithOre, 30);
+		setBlockLevel(Blocks.diamond_ore, 40);
+		setBlockLevel(Blocks.redstone_ore, 40);
+		setBlockLevel(addyOre, 50);
+		setBlockLevel(runeOre, 60);
+		setBlockLevel(Blocks.emerald_ore, 70);
+	}
+
+	public static void setBlockLevel(Block block, int level)
+	{
+		blockLevels.put(block, level);
 	}
 }

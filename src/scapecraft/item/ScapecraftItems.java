@@ -1,7 +1,10 @@
 package scapecraft.item;
 
+import java.util.HashMap;
+
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemFood;
+import net.minecraft.init.Items;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 
@@ -11,6 +14,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 
 public class ScapecraftItems
 {
+	public static HashMap<Item, Integer> toolLevels;
 	public static Item santaHelmet;
 
 	public static Item phatHelmet;
@@ -296,7 +300,6 @@ public class ScapecraftItems
 	public static Item superDef;
 	public static Item specPot;
 
-	public static Item magicBoat;
 	public static Item cracker;
 
 	public static Item ahrimStaff;
@@ -594,7 +597,6 @@ public class ScapecraftItems
 		superStr = new ItemScapecraftPotion(new PotionEffect(Potion.damageBoost.id, 600, 0)).setUnlocalizedName("superStr").setTextureName("scapecraft:superstr");
 		superDef = new ItemScapecraftPotion(new PotionEffect(Potion.resistance.id, 600, 1)).setUnlocalizedName("superDef").setTextureName("scapecraft:superdef");
 		specPot = new ItemSpecialPotion().setUnlocalizedName("specPot").setTextureName("scapecraft:superdef");
-		magicBoat = new ItemMagicBoat();
 		cracker = new ItemCracker();
 
 		ahrimStaff = new Item().setUnlocalizedName("ahrimStaff").setTextureName("scapecraft:AhrimStaff").setCreativeTab(Scapecraft.tabScapecraftWeapon);
@@ -886,7 +888,6 @@ public class ScapecraftItems
 		GameRegistry.registerItem(superDef, "superDef");
 		GameRegistry.registerItem(specPot, "specPot");
 
-		GameRegistry.registerItem(magicBoat, "magicBoat");
 		GameRegistry.registerItem(cracker, "cracker");
 
 		GameRegistry.registerItem(ahrimStaff, "ahrimStaff"); 
@@ -894,5 +895,20 @@ public class ScapecraftItems
 		GameRegistry.registerItem(guthixStaff, "guthixStaff"); 
 		GameRegistry.registerItem(saraStaff, "saraStaff"); 
 		GameRegistry.registerItem(zammyStaff, "zammyStaff");
+
+		toolLevels = new HashMap<Item, Integer>();
+		setToolLevel(Items.iron_pickaxe, 10);
+		/*setToolLevel(blackPickaxe);
+		setToolLevel(whitePickaxe);*/ //Don't have these yet
+		setToolLevel(mithPickaxe, 30);
+		setToolLevel(addyPickaxe, 40);
+		setToolLevel(runePickaxe, 50);
+		setToolLevel(dragonPickaxe, 60);
+		setToolLevel(dragonPickaxeg, 70);
+	}
+
+	public static void setToolLevel(Item tool, int level)
+	{
+		toolLevels.put(tool, level);
 	}
 }

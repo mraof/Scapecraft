@@ -31,10 +31,11 @@ public class GuiHealth extends Gui
 		float health = this.mc.thePlayer.getHealth();
 		float absorb = this.mc.thePlayer.getAbsorptionAmount();
 		health += absorb;
-		int healthColor = absorb > 0 ? 0xFFDD11 : 0xFFFFFF;
+		int green = ((int) (health / maxHealth * 0xFF)) << 8;
+		int healthColor = ((green > 0x00FF00 ? 0x00FF00 : green & 0x00FF00) | ((green & 0xFF0000) >> 9) | ((maxHealth - health > 0 ? (int) ((maxHealth - health) / maxHealth * 0xFF) << 16 : 0) & 0xFF0000)) & 0xFFFFFF;
 		if(this.mc.thePlayer.isPotionActive(Potion.poison))
 		{
-			healthColor -= 0x3333BB;
+			healthColor = healthColor & 0xcccccc;
 		}
 		if(this.mc.thePlayer.isPotionActive(Potion.wither))
 		{
@@ -58,6 +59,7 @@ public class GuiHealth extends Gui
 			this.mc.fontRendererObj.drawStringWithShadow("Mining: " + Stats.clientStats.get("miningLevel") + " (" + Stats.clientStats.get("miningxp") + ")", width - 100, y + 22, 0xFFFFFF);
 		}
 		this.mc.fontRendererObj.drawStringWithShadow("HP: " + String.format("%.1f", health) + "/" + maxHealth, x, y, healthColor);
+		GL11.glColor4f(1, 1, 1, 1);
 		GL11.glDisable(GL11.GL_BLEND);
 		GL11.glDisable(GL11.GL_ALPHA_TEST);
 		GL11.glPopMatrix();
