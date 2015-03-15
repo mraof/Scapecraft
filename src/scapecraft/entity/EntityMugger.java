@@ -36,7 +36,7 @@ public class EntityMugger extends EntityScapecraft
 		this.tasks.addTask(6, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
 
 		this.lifespan = 3600;
-		this.addTargets(EntityBarbarian.class, EntityFarmer.class, EntityGreenDragon.class, EntityGuard.class, EntityHeroKnight.class, EntityKQ.class, EntityKQ2.class, EntityKing.class, EntityKingsGuard.class, EntityKos1.class, EntityKos2.class, EntityKos3.class, EntityPlayer.class, EntityTD.class, EntityWhiteKnight.class, EntityWizard.class)
+		this.addTargets(EntityBarbarian.class, EntityFarmer.class, EntityGreenDragon.class, EntityGuard.class, EntityHeroKnight.class, EntityKQ.class, EntityKQ2.class, EntityKing.class, EntityKingsGuard.class, EntityKos1.class, EntityKos2.class, EntityKos3.class, EntityPlayer.class, EntityTD.class, EntityWhiteKnight.class, EntityWizard.class);
 	}
 
 	protected void applyEntityAttributes()
