@@ -243,7 +243,6 @@ public class ScapecraftEventHandler
 				(event.entityPlayer.getHeldItem() != null && ScapecraftItems.toolLevels.get(event.entityPlayer.getHeldItem().getItem()) != null && ScapecraftItems.toolLevels.get(event.entityPlayer.getHeldItem().getItem()) > Stats.getMiningLevel(event.entityPlayer)) || 
 				ScapecraftBlocks.blockLevels.get(block) != null && Stats.getMiningLevel(event.entityPlayer) < ScapecraftBlocks.blockLevels.get(block))
 		{
-			System.out.println("Removing speed for " + block);
 			event.newSpeed = -1F;
 		}
 	}

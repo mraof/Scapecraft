@@ -99,7 +99,6 @@ public class GuiSpawner extends GuiScreen
 			if(entityNameTextField.getText().indexOf(' ') != -1 && !ScapecraftEntities.entityNames.containsKey(entityNameTextField.getText().toLowerCase().substring(0, entityNameTextField.getText().indexOf(' '))))
 				return;
 			te.entityName = entityNameTextField.getText();
-			System.out.println(te.entityName);
 			Integer spawnInterval = Integer.parseInt(spawnIntervalTextField.getText());
 			if(spawnInterval != null)
 			{
