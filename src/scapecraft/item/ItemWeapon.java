@@ -90,7 +90,10 @@ public class ItemWeapon extends ItemSword
 	public void addInformation(ItemStack itemStack, EntityPlayer player, List lines, boolean advancedTooltips)
 	{
 		super.addInformation(itemStack, player, lines, advancedTooltips);
-		lines.add(StatCollector.translateToLocal("weapon.minlevel") + " " + toolMaterial.getMinLevel());
+		if(Scapecraft.requireLevels)
+		{
+			lines.add(StatCollector.translateToLocal("weapon.minlevel") + " " + toolMaterial.getMinLevel());
+		}
 	}
 
 	public boolean unableToUse(EntityLivingBase entityLiving)

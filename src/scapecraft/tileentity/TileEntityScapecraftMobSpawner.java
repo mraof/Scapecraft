@@ -80,7 +80,7 @@ public class TileEntityScapecraftMobSpawner extends TileEntity
 					EntityScapecraft entity = ScapecraftEntities.spawnScapecraftEntity(args.get(0), this.worldObj);
 					if(entity == null)
 					{
-						System.out.printf("Mob Spawner at %d, %d, %d spawned null entity \"%s\"", this.xCoord, this.yCoord, this.zCoord, entityName);
+						System.out.printf("Mob Spawner at %d, %d, %d spawned null entity \"%s\"\n", this.xCoord, this.yCoord, this.zCoord, entityName);
 						return;
 					}
 					int y = this.yCoord + 1;

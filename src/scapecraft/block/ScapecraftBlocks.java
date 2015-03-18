@@ -8,6 +8,8 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.gen.feature.WorldGenTrees;
 
 import scapecraft.item.ScapecraftItems;
@@ -18,6 +20,7 @@ import scapecraft.tileentity.TileEntityStall;
 import scapecraft.world.gen.feature.WorldGenMagicTree;
 import scapecraft.world.gen.feature.WorldGenYewTree;
 
+import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.common.registry.GameRegistry;
 
 public class ScapecraftBlocks
@@ -301,22 +304,16 @@ public class ScapecraftBlocks
 		GameRegistry.registerTileEntity(TileEntityScapecraftMobSpawner.class, "scapecraftMobSpawner");
 		GameRegistry.registerTileEntity(TileEntityStall.class, "stall");
 		GameRegistry.registerTileEntity(TileEntityFire.class, "scapecraftFire");
-
-		blockLevels = new HashMap<Block, Integer>();
-
-		setBlockLevel(Blocks.iron_ore, 10);
-		setBlockLevel(bluriteOre, 10);
-		setBlockLevel(Blocks.coal_ore, 20);
-		setBlockLevel(mithOre, 30);
-		setBlockLevel(Blocks.diamond_ore, 40);
-		setBlockLevel(Blocks.redstone_ore, 40);
-		setBlockLevel(addyOre, 50);
-		setBlockLevel(runeOre, 60);
-		setBlockLevel(Blocks.emerald_ore, 70);
 	}
 
-	public static void setBlockLevel(Block block, int level)
+	public static void setBlockLevels(NBTTagList blocks)
 	{
-		blockLevels.put(block, level);
+		blockLevels = new HashMap<Block, Integer>();
+		for(int i = 0; i < blocks.tagCount(); i++)
+		{
+			NBTTagCompound tag = blocks.getCompoundTagAt(i);
+			Block block = GameData.getBlockRegistry().getObject(tag.getString("string"));
+			blockLevels.put(block, tag.getInteger("number"));
+		}
 	}
 }

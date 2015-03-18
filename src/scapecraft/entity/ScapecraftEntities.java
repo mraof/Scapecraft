@@ -121,7 +121,6 @@ public class ScapecraftEntities
 			{
 				entityObjects.add(entityClass.getConstructor(new Class[] { World.class }).newInstance(new Object[] { null }));
 			} catch(Exception e) {e.printStackTrace(); };
-			System.out.println(name);
 		}
 
 		currentEntityIdOffset++;

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.regex.Pattern;
 
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
@@ -12,6 +13,8 @@ import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.config.Property;
 
 import scapecraft.block.ScapecraftBlocks;
 import scapecraft.client.gui.GuiHandler;
@@ -20,6 +23,7 @@ import scapecraft.economy.EconomyHandler;
 import scapecraft.economy.ScapecraftEconomy;
 import scapecraft.entity.ScapecraftEntities;
 import scapecraft.item.ScapecraftItems;
+import scapecraft.network.ConfigPacket;
 import scapecraft.network.MobSpawnerGuiPacket;
 import scapecraft.network.MobSpawnerPacket;
 import scapecraft.network.StatsPacket;
@@ -47,6 +51,8 @@ public class Scapecraft
 {
 	public static final String version = "@VERSION@";
 	public static boolean requireLevels = true;
+	public static NBTTagList blockLevels;
+	public static NBTTagList toolLevels;
 
 	/*start armor*/
 	public static final CreativeTabs tabScapecraftArmor = new CreativeTabs("tabScapecraftArmor")
@@ -105,8 +111,41 @@ public class Scapecraft
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event)
 	{
+		blockLevels = new NBTTagList();
+		toolLevels = new NBTTagList();
+		Configuration config = new Configuration(event.getSuggestedConfigurationFile());
+		config.load();
+		requireLevels = config.getBoolean("requireLevels", "Levels", true, "Use level requirements");
+		Pattern stringIntPair = Pattern.compile("^.* \\d*$");
+		blockLevels = readStringIntPairs(config.get("Levels", "blockLevels", new String[] {
+			"iron_ore 10",
+			"Scapecraft:bluriteOre 10",
+			"coal_ore 25",
+			"Scapecraft:mithOre 50",
+			"diamond_ore 40",
+			"redstone_ore 40",
+			"Scapecraft:addyOre 60",
+			"Scapecraft:runeOre 70",
+			"emerald_ore 70",
+		}, "Levels required to break blocks", stringIntPair));
+		toolLevels = readStringIntPairs(config.get("Levels", "toolLevels", new String[] {
+			"iron_pickaxe 10",
+			/*"Scapecraft:blackPickaxe 20",
+			  "Scapecraft:whitePickaxe 20",*/ //Don't have these yet
+			"Scapecraft:mithPickaxe 30",
+			"Scapecraft:addyPickaxe 40",
+			"Scapecraft:runePickaxe 50",
+			"Scapecraft:dragonPickaxe 60",
+			"Scapecraft:dragonPickaxeg 70"
+		}, "Levels required to use tools", stringIntPair));
+		config.save();
+
 		ScapecraftItems.registerItems();
 		ScapecraftBlocks.registerBlocks();
+		ScapecraftItems.setToolLevels(toolLevels);
+		ScapecraftBlocks.setBlockLevels(blockLevels);
+		System.out.println(ScapecraftItems.toolLevels);
+		System.out.println(ScapecraftBlocks.blockLevels);
 	}
 
 	@EventHandler
@@ -126,6 +165,7 @@ public class Scapecraft
 		network.registerMessage(StatsPacket.class, StatsPacket.class, 0, Side.CLIENT);
 		network.registerMessage(MobSpawnerGuiPacket.class, MobSpawnerGuiPacket.class, 1, Side.CLIENT);
 		network.registerMessage(MobSpawnerPacket.class, MobSpawnerPacket.class, 2, Side.SERVER);
+		network.registerMessage(ConfigPacket.class, ConfigPacket.class, 3, Side.CLIENT);
 	}
 
 	@EventHandler
@@ -236,5 +276,20 @@ public class Scapecraft
 				}
 			}
 		}
+	}
+
+	private NBTTagList readStringIntPairs(Property prop)
+	{
+		NBTTagList tagList = new NBTTagList();
+		for(String value : prop.getStringList())
+		{
+			String[] pair = value.split(" ");
+			NBTTagCompound tagCompound = new NBTTagCompound();
+			tagCompound.setString("string", pair[0]);
+			System.out.printf("From \"%s\", \"%s\" is \"%s\", parsed as %d\n", value, pair[0], pair[1], Integer.parseInt(pair[1]));
+			tagCompound.setInteger("number", Integer.parseInt(pair[1]));
+			tagList.appendTag(tagCompound);
+		}
+		return tagList;
 	}
 }

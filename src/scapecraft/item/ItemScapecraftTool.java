@@ -1,5 +1,6 @@
 package scapecraft.item;
 
+import java.util.List;
 import java.util.Set;
 
 import net.minecraft.block.Block;
@@ -10,6 +11,7 @@ import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTool;
+import net.minecraft.util.StatCollector;
 
 import scapecraft.Scapecraft;
 import scapecraft.Stats;
@@ -17,6 +19,9 @@ import scapecraft.Stats;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class ItemScapecraftTool extends ItemTool
 {
@@ -91,6 +96,22 @@ public class ItemScapecraftTool extends ItemTool
 	}
 
 	@Override
+	@SideOnly(Side.CLIENT)
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public void addInformation(ItemStack itemStack, EntityPlayer player, List lines, boolean advancedTooltips)
+	{
+		super.addInformation(itemStack, player, lines, advancedTooltips);
+		if(Scapecraft.requireLevels)
+		{
+			lines.add(StatCollector.translateToLocal("tool.minlevel.combat") + " " + toolMaterial.getMinLevel());
+			if(ScapecraftItems.toolLevels.get(this) != null)
+			{
+				lines.add(StatCollector.translateToLocal("tool.minlevel." + toolClass) + " " + ScapecraftItems.toolLevels.get(this));
+			}
+		}
+	}
+
+	@Override
 	public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player, Entity target)
 	{
 		if(Scapecraft.requireLevels && Stats.getCombatLevel(player) < this.toolMaterial.getMinLevel() && !player.capabilities.isCreativeMode)
@@ -106,7 +127,7 @@ public class ItemScapecraftTool extends ItemTool
 		if(entityLiving instanceof EntityPlayer)
 		{
 			EntityPlayer player = (EntityPlayer) entityLiving;
-			return Scapecraft.requireLevels && !player.capabilities.isCreativeMode && Stats.getCombatLevel(player) < this.toolMaterial.getMinLevel() && Stats.getMiningLevel(player) < this.toolMaterial.getMinLevel();
+			return Scapecraft.requireLevels && ScapecraftItems.toolLevels.containsKey(this) && !player.capabilities.isCreativeMode && Stats.getCombatLevel(player) < this.toolMaterial.getMinLevel() && Stats.getMiningLevel(player) < ScapecraftItems.toolLevels.get(this);
 		}
 		return false;
 	}

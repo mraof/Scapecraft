@@ -53,7 +53,9 @@ public class ItemArmorBandos extends ItemArmorScapecraft
 	public void onWearerAttack(LivingHurtEvent event)
 	{
 		if(!event.source.isProjectile())
+		{
 			event.ammount += damageBoosts[armorType];
+		}
 	}
 
 	@Override

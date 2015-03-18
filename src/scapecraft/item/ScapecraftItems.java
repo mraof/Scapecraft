@@ -4,12 +4,14 @@ import java.util.HashMap;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemFood;
-import net.minecraft.init.Items;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 
 import scapecraft.Scapecraft;
 
+import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.common.registry.GameRegistry;
 
 public class ScapecraftItems
@@ -895,20 +897,21 @@ public class ScapecraftItems
 		GameRegistry.registerItem(guthixStaff, "guthixStaff"); 
 		GameRegistry.registerItem(saraStaff, "saraStaff"); 
 		GameRegistry.registerItem(zammyStaff, "zammyStaff");
-
-		toolLevels = new HashMap<Item, Integer>();
-		setToolLevel(Items.iron_pickaxe, 10);
-		/*setToolLevel(blackPickaxe);
-		setToolLevel(whitePickaxe);*/ //Don't have these yet
-		setToolLevel(mithPickaxe, 30);
-		setToolLevel(addyPickaxe, 40);
-		setToolLevel(runePickaxe, 50);
-		setToolLevel(dragonPickaxe, 60);
-		setToolLevel(dragonPickaxeg, 70);
 	}
 
-	public static void setToolLevel(Item tool, int level)
+	public static void setToolLevels(NBTTagList tools)
 	{
-		toolLevels.put(tool, level);
+		toolLevels = new HashMap<Item, Integer>();
+		for(int i = 0; i < tools.tagCount(); i++)
+		{
+			NBTTagCompound tag = tools.getCompoundTagAt(i);
+			Item item = GameData.getItemRegistry().getObject(tag.getString("string"));
+			if(item == null)
+			{
+				System.out.println("Got null for " + tag.getString("string"));
+				continue;
+			}
+			toolLevels.put(item, tag.getInteger("number"));
+		}
 	}
 }

@@ -585,3 +585,6 @@ weapon.fullseteffect=Full Set Effect:
 weapon.minlevel=Level Required:
 weapon.special=Special: 
 weapon.specialcost=Energy Required:
+tool.minlevel.combat=Combat Level:
+tool.minlevel.pickaxe=Mining Level:
+tool.minlevel.axe=Woodcutting Level:

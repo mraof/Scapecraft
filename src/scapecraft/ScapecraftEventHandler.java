@@ -26,8 +26,8 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.world.WorldEvent;
 
-import scapecraft.block.ScapecraftBlocks;
 import scapecraft.block.BlockBlockSpawner;
+import scapecraft.block.ScapecraftBlocks;
 import scapecraft.client.ClientProxy;
 import scapecraft.economy.EconomyHandler;
 import scapecraft.entity.Drop;
@@ -35,6 +35,7 @@ import scapecraft.entity.EntityScapecraft;
 import scapecraft.item.ItemArmorScapecraft;
 import scapecraft.item.ItemWeapon;
 import scapecraft.item.ScapecraftItems;
+import scapecraft.network.ConfigPacket;
 import scapecraft.network.StatsPacket;
 import scapecraft.util.CombatXpHelper;
 
@@ -54,10 +55,16 @@ public class ScapecraftEventHandler
 		{
 			EntityPlayer player = (EntityPlayer) event.source.getEntity();
 			for(int i = 0; i <= 3; i++)
+			{
 				if(player.getCurrentArmor(i) != null && player.getCurrentArmor(i).getItem() instanceof ItemArmorScapecraft)
+				{
 					((ItemArmorScapecraft) player.getCurrentArmor(i).getItem()).onWearerAttack(event);
+				}
+			}
 			if(player.getHeldItem() != null && player.getHeldItem().getItem() instanceof ItemWeapon)
+			{
 				((ItemWeapon) player.getHeldItem().getItem()).onEntityHurt(event);
+			}
 		}
 	}
 
@@ -238,12 +245,18 @@ public class ScapecraftEventHandler
 	public void onPlayerBreakBlock(PlayerEvent.BreakSpeed event)
 	{
 		Block block = event.block instanceof BlockBlockSpawner ? ((BlockBlockSpawner) event.block).fullBlock : event.block;
-		System.out.println(Stats.getMiningLevel(event.entityPlayer));
 		if(Scapecraft.requireLevels && 
 				(event.entityPlayer.getHeldItem() != null && ScapecraftItems.toolLevels.get(event.entityPlayer.getHeldItem().getItem()) != null && ScapecraftItems.toolLevels.get(event.entityPlayer.getHeldItem().getItem()) > Stats.getMiningLevel(event.entityPlayer)) || 
 				ScapecraftBlocks.blockLevels.get(block) != null && Stats.getMiningLevel(event.entityPlayer) < ScapecraftBlocks.blockLevels.get(block))
 		{
 			event.newSpeed = -1F;
 		}
+	}
+
+	@SubscribeEvent
+	public void onPlayerLogin(cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent event)
+	{
+		ConfigPacket packet = new ConfigPacket();
+		Scapecraft.network.sendTo(packet, (EntityPlayerMP) event.player);
 	}
 }
