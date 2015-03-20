@@ -308,7 +308,9 @@ public class EntityShapeshifter extends EntityScapecraft implements IEntityAddit
 		for(int i = 1; i < args.size(); i++)
 		{
 			if(args.get(i).startsWith("mob="))
+			{
 				this.setMob(args.get(i).substring(4));
+			}
 		}
 	}
 }

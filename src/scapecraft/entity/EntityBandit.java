@@ -1,8 +1,6 @@
 package scapecraft.entity;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.EnumCreatureAttribute;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIAttackOnCollide;
 import net.minecraft.entity.ai.EntityAIHurtByTarget;
@@ -11,13 +9,10 @@ import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.ai.EntityAIWander;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
-import net.minecraft.entity.passive.EntityOcelot;
-import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
 import scapecraft.item.ScapecraftItems;
@@ -36,16 +31,23 @@ public class EntityBandit extends EntityScapecraft
 		this.tasks.addTask(6, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
 		this.lifespan = 8000;
 		this.addTargets(EntityBarbarian.class, EntityFarmer.class, EntityGreenDragon.class, EntityGuard.class, EntityHeroKnight.class, EntityKQ.class, EntityKQ2.class, EntityKing.class, EntityKingsGuard.class, EntityKos1.class, EntityKos2.class, EntityKos3.class, EntityPlayer.class, EntityTD.class, EntityWhiteKnight.class, EntityWizard.class);
+		level = 50;
 	}
 
 	@Override
 	protected void applyEntityAttributes()
 	{
 		super.applyEntityAttributes();
-		this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(300.0D);
 		this.getEntityAttribute(SharedMonsterAttributes.followRange).setBaseValue(32.0D);
 		this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.27D);
-		this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(16.0D);
+		this.setLevel(rand.nextInt(3) + 49);
+	}
+
+	public void setLevel(int level)
+	{
+		this.level = level;
+		this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(25.0D + level * 6.0D);
+		this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(1D + level * .3);
 	}
 
 	@Override
@@ -83,6 +85,6 @@ public class EntityBandit extends EntityScapecraft
 	@Override
 	public int getXpValue()
 	{
-		return 113;
+		return 13 + level * 2;
 	}
 }

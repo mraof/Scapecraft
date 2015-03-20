@@ -331,7 +331,7 @@ public class ClientProxy extends CommonProxy
 		MinecraftForgeClient.registerItemRenderer(ScapecraftItems.blackHalberd, new RenderItemWeapon(new ModelHalberd(), Resources.TEXTURE_BLACKHALBERD, 1F, 220F).setOffset(0F, 0F, 0F));
 		MinecraftForgeClient.registerItemRenderer(ScapecraftItems.dryRapier, new RenderItemWeapon(new ModelDryrapier(), Resources.TEXTURE_DRYRAPIER, 1F, 220F).setOffset(0F, 0F, 0F));
 		MinecraftForgeClient.registerItemRenderer(ScapecraftItems.dryMace, new RenderItemWeapon(new ModelDrymace(), Resources.TEXTURE_DRYMACE, 1F, 220F).setOffset(0F, 0F, 0F));
-		MinecraftForgeClient.registerItemRenderer(ScapecraftItems.dryLong, new RenderItemWeapon(new ModelDrylong(), Resources.TEXTURE_DRYLONG, 1F, 220F).setOffset(0F, 0F, 0F));
+		MinecraftForgeClient.registerItemRenderer(ScapecraftItems.dryLong, new RenderItemWeapon(new ModelDrylong(), Resources.TEXTURE_DRYLONG, 1F, 220F).setOffset(1F, 0.3F, 0F).setRotation(150F, 90F, 0F));
 		MinecraftForgeClient.registerItemRenderer(ScapecraftItems.dragon2hSword, new RenderItemWeapon(new Modeld2h(), Resources.TEXTURE_D2H, 0.5F, 220F).setOffset(1.3F, 0.9F, -0.1F));
 		MinecraftForgeClient.registerItemRenderer(ScapecraftItems.darkBow, new RenderItemWeapon(new ModelDarkBow(), Resources.TEXTURE_DARKBOW, 1F, 0F).setOffset(0F, 0.5F, 0F).setRotation(0F, 270F, 0F));
 		MinecraftForgeClient.registerItemRenderer(ScapecraftItems.karilBow, new RenderItemWeapon(new ModelKarilBow(), Resources.TEXTURE_KARIL, 1F, 180F).setOffset(0.1F, 0.3F, 1F));

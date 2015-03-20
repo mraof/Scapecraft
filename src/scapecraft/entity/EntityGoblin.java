@@ -1,6 +1,5 @@
 package scapecraft.entity;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIAttackOnCollide;
@@ -10,12 +9,9 @@ import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.ai.EntityAIWander;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
-import net.minecraft.entity.passive.EntityOcelot;
-import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
 
@@ -39,10 +35,16 @@ public class EntityGoblin extends EntityScapecraft
 	protected void applyEntityAttributes()
 	{
 		super.applyEntityAttributes();
-		this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(20.0D);
 		this.getEntityAttribute(SharedMonsterAttributes.followRange).setBaseValue(32.0D);
 		this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.23D);
-		this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(3.0D);
+		this.setLevel(rand.nextInt(3) + 1);
+	}
+
+	public void setLevel(int level)
+	{
+		this.level = level;
+		this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(18.0D + level * 2.0D);
+		this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(2.7D + level * .3);
 	}
 
 	@Override
@@ -72,6 +74,6 @@ public class EntityGoblin extends EntityScapecraft
 	@Override
 	public int getXpValue()
 	{
-		return 25;
+		return 24 + level;
 	}
 }

@@ -1,10 +1,10 @@
 package scapecraft.entity;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -16,6 +16,7 @@ import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
@@ -31,8 +32,9 @@ public abstract class EntityScapecraft extends EntityMob implements XpDropper, I
 	public static HashMap<Class<? extends EntityScapecraft>, List<Integer>> moneyDrops = new HashMap<Class<? extends EntityScapecraft>, List<Integer>>();
 	protected int lifespan;
 	public Set<Class<? extends EntityLivingBase>> targetClasses = new HashSet<Class<? extends EntityLivingBase>>();
-	public boolean passive = false;
+	public boolean passive = true;
 	public TileEntityScapecraftMobSpawner mobSpawner = null;
+	public int level = 1;
 
 	public EntityScapecraft(World par1World) 
 	{
@@ -42,7 +44,7 @@ public abstract class EntityScapecraft extends EntityMob implements XpDropper, I
 
 	public void giveXp()
 	{
-		double money = rand.nextInt(10) == 0 ? moneyDrops.get(this.getClass()).get(rand.nextInt(moneyDrops.get(this.getClass()).size())) : 0;
+		double money = moneyDrops.get(this.getClass()) != null && rand.nextInt(10) == 0 ? moneyDrops.get(this.getClass()).get(rand.nextInt(moneyDrops.get(this.getClass()).size())) : 0;
 		float damageTaken = 0;
 		for(Float damage : attackers.values())
 		{
@@ -64,9 +66,9 @@ public abstract class EntityScapecraft extends EntityMob implements XpDropper, I
 		return 0;
 	}
 
-	protected void dropFewItems(boolean par1, int par2)
+	protected void dropFewItems(boolean recentlyHit, int looting)
 	{
-		if(drops.get(this.getClass()) != null)
+		if(drops.get(this.getClass()) != null && recentlyHit)
 			for(Drop drop : drops.get(this.getClass()))
 				if(rand.nextInt(drop.chance) == 0)
 					entityDropItem(drop.stack.copy(), 1);
@@ -176,8 +178,10 @@ public abstract class EntityScapecraft extends EntityMob implements XpDropper, I
 	@Override
 	public boolean isEntityApplicable(Entity entity)
 	{
-		if(entity instanceof EntityPlayer && passive)
-			return false;
+		if(entity instanceof EntityPlayer && !passive)
+		{
+			return true;
+		}
 		return targetClasses.contains(entity.getClass());
 	}
 
@@ -194,11 +198,53 @@ public abstract class EntityScapecraft extends EntityMob implements XpDropper, I
 	public void addTargets(Object... entityClasses)
 	{
 		for(Object entityClass : entityClasses)
-			if(EntityLivingBase.class.isAssignableFrom((Class<?>) entityClass))
+		{
+			if(entityClass.equals(EntityPlayer.class))
+			{
+				passive = false;
+			}
+			else if(EntityLivingBase.class.isAssignableFrom((Class<?>) entityClass))
+			{
 				targetClasses.add((Class<? extends EntityLivingBase>) entityClass);
+			}
+		}
 	}
 
 	public void onSpawnerSpawn(ArrayList<String> args)
+	{
+		for(int i = 1; i < args.size(); i++)
+		{
+			if(args.get(i).startsWith("level="))
+			{
+				try
+				{
+					String levels = args.get(i).substring(6);
+					if(levels.contains("-"))
+					{
+						String[] levelRange = levels.split("-");
+						level = Integer.parseInt(levelRange[0]) + rand.nextInt(Integer.parseInt(levelRange[1]) - Integer.parseInt(levelRange[0]));
+					}
+					else
+					{
+						level = Integer.parseInt(levels);
+					}
+
+					this.setLevel(level);
+					this.setHealth(this.getMaxHealth());
+				}
+				catch(Exception e)
+				{
+					e.printStackTrace();
+				}
+			}
+			else if(args.get(i).startsWith("passive="))
+			{
+				passive = Boolean.valueOf(args.get(i).substring(8));
+			}
+		}
+	}
+
+	public void setLevel(int level)
 	{
 	}
 
@@ -241,5 +287,23 @@ public abstract class EntityScapecraft extends EntityMob implements XpDropper, I
 	public int getExperiencePoints(EntityPlayer player)
 	{
 		return (int) Math.sqrt(this.getXpValue()) + 5;
+	}
+
+	@Override
+	public void writeEntityToNBT(NBTTagCompound tagCompound)
+	{
+		super.writeEntityToNBT(tagCompound);
+		tagCompound.setInteger("level", level);
+	}
+
+	@Override
+	public void readEntityFromNBT(NBTTagCompound tagCompound)
+	{
+		super.readEntityFromNBT(tagCompound);
+		level = tagCompound.getInteger("level");
+		if(level < 1)
+		{
+			level = 1;
+		}
 	}
 }
