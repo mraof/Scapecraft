@@ -5,15 +5,15 @@ import net.minecraft.item.Item;
 public enum ScapecraftToolMaterial
 {
 
-	BRONZE(1, 400, 5.5F, 2.0F, 10),
-	MITH(2, 400, 6.5F, 3.0F, 10, 30),
-	ADDY(2, 700, 7.5F, 4.0F, 10, 40),
+	BRONZE(1, 500, 5.5F, 2.0F, 10),
+	MITH(2, 1400, 6.5F, 3.0F, 10, 30),
+	ADDY(2, 1700, 7.5F, 4.0F, 10, 40),
 	RUNE(3, 2000, 10.5F, 5.0F, 10, 50),
 	DRAGONG(3, 500, 100.0F, 8.0F, 30, 70),
 	KORASIS(3, 100, 5.0F, 9.0F, 10, 15),
 	DRAGON(3, 2500, 15.0F, 6.0F, 30, 60),
 	DRAGONC(3, 250, 15.0F, 8.0F, 30),	 
-	BLACK(2, 300, 6.0F, 2.0F, 15, 20),
+	BLACK(2, 1000, 6.0F, 2.0F, 15, 20),
 	BLACKH(2, 1500, 6.0F, 3.0F, 15, 20),
 	AGS(3, 30000, 15.0F, 17.0F, 30, 75),
 	BGS(3, 30000, 15.0F, 15.0F, 30, 75),
@@ -35,7 +35,7 @@ public enum ScapecraftToolMaterial
 	VESTA(3, 100, 15.0F, 13.0F, 1),
 	AGILITY(3, 500, 15.0F, 5.0F, 10),
 	DRYGORE(3, 30000, 15.0F, 13.0F, 15, 90),
-	IRON(2, 200, 5.5F, 2.0F, 10, 10),
+	IRON(2, 700, 5.5F, 2.0F, 10, 10),
 	TORAG(3, 10000, 15.0F, 12.0F, 8, 70),
 	VERAC(3, 10000, 15.0F, 8.0F, 8, 70),
 	GUTHAN(3, 10000, 15.0F, 9.0F, 8, 70),
