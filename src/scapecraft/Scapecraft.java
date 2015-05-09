@@ -145,7 +145,7 @@ public class Scapecraft
 		network.registerMessage(StatsPacket.class, StatsPacket.class, 0, Side.CLIENT);
 		network.registerMessage(MobSpawnerGuiPacket.class, MobSpawnerGuiPacket.class, 1, Side.CLIENT);
 		network.registerMessage(MobSpawnerPacket.class, MobSpawnerPacket.class, 2, Side.SERVER);
-		network.registerMessage(ConfigPacket.class, ConfigPacket.class, 3, Side.CLIENT);
+		network.registerMessage(ConfigPacket.Handler.class, ConfigPacket.class, 3, Side.CLIENT);
 		network.registerMessage(ShopGuiPacket.class, ShopGuiPacket.class, 4, Side.CLIENT);
 	}
 

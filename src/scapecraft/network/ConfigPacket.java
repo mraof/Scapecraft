@@ -15,7 +15,7 @@ import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 
-public class ConfigPacket implements IMessage, IMessageHandler<ConfigPacket, IMessage>
+public class ConfigPacket implements IMessage
 {
 	public NBTTagList blockLevels;
 	public NBTTagList toolLevels;
@@ -48,12 +48,15 @@ public class ConfigPacket implements IMessage, IMessageHandler<ConfigPacket, IMe
 		ByteBufUtils.writeTag(buf, toolCompound);
 	}
 
-	@Override
-	public IMessage onMessage(ConfigPacket message, MessageContext ctx)
+	public class Handler implements IMessageHandler<ConfigPacket, IMessage>
 	{
-		Scapecraft.requireLevels = requireLevels;
-		ScapecraftBlocks.setBlockLevels(blockLevels);
-		ScapecraftItems.setToolLevels(toolLevels);
-		return null;
+		@Override
+		public IMessage onMessage(ConfigPacket message, MessageContext ctx)
+		{
+			Scapecraft.requireLevels = message.requireLevels;
+			ScapecraftBlocks.setBlockLevels(message.blockLevels);
+			ScapecraftItems.setToolLevels(message.toolLevels);
+			return null;
+		}
 	}
 }
