@@ -23,6 +23,7 @@ public class Stats
 	{
 		setStat(player, stat + "Level", getLevelFromXp(getStat(player, stat + "xp") + amount));
 		addStat(player, stat + "xp", amount);
+		System.out.println(player.getDisplayName() + " gained " + amount + " " + stat + " xp,and is now level " + getStat(player, stat + "Level") + " (" + getStat(player, stat + "xp") + "xp)");
 	}
 
 	public static void addEnergy(EntityPlayer player, int amount)

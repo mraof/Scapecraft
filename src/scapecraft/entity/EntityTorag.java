@@ -71,7 +71,6 @@ public class EntityTorag extends EntityScapecraft
 		this.tasks.addTask(2, new EntityAIAttackOnCollide(this, EntityHeroKnight.class, this.moveSpeed, false));
 		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityFarmer.class, 0, true));
 		this.tasks.addTask(2, new EntityAIAttackOnCollide(this, EntityFarmer.class, this.moveSpeed, false));
-		lifespan = 6000;
 	}
 	protected void applyEntityAttributes()
 	{

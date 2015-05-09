@@ -68,20 +68,20 @@ public class ItemScapecraftSpawnEgg extends Item
 	@Override
 	public String getUnlocalizedName(ItemStack par1ItemStack) 
 	{
-		this.checkStack(par1ItemStack);
+		checkStack(par1ItemStack);
 		return getUnlocalizedName() + "." + ScapecraftEntities.entities.get(par1ItemStack.getMetadata());
 	}
 
 	@Override
 	public boolean hitEntity(ItemStack stack, EntityLivingBase target, EntityLivingBase attacker)
 	{
-		this.checkStack(stack);
+		checkStack(stack);
 		if(attacker instanceof EntityPlayer && ((EntityPlayer) attacker).capabilities.isCreativeMode)
 			target.attackEntityFrom(new EntityDamageSource("player", attacker), (float) ((EntityScapecraft)ScapecraftEntities.entityObjects.get(stack.getMetadata())).getEntityAttribute(SharedMonsterAttributes.attackDamage).getAttributeValue());
 		return true;
 	}
 
-	public void checkStack(ItemStack stack)
+	public static void checkStack(ItemStack stack)
 	{
 		 if(stack.hasTagCompound() && !stack.getTagCompound().getString("mob").isEmpty())
 		 {
@@ -95,5 +95,12 @@ public class ItemScapecraftSpawnEgg extends Item
 				 stack.setTagCompound(new NBTTagCompound());
 			 stack.getTagCompound().setString("mob", ScapecraftEntities.entities.get(stack.getMetadata()));
 		 }
+	}
+
+	public static ItemStack setMob(ItemStack stack, String mobName)
+	{
+		stack.setMetadata(ScapecraftEntities.entities.indexOf(mobName));
+		checkStack(stack);
+		return stack;
 	}
 }

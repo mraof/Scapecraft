@@ -10,8 +10,6 @@ import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.ai.EntityAIWander;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.potion.Potion;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.world.World;
 
 
@@ -28,10 +26,10 @@ public class EntityGoblin extends EntityScapecraft
 		this.tasks.addTask(5, new EntityAIWander(this, 1D));
 		this.tasks.addTask(6, new EntityAILookIdle(this));
 		this.tasks.addTask(6, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
-		this.lifespan = 3600;
 		this.addTargets(EntityBlackDragon.class, EntityFarmer.class, EntityGuard.class, EntityKos1.class, EntityKos2.class, EntityKos3.class, EntityTD.class);
 	}
 
+	@Override
 	protected void applyEntityAttributes()
 	{
 		super.applyEntityAttributes();
@@ -40,8 +38,10 @@ public class EntityGoblin extends EntityScapecraft
 		this.setLevel(rand.nextInt(3) + 1);
 	}
 
+	@Override
 	public void setLevel(int level)
 	{
+		super.setLevel(level);
 		this.level = level;
 		this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(18.0D + level * 2.0D);
 		this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(2.7D + level * .3);
@@ -63,12 +63,6 @@ public class EntityGoblin extends EntityScapecraft
 	protected String getDeathSound()
 	{
 		return "mob.villager.defaultdeath";
-	}
-
-	@Override
-	public boolean isPotionApplicable(PotionEffect par1PotionEffect)
-	{
-		return par1PotionEffect.getPotionID() == Potion.poison.id ? false : super.isPotionApplicable(par1PotionEffect);
 	}
 
 	@Override

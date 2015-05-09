@@ -8,6 +8,7 @@ import net.minecraft.nbt.NBTTagList;
 import scapecraft.Scapecraft;
 import scapecraft.block.ScapecraftBlocks;
 import scapecraft.item.ScapecraftItems;
+import scapecraft.util.Config;
 
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
@@ -22,9 +23,9 @@ public class ConfigPacket implements IMessage, IMessageHandler<ConfigPacket, IMe
 
 	public ConfigPacket()
 	{
-		blockLevels = Scapecraft.blockLevels;
-		toolLevels = Scapecraft.toolLevels;
-		requireLevels = Scapecraft.requireLevels;
+		blockLevels = Config.blockLevels;
+		toolLevels = Config.toolLevels;
+		requireLevels = Config.requireLevels;
 	}
 
 	@Override

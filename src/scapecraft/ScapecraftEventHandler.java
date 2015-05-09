@@ -8,11 +8,13 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemAxe;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -33,6 +35,7 @@ import scapecraft.economy.EconomyHandler;
 import scapecraft.entity.Drop;
 import scapecraft.entity.EntityScapecraft;
 import scapecraft.item.ItemArmorScapecraft;
+import scapecraft.item.ItemScapecraftTool;
 import scapecraft.item.ItemWeapon;
 import scapecraft.item.ScapecraftItems;
 import scapecraft.network.ConfigPacket;
@@ -119,9 +122,9 @@ public class ScapecraftEventHandler
 	public void onLivingDeathEvent(LivingDeathEvent event)
 	{
 		/* if(event.entityLiving instanceof XpDropper)
-		{
-			((XpDropper) event.entityLiving).giveXp();
-		} */
+		   {
+		   ((XpDropper) event.entityLiving).giveXp();
+		   } */
 		if(event.source.getEntity() instanceof EntityPlayer)
 		{
 			EntityPlayer player = (EntityPlayer) event.source.getEntity();
@@ -245,9 +248,19 @@ public class ScapecraftEventHandler
 	public void onPlayerBreakBlock(PlayerEvent.BreakSpeed event)
 	{
 		Block block = event.block instanceof BlockBlockSpawner ? ((BlockBlockSpawner) event.block).fullBlock : event.block;
+		String blockStat = (block.getMaterial() == Material.wood ? "woodcutting" : "mining") + "Level";
+		String toolStat = "miningLevel";
+		if(event.entityPlayer.getHeldItem() != null)
+		{
+			Item item = event.entityPlayer.getHeldItem().getItem();
+			toolStat = (item instanceof ItemScapecraftTool ? ((ItemScapecraftTool) item).skill : item instanceof ItemAxe ? "woodcutting" : "mining") + "Level";
+		}
 		if(Scapecraft.requireLevels && 
-				(event.entityPlayer.getHeldItem() != null && ScapecraftItems.toolLevels.get(event.entityPlayer.getHeldItem().getItem()) != null && ScapecraftItems.toolLevels.get(event.entityPlayer.getHeldItem().getItem()) > Stats.getMiningLevel(event.entityPlayer)) || 
-				ScapecraftBlocks.blockLevels.get(block) != null && Stats.getMiningLevel(event.entityPlayer) < ScapecraftBlocks.blockLevels.get(block))
+				(event.entityPlayer.getHeldItem() != null && 
+				ScapecraftItems.toolLevels.containsKey(event.entityLiving.getHeldItem().getItem()) &&
+				ScapecraftItems.toolLevels.get(event.entityPlayer.getHeldItem().getItem()) > Stats.getStat(event.entityPlayer, toolStat)) || 
+				ScapecraftBlocks.blockLevels.get(block) != null && 
+				Stats.getStat(event.entityPlayer, blockStat) < ScapecraftBlocks.blockLevels.get(block))
 		{
 			event.newSpeed = -1F;
 		}

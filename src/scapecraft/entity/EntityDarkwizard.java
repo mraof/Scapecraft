@@ -1,12 +1,9 @@
 package scapecraft.entity;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EnumCreatureAttribute;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.projectile.EntityLargeFireball;
 import net.minecraft.item.ItemStack;
-import net.minecraft.potion.Potion;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
@@ -15,8 +12,6 @@ import scapecraft.item.ScapecraftItems;
 public class EntityDarkwizard extends EntityScapecraft
 {
 	private int field_40152_d;
-	
-
 
 	public EntityDarkwizard(World par1World)
 	{
@@ -28,67 +23,26 @@ public class EntityDarkwizard extends EntityScapecraft
 	protected void applyEntityAttributes()
 	{
 		super.applyEntityAttributes();
-		// Max Health - default 20.0D - min 0.0D - max Double.MAX_VALUE
 		this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(60.0D);
-		// Follow Range - default 32.0D - min 0.0D - max 2048.0D
 		this.getEntityAttribute(SharedMonsterAttributes.followRange).setBaseValue(32.0D);
-		// Movement Speed - default 0.699D - min 0.0D - max Double.MAX_VALUE
 		this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.350D);
-		// Attack Damage - default 2.0D - min 0.0D - max Doubt.MAX_VALUE
 		this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(5.0D);
 	}
 
-
-
-	public String getEntityName()
-	{
-		return "Dark Wizard";
-	}
-
-	protected void entityInit()
-	{
-		super.entityInit();
-		this.dataWatcher.addObject(16, new Byte((byte)0));
-	}
-
-
-
-	/**
-	 * Called to update the entity's position/logic.
-	 */
-	public void onUpdate()
-	{
-		super.onUpdate();
-
-
-	}
-
-
-
-
+	@Override
 	protected String getHurtSound()
 	{
 		return "mob.villager.defaulthurt";
 	}
 
-	/**
-	 * Returns the sound this mob makes on death.
-	 */
+	@Override
 	protected String getDeathSound()
 	{
 		return "mob.villager.defaultdeath";
 	}
-	/**
-	 * Plays step sound at given x, y, z for the entity
-	 */
-	protected void playStepSound(int var1, int var2, int var3, int var4)
-	{
-		this.worldObj.playSoundAtEntity(this, "mob.villager.default", 0.15F, 1.0F);
-	}
 
-	/**
-	 * Basic mob attack. Default to touch of death in EntityCreature. Overridden by each mob to define their attack.
-	 */
+	//TODO replace old attack
+	@Override
 	protected void attackEntity(Entity par1Entity, float par2)
 	{
 		if (attackTime <= 0 && par2 < 2.0F && par1Entity.boundingBox.maxY > boundingBox.minY && par1Entity.boundingBox.minY < boundingBox.maxY)
@@ -141,31 +95,11 @@ public class EntityDarkwizard extends EntityScapecraft
 		}
 	}
 
+	@Override
 	public boolean isBurning()
 	{
 		return false;
 	}
-
-
-
-	public EnumCreatureAttribute getCreatureAttribute()
-	{
-		return EnumCreatureAttribute.UNDEAD;
-	}
-
-	public boolean isPotionApplicable(PotionEffect par1PotionEffect)
-	{
-		return par1PotionEffect.getPotionID() == Potion.poison.id ? false : super.isPotionApplicable(par1PotionEffect);
-	}
-
-
-	public void onLivingUpdate()
-	{
-		if(ticksExisted > 180 * 20) setDead(); 
-		super.onLivingUpdate();
-	}
-
-
 
 	private static final ItemStack defaultHeldItem;
 	public ItemStack getHeldItem()
@@ -183,12 +117,4 @@ public class EntityDarkwizard extends EntityScapecraft
 	{
 		return 50;
 	}
-
-
-
-
-
-
-
-
 }

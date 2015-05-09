@@ -8,7 +8,7 @@ import net.minecraft.util.ResourceLocation;
 import scapecraft.entity.EntityShapeshifter;
 
 public class RenderShapeshifter extends Render
- {
+{
 
 	@Override
 	public void doRender(Entity entity, double x, double y, double z, float f, float f1)

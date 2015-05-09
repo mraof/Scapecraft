@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.regex.Pattern;
 
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
@@ -12,9 +11,9 @@ import net.minecraft.item.Item;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.common.config.Property;
 
 import scapecraft.block.ScapecraftBlocks;
 import scapecraft.client.gui.GuiHandler;
@@ -26,8 +25,11 @@ import scapecraft.item.ScapecraftItems;
 import scapecraft.network.ConfigPacket;
 import scapecraft.network.MobSpawnerGuiPacket;
 import scapecraft.network.MobSpawnerPacket;
+import scapecraft.network.ShopGuiPacket;
 import scapecraft.network.StatsPacket;
+import scapecraft.util.Config;
 import scapecraft.util.UpdateHandler;
+import scapecraft.world.WorldProviderDungeon;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
@@ -51,8 +53,8 @@ public class Scapecraft
 {
 	public static final String version = "@VERSION@";
 	public static boolean requireLevels = true;
-	public static NBTTagList blockLevels;
-	public static NBTTagList toolLevels;
+	public static int dungeonDimensionId;
+	public static int dungeonProviderId;
 
 	/*start armor*/
 	public static final CreativeTabs tabScapecraftArmor = new CreativeTabs("tabScapecraftArmor")
@@ -111,39 +113,12 @@ public class Scapecraft
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event)
 	{
-		blockLevels = new NBTTagList();
-		toolLevels = new NBTTagList();
-		Configuration config = new Configuration(event.getSuggestedConfigurationFile());
-		config.load();
-		requireLevels = config.getBoolean("requireLevels", "Levels", true, "Use level requirements");
-		Pattern stringIntPair = Pattern.compile("^.* \\d*$");
-		blockLevels = readStringIntPairs(config.get("Levels", "blockLevels", new String[] {
-			"iron_ore 10",
-			"Scapecraft:bluriteOre 10",
-			"coal_ore 25",
-			"Scapecraft:mithOre 50",
-			"diamond_ore 40",
-			"redstone_ore 40",
-			"Scapecraft:addyOre 60",
-			"Scapecraft:runeOre 70",
-			"emerald_ore 70",
-		}, "Levels required to break blocks", stringIntPair));
-		toolLevels = readStringIntPairs(config.get("Levels", "toolLevels", new String[] {
-			"iron_pickaxe 10",
-			/*"Scapecraft:blackPickaxe 20",
-			  "Scapecraft:whitePickaxe 20",*/ //Don't have these yet
-			"Scapecraft:mithPickaxe 30",
-			"Scapecraft:addyPickaxe 40",
-			"Scapecraft:runePickaxe 50",
-			"Scapecraft:dragonPickaxe 60",
-			"Scapecraft:dragonPickaxeg 70"
-		}, "Levels required to use tools", stringIntPair));
-		config.save();
+		Config.loadConfig(new Configuration(event.getSuggestedConfigurationFile()));
 
 		ScapecraftItems.registerItems();
 		ScapecraftBlocks.registerBlocks();
-		ScapecraftItems.setToolLevels(toolLevels);
-		ScapecraftBlocks.setBlockLevels(blockLevels);
+		ScapecraftItems.setToolLevels(Config.toolLevels);
+		ScapecraftBlocks.setBlockLevels(Config.blockLevels);
 		System.out.println(ScapecraftItems.toolLevels);
 		System.out.println(ScapecraftBlocks.blockLevels);
 	}
@@ -155,7 +130,12 @@ public class Scapecraft
 
 		ScapecraftEntities.registerEntities();
 
+		Config.loadDrops();
+
 		ScapecraftRecipes.registerRecipes();
+
+		DimensionManager.registerProviderType(dungeonProviderId, WorldProviderDungeon.class, true);
+		DimensionManager.registerDimension(dungeonDimensionId, dungeonProviderId);
 
 		ScapecraftEventHandler eventHandler = new ScapecraftEventHandler();
 		MinecraftForge.EVENT_BUS.register(eventHandler);
@@ -166,6 +146,7 @@ public class Scapecraft
 		network.registerMessage(MobSpawnerGuiPacket.class, MobSpawnerGuiPacket.class, 1, Side.CLIENT);
 		network.registerMessage(MobSpawnerPacket.class, MobSpawnerPacket.class, 2, Side.SERVER);
 		network.registerMessage(ConfigPacket.class, ConfigPacket.class, 3, Side.CLIENT);
+		network.registerMessage(ShopGuiPacket.class, ShopGuiPacket.class, 4, Side.CLIENT);
 	}
 
 	@EventHandler
@@ -217,24 +198,6 @@ public class Scapecraft
 				return;
 			}
 
-			//NBTTagCompound drops = nbt.getCompoundTag("drops");
-			//boolean update = !drops.getString("version").equals(version) || version.isEmpty();
-			//if(update)
-			ScapecraftEntities.addDrops();
-
-			/*if(!drops.hasNoTags())
-			  {
-			  for(Object id : drops.getKeySet())
-			  {
-			  NBTTagList list = drops.getTagList((String) id, Constants.NBT.TAG_COMPOUND);
-			  @SuppressWarnings("unchecked") //Decompiling causes type erasure, so this is necessary to prevent warnings
-			  Class<? extends EntityScapecraft> entityClass = (Class<? extends EntityScapecraft>) EntityList.stringToClassMapping.get((String) id);
-			  while(list.tagCount() > 0)
-			  if(!update || list.getCompoundTagAt(0).getBoolean("custom"))
-			  EntityScapecraft.addDrop(entityClass, Drop.fromNBT((NBTTagCompound) list.removeTag(0)));
-
-			  }
-			  }*/
 			EconomyHandler.scEconomy = new ScapecraftEconomy();
 			EconomyHandler.scEconomy.readFromNBT(nbt);
 		}
@@ -276,20 +239,5 @@ public class Scapecraft
 				}
 			}
 		}
-	}
-
-	private NBTTagList readStringIntPairs(Property prop)
-	{
-		NBTTagList tagList = new NBTTagList();
-		for(String value : prop.getStringList())
-		{
-			String[] pair = value.split(" ");
-			NBTTagCompound tagCompound = new NBTTagCompound();
-			tagCompound.setString("string", pair[0]);
-			System.out.printf("From \"%s\", \"%s\" is \"%s\", parsed as %d\n", value, pair[0], pair[1], Integer.parseInt(pair[1]));
-			tagCompound.setInteger("number", Integer.parseInt(pair[1]));
-			tagList.appendTag(tagCompound);
-		}
-		return tagList;
 	}
 }

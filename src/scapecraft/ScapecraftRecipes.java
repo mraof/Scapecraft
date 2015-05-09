@@ -5,7 +5,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
 import scapecraft.block.ScapecraftBlocks;
-import scapecraft.entity.ScapecraftEntities;
+import scapecraft.item.ItemScapecraftSpawnEgg;
 import scapecraft.item.ScapecraftItems;
 
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -19,10 +19,10 @@ public class ScapecraftRecipes
 		GameRegistry.addRecipe(new ItemStack(ScapecraftItems.boltRack, 3), new Object[] { " X ", " Y ", 'X', ScapecraftBlocks.magicPlank, 'Y', Items.arrow});
 		GameRegistry.addRecipe(new ItemStack(ScapecraftItems.cabbagePieUncooked, 1), new Object[] {" X ", " Y ", 'X', ScapecraftItems.cutCabbage, 'Y', Items.bread});
 		GameRegistry.addRecipe(new ItemStack(ScapecraftItems.cabbagePieUncooked, 1), new Object[] {" X ", "XYX", 'X', Blocks.log, 'Y', Blocks.torch});
-		GameRegistry.addRecipe(new ItemStack(ScapecraftItems.scapecraftSpawnEgg, ScapecraftEntities.entities.indexOf("WhiteKnight")), new Object[] {"XYX", 'X', Items.gold_ingot, 'Y', Items.paper});
-		GameRegistry.addRecipe(new ItemStack(ScapecraftItems.scapecraftSpawnEgg, ScapecraftEntities.entities.indexOf("Guard")), new Object[] {"XY", 'X', Items.gold_ingot, 'Y', Items.paper});
-		GameRegistry.addRecipe(new ItemStack(ScapecraftItems.scapecraftSpawnEgg, ScapecraftEntities.entities.indexOf("Wizard")), new Object[] {" X ", "XYX", " X ", 'X', Items.gold_ingot, 'Y', Items.paper});
-		GameRegistry.addRecipe(new ItemStack(ScapecraftItems.scapecraftSpawnEgg, ScapecraftEntities.entities.indexOf("HeroKnight")), new Object[] {"XXX", "XYX", "XXX", 'X', Items.diamond, 'Y', Items.paper});
+		GameRegistry.addRecipe(ItemScapecraftSpawnEgg.setMob(new ItemStack(ScapecraftItems.scapecraftSpawnEgg), "WhiteKnight"), new Object[] {"XYX", 'X', Items.gold_ingot, 'Y', Items.paper});
+		GameRegistry.addRecipe(ItemScapecraftSpawnEgg.setMob(new ItemStack(ScapecraftItems.scapecraftSpawnEgg), "Guard"), new Object[] {"XY", 'X', Items.gold_ingot, 'Y', Items.paper});
+		GameRegistry.addRecipe(ItemScapecraftSpawnEgg.setMob(new ItemStack(ScapecraftItems.scapecraftSpawnEgg), "Wizard"), new Object[] {" X ", "XYX", " X ", 'X', Items.gold_ingot, 'Y', Items.paper});
+		GameRegistry.addRecipe(ItemScapecraftSpawnEgg.setMob(new ItemStack(ScapecraftItems.scapecraftSpawnEgg), "HeroKnight"), new Object[] {"XXX", "XYX", "XXX", 'X', Items.diamond, 'Y', Items.paper});
 		GameRegistry.addRecipe(new ItemStack(ScapecraftItems.cutCabbage, 1), new Object[] {"X", 'X', ScapecraftBlocks.cabbage});
 		GameRegistry.addRecipe(new ItemStack(ScapecraftItems.fishPieUncooked, 1), new Object[] {" X ", " Y ", 'X', Items.cooked_fish, 'Y', Items.bread});
 		GameRegistry.addRecipe(new ItemStack(ScapecraftItems.greenDLeather, 1), new Object[] {" X ", " Y ", 'X', Items.gold_ingot, 'Y', ScapecraftItems.greenDHide});
@@ -35,6 +35,18 @@ public class ScapecraftRecipes
 		GameRegistry.addRecipe(new ItemStack(ScapecraftItems.stoneChestplate, 1), new Object[] {"X X", "XXX", "XXX", 'X', ScapecraftBlocks.blueCobbleCompressed});
 		GameRegistry.addRecipe(new ItemStack(ScapecraftItems.stoneHelmet, 1), new Object[] {"XXX", "X X", 'X', ScapecraftBlocks.blueCobbleCompressed});
 		GameRegistry.addRecipe(new ItemStack(ScapecraftItems.stoneLeggings, 1), new Object[] {"XXX", "X X", "X X", 'X', ScapecraftBlocks.blueCobbleCompressed});
+		GameRegistry.addRecipe(new ItemStack(ScapecraftItems.strongOakBow, 1), new Object[] { " XY", "X Y", " XY", 'X', ScapecraftItems.strongOakStick, 'Y', Items.string});
+		GameRegistry.addRecipe(new ItemStack(ScapecraftBlocks.strongOakPlank, 2), new Object[] { "X", 'X', ScapecraftBlocks.strongOakLog});
+		GameRegistry.addRecipe(new ItemStack(ScapecraftBlocks.strongOakStairs, 4), new Object[] { "  X", " XX", "XXX", 'X', ScapecraftBlocks.strongOakPlank});
+		GameRegistry.addRecipe(new ItemStack(ScapecraftItems.strongOakStick, 1), new Object[] { "X", "X", 'X', ScapecraftBlocks.strongOakPlank});
+		GameRegistry.addRecipe(new ItemStack(ScapecraftItems.willowBow, 1), new Object[] { " XY", "X Y", " XY", 'X', ScapecraftItems.willowStick, 'Y', Items.string});
+		GameRegistry.addRecipe(new ItemStack(ScapecraftBlocks.willowPlank, 2), new Object[] { "X", 'X', ScapecraftBlocks.willowLog});
+		GameRegistry.addRecipe(new ItemStack(ScapecraftBlocks.willowStairs, 4), new Object[] { "  X", " XX", "XXX", 'X', ScapecraftBlocks.willowPlank});
+		GameRegistry.addRecipe(new ItemStack(ScapecraftItems.willowStick, 1), new Object[] { "X", "X", 'X', ScapecraftBlocks.willowPlank});
+		GameRegistry.addRecipe(new ItemStack(ScapecraftItems.mapleBow, 1), new Object[] { " XY", "X Y", " XY", 'X', ScapecraftItems.mapleStick, 'Y', Items.string});
+		GameRegistry.addRecipe(new ItemStack(ScapecraftBlocks.maplePlank, 2), new Object[] { "X", 'X', ScapecraftBlocks.mapleLog});
+		GameRegistry.addRecipe(new ItemStack(ScapecraftBlocks.mapleStairs, 4), new Object[] { "  X", " XX", "XXX", 'X', ScapecraftBlocks.maplePlank});
+		GameRegistry.addRecipe(new ItemStack(ScapecraftItems.mapleStick, 1), new Object[] { "X", "X", 'X', ScapecraftBlocks.maplePlank});
 		GameRegistry.addRecipe(new ItemStack(ScapecraftItems.yewBow, 1), new Object[] { " XY", "X Y", " XY", 'X', ScapecraftItems.yewStick, 'Y', Items.string});
 		GameRegistry.addRecipe(new ItemStack(ScapecraftBlocks.yewPlank, 2), new Object[] { "X", 'X', ScapecraftBlocks.yewLog});
 		GameRegistry.addRecipe(new ItemStack(ScapecraftBlocks.yewStairs, 4), new Object[] { "  X", " XX", "XXX", 'X', ScapecraftBlocks.yewPlank});

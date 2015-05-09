@@ -10,14 +10,18 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.world.gen.feature.WorldGenTrees;
 
 import scapecraft.item.ScapecraftItems;
 import scapecraft.tileentity.TileEntityBlockSpawner;
+import scapecraft.tileentity.TileEntityDungeonDoor;
 import scapecraft.tileentity.TileEntityFire;
 import scapecraft.tileentity.TileEntityScapecraftMobSpawner;
 import scapecraft.tileentity.TileEntityStall;
 import scapecraft.world.gen.feature.WorldGenMagicTree;
+import scapecraft.world.gen.feature.WorldGenMapleTree;
+import scapecraft.world.gen.feature.WorldGenOakTree;
+import scapecraft.world.gen.feature.WorldGenStrongOakTree;
+import scapecraft.world.gen.feature.WorldGenWillowTree;
 import scapecraft.world.gen.feature.WorldGenYewTree;
 
 import cpw.mods.fml.common.registry.GameData;
@@ -68,6 +72,9 @@ public class ScapecraftBlocks
 
 	public static Block cabbageSpawn;
 	public static Block oakTreeSpawn;
+	public static Block strongOakTreeSpawn;
+	public static Block willowTreeSpawn;
+	public static Block mapleTreeSpawn;
 	public static Block yewTreeSpawn;
 	public static Block magicTreeSpawn;
 
@@ -87,28 +94,45 @@ public class ScapecraftBlocks
 	public static Block keyBlock;
 	public static Block keyBlock2;
 
+	public static Block strongOakLog;
+	public static Block strongOakPlank;
+	public static Block strongOakStairs;
+	public static Block strongOakSapling;
+	public static Block strongOakLeaves;
+	public static Block willowLog;
+	public static Block willowPlank;
+	public static Block willowStairs;
+	public static Block willowSapling;
+	public static Block willowLeaves;
+	public static Block mapleLog;
+	public static Block maplePlank;
+	public static Block mapleStairs;
+	public static Block mapleSapling;
+	public static Block mapleLeaves;
 	public static Block yewLog;
-	public static Block magicLog;
 	public static Block yewPlank;
-	public static Block magicPlank;
 	public static Block yewStairs;
-	public static Block magicStairs;
 	public static Block yewSapling;
-	public static Block magicSapling;
 	public static Block yewLeaves;
+	public static Block magicLog;
+	public static Block magicPlank;
+	public static Block magicStairs;
+	public static Block magicSapling;
 	public static Block magicLeaves;
 
 	public static Block serverNotice;
 	public static Block whiteBlock;
 	public static Block blackBlock;
 	public static Block hardIce;
-	public static Block invisibleLight;;
+	public static Block invisibleLight;
+	public static Block dungeonTele;
 
 	public static Block cabbage;
 
 	public static Block stall;
 	public static Block mobSpawner;
 	public static Block scapecraftFire;
+	public static Block dungeonDoor;
 
 	public static void registerBlocks()
 	{
@@ -116,7 +140,7 @@ public class ScapecraftBlocks
 
 		cabbage = new BlockCabbage().setTextureName("scapecraft:cabbage").setUnlocalizedName("cabbage");
 
-		blueCobble = new BlockScapecraft(Material.rock).setTextureName("scapecraft:BlueCobblestone").setUnlocalizedName("blueCobble");
+		blueCobble = new BlockScapecraft(Material.rock).setTextureName("scapecraft:BlueCobblestone").setUnlocalizedName("blueCobble").setHardness(1.0F);
 		blueCobbleCompressed = new BlockScapecraft(Material.rock).setTextureName("scapecraft:BlueCobblestonec").setUnlocalizedName("blueCobbleCompressed");
 
 		tinOre = new BlockScapecraft(Material.rock).setHarvest("pickaxe", 0).setTextureName("scapecraft:TinOre").setHardness(10.0F).setResistance(5.0F).setUnlocalizedName("tinOre");
@@ -136,7 +160,7 @@ public class ScapecraftBlocks
 		bluriteOreSpawn = new BlockBlockSpawner(bluriteOre, 90, 35);
 		redstoneOreSpawn = new BlockBlockSpawner(Blocks.redstone_ore, 600, 50);
 		ironOreSpawn = new BlockBlockSpawner(Blocks.iron_ore, 300, 70);
-		coalOreSpawn = new BlockBlockSpawner(Blocks.coal_ore, 120, 100);
+		coalOreSpawn = new BlockBlockSpawner(Blocks.coal_ore, 120, 50);
 		diamondOreSpawn = new BlockBlockSpawner(Blocks.diamond_ore, 1800, 100);
 		emeraldOreSpawn = new BlockBlockSpawner(Blocks.emerald_ore, 4500, 120);
 		goldOreSpawn = new BlockBlockSpawner(Blocks.gold_ore, 1200, 130);
@@ -149,9 +173,9 @@ public class ScapecraftBlocks
 		gravelSpawn = new BlockBlockSpawner(Blocks.gravel, 20);
 		blueCobbleSpawn = new BlockBlockSpawner(blueCobble, 10800);
 		gravelSpawn = new BlockBlockSpawner(Blocks.gravel, 20);
-		wheatSpawn = new BlockBlockSpawner(Blocks.wheat, 1800, 0, 7);
-		carrotSpawn = new BlockBlockSpawner(Blocks.carrots, 1800, 0, 7);
-		potatoSpawn = new BlockBlockSpawner(Blocks.potatoes, 1800, 0, 7);
+		wheatSpawn = new BlockBlockSpawner(Blocks.wheat, 1800, 0);
+		carrotSpawn = new BlockBlockSpawner(Blocks.carrots, 1800, 0);
+		potatoSpawn = new BlockBlockSpawner(Blocks.potatoes, 1800, 0);
 
 		cabbageSpawn = new BlockBlockSpawner(cabbage, 60);
 
@@ -170,15 +194,30 @@ public class ScapecraftBlocks
 		keyBlock = new BlockLock(ScapecraftItems.tombKey).setUnlocalizedName("barrowsLock");
 		keyBlock2 = new BlockLock(ScapecraftItems.doorKey).setUnlocalizedName("fortressLock");
 
+		strongOakLog = new BlockScapecraftLog().setHarvest("axe", 2).setTextureName("scapecraft:StrongOakLog").setHardness(20.0F).setUnlocalizedName("strongOakLog");
+		strongOakPlank = new BlockScapecraft(Material.wood).setHarvest("axe", 2).setTextureName("scapecraft:StrongOakPlank").setHardness(50F).setUnlocalizedName("strongOakPlank");
+		strongOakStairs = new BlockScapecraftStairs(strongOakPlank).setUnlocalizedName("strongOakStairs");
+		strongOakSapling = new BlockScapecraftSapling(WorldGenStrongOakTree.class).setTextureName("scapecraft:StrongOakSapling").setUnlocalizedName("strongOakSapling");
+		strongOakLeaves = new BlockScapecraftLeaves(strongOakSapling).setTextureName("scapecraft:StrongOakLeaves").setUnlocalizedName("strongOakLeaves");
+		willowLog = new BlockScapecraftLog().setHarvest("axe", 2).setTextureName("scapecraft:WillowLog").setHardness(20.0F).setUnlocalizedName("willowLog");
+		willowPlank = new BlockScapecraft(Material.wood).setHarvest("axe", 2).setTextureName("scapecraft:WillowPlank").setHardness(50F).setUnlocalizedName("willowPlank");
+		willowStairs = new BlockScapecraftStairs(willowPlank).setUnlocalizedName("willowStairs");
+		willowSapling = new BlockScapecraftSapling(WorldGenWillowTree.class).setTextureName("scapecraft:WillowSapling").setUnlocalizedName("willowSapling");
+		willowLeaves = new BlockScapecraftLeaves(willowSapling).setTextureName("scapecraft:WillowLeaves").setUnlocalizedName("willowLeaves");
+		mapleLog = new BlockScapecraftLog().setHarvest("axe", 2).setTextureName("scapecraft:MapleLog").setHardness(15.0F).setUnlocalizedName("mapleLog");
+		maplePlank = new BlockScapecraft(Material.wood).setHarvest("axe", 2).setTextureName("scapecraft:MaplePlank").setHardness(50F).setUnlocalizedName("maplePlank");
+		mapleStairs = new BlockScapecraftStairs(maplePlank).setUnlocalizedName("mapleStairs");
+		mapleSapling = new BlockScapecraftSapling(WorldGenMapleTree.class).setTextureName("scapecraft:MapleSapling").setUnlocalizedName("mapleSapling");
+		mapleLeaves = new BlockScapecraftLeaves(mapleSapling).setTextureName("scapecraft:MapleLeaves").setUnlocalizedName("mapleLeaves");
 		yewLog = new BlockScapecraftLog().setHarvest("axe", 2).setTextureName("scapecraft:YewLog").setHardness(20.0F).setUnlocalizedName("yewLog");
-		magicLog = new BlockScapecraftLog().setHarvest("axe", 2).setTextureName("scapecraft:MagicLog").setHardness(50.0F).setUnlocalizedName("magicLog");
 		yewPlank = new BlockScapecraft(Material.wood).setHarvest("axe", 2).setTextureName("scapecraft:YewPlank").setHardness(50F).setUnlocalizedName("yewPlank");
-		magicPlank = new BlockScapecraft(Material.wood).setHarvest("axe", 2).setTextureName("scapecraft:MagicPlank").setHardness(5.0F).setUnlocalizedName("magicPlank");
 		yewStairs = new BlockScapecraftStairs(yewPlank).setUnlocalizedName("yewStairs");
-		magicStairs = new BlockScapecraftStairs(magicPlank).setUnlocalizedName("magicStairs");
 		yewSapling = new BlockScapecraftSapling(WorldGenYewTree.class).setTextureName("scapecraft:YewSapling").setUnlocalizedName("yewSapling");
-		magicSapling = new BlockScapecraftSapling(WorldGenMagicTree.class).setTextureName("scapecraft:MagicSapling").setUnlocalizedName("magicSapling");
 		yewLeaves = new BlockScapecraftLeaves(yewSapling).setTextureName("scapecraft:YewLeaves").setUnlocalizedName("yewLeaves");
+		magicLog = new BlockScapecraftLog().setHarvest("axe", 2).setTextureName("scapecraft:MagicLog").setHardness(50.0F).setUnlocalizedName("magicLog");
+		magicPlank = new BlockScapecraft(Material.wood).setHarvest("axe", 2).setTextureName("scapecraft:MagicPlank").setHardness(5.0F).setUnlocalizedName("magicPlank");
+		magicStairs = new BlockScapecraftStairs(magicPlank).setUnlocalizedName("magicStairs");
+		magicSapling = new BlockScapecraftSapling(WorldGenMagicTree.class).setTextureName("scapecraft:MagicSapling").setUnlocalizedName("magicSapling");
 		magicLeaves = new BlockScapecraftLeaves(magicSapling, ScapecraftItems.magicFruit).setTextureName("scapecraft:MagicLeaves").setUnlocalizedName("magicLeaves");
 
 		serverNotice = new BlockScapecraft(Material.glass).setTextureName("scapecraft:ServerNotice").setUnlocalizedName("serverNotice");
@@ -190,12 +229,17 @@ public class ScapecraftBlocks
 		stall = new BlockStall();
 		mobSpawner = new BlockSpawn();
 		scapecraftFire = new BlockScapecraftFire();
+		dungeonDoor = new BlockDungeonDoor().setTextureName("endframe_eye");
 
-		oakTreeSpawn = new BlockTreeSpawner(Blocks.log, 100, new WorldGenTrees(true), 4);
-		yewTreeSpawn = new BlockTreeSpawner(yewLog, 1200, new WorldGenYewTree(true), 50);
-		magicTreeSpawn = new BlockTreeSpawner(magicLog, 1800, new WorldGenMagicTree(true), 100);
+		oakTreeSpawn = new BlockTreeSpawner(Blocks.log, 100, new WorldGenOakTree(true), 25);
+		strongOakTreeSpawn = new BlockTreeSpawner(strongOakLog, 200, new WorldGenStrongOakTree(true), 38);
+		willowTreeSpawn = new BlockTreeSpawner(willowLog, 400, new WorldGenYewTree(true), 68);
+		mapleTreeSpawn = new BlockTreeSpawner(mapleLog, 600, new WorldGenMapleTree(true), 100);
+		yewTreeSpawn = new BlockTreeSpawner(yewLog, 1200, new WorldGenYewTree(true), 175);
+		magicTreeSpawn = new BlockTreeSpawner(magicLog, 1800, new WorldGenMagicTree(true), 250);
 
 		unbreakableAnvil = new BlockUnbreakableAnvil();
+		dungeonTele = new BlockDungeonTele();
 
 		GameRegistry.registerBlock(coffin, "coffin");
 
@@ -237,6 +281,9 @@ public class ScapecraftBlocks
 		GameRegistry.registerBlock(potatoSpawn, "potatoSpawn");
 
 		GameRegistry.registerBlock(oakTreeSpawn, "oakTreeSpawn");
+		GameRegistry.registerBlock(strongOakTreeSpawn, "strongOakTreeSpawn");
+		GameRegistry.registerBlock(willowTreeSpawn, "willowTreeSpawn");
+		GameRegistry.registerBlock(mapleTreeSpawn, "mapleTreeSpawn");
 		GameRegistry.registerBlock(yewTreeSpawn, "yewTreeSpawn");
 		GameRegistry.registerBlock(magicTreeSpawn, "magicTreeSpawn");
 
@@ -259,15 +306,30 @@ public class ScapecraftBlocks
 		GameRegistry.registerBlock(keyBlock, "keyBlock");
 		GameRegistry.registerBlock(keyBlock2, "keyBlock2");
 
+		GameRegistry.registerBlock(strongOakLog, "strongOakLog");
+		GameRegistry.registerBlock(strongOakPlank, "strongOakPlank");
+		GameRegistry.registerBlock(strongOakStairs, "strongOakStairs");
+		GameRegistry.registerBlock(strongOakSapling, "strongOakSapling");
+		GameRegistry.registerBlock(strongOakLeaves, "strongOakLeaves");
+		GameRegistry.registerBlock(willowLog, "willowLog");
+		GameRegistry.registerBlock(willowPlank, "willowPlank");
+		GameRegistry.registerBlock(willowStairs, "willowStairs");
+		GameRegistry.registerBlock(willowSapling, "willowSapling");
+		GameRegistry.registerBlock(willowLeaves, "willowLeaves");
+		GameRegistry.registerBlock(mapleLog, "mapleLog");
+		GameRegistry.registerBlock(maplePlank, "maplePlank");
+		GameRegistry.registerBlock(mapleStairs, "mapleStairs");
+		GameRegistry.registerBlock(mapleSapling, "mapleSapling");
+		GameRegistry.registerBlock(mapleLeaves, "mapleLeaves");
 		GameRegistry.registerBlock(yewLog, "yewLog");
-		GameRegistry.registerBlock(magicLog, "magicLog");
 		GameRegistry.registerBlock(yewPlank, "yewPlank");
-		GameRegistry.registerBlock(magicPlank, "magicPlank");
 		GameRegistry.registerBlock(yewStairs, "yewStairs");
-		GameRegistry.registerBlock(magicStairs, "magicStairs");
 		GameRegistry.registerBlock(yewSapling, "yewSapling");
-		GameRegistry.registerBlock(magicSapling, "magicSapling");
 		GameRegistry.registerBlock(yewLeaves, "yewLeaves");
+		GameRegistry.registerBlock(magicLog, "magicLog");
+		GameRegistry.registerBlock(magicPlank, "magicPlank");
+		GameRegistry.registerBlock(magicStairs, "magicStairs");
+		GameRegistry.registerBlock(magicSapling, "magicSapling");
 		GameRegistry.registerBlock(magicLeaves, "magicLeaves");
 
 		GameRegistry.registerBlock(serverNotice, "serverNotice");
@@ -279,6 +341,12 @@ public class ScapecraftBlocks
 		GameRegistry.registerBlock(stall, "stall");
 		GameRegistry.registerBlock(mobSpawner, "mobSpawner");
 		GameRegistry.registerBlock(scapecraftFire, "scapecraftFire");
+		if(true)
+		{
+		GameRegistry.registerBlock(dungeonDoor, "dungeonDoor");
+
+		GameRegistry.registerBlock(dungeonTele, "dungeonTele");
+		}
 
 		Item.getItemFromBlock(addyOreSpawn).setHasSubtypes(true);
 		Item.getItemFromBlock(mithOreSpawn).setHasSubtypes(true);
@@ -304,6 +372,7 @@ public class ScapecraftBlocks
 		GameRegistry.registerTileEntity(TileEntityScapecraftMobSpawner.class, "scapecraftMobSpawner");
 		GameRegistry.registerTileEntity(TileEntityStall.class, "stall");
 		GameRegistry.registerTileEntity(TileEntityFire.class, "scapecraftFire");
+		GameRegistry.registerTileEntity(TileEntityDungeonDoor.class, "dungeonDoor");
 	}
 
 	public static void setBlockLevels(NBTTagList blocks)

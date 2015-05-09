@@ -58,7 +58,7 @@ public class BlockScapecraftLeaves extends BlockLeaves
 	@Override
         protected void func_150124_c(World world, int x, int y, int z, int metadata, int chance)
 	{
-		if(world.rand.nextInt(chance) == 0)
+		if(world.rand.nextInt(chance) == 0 && fruit != null)
 			this.dropBlockAsItem(world, x, y, z, new ItemStack(fruit));
 	}
 

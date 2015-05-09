@@ -32,12 +32,6 @@ public class BlockBlockSpawner extends Block implements ITileEntityProvider
 	public int fullSize = 15;
 	public String stat = "mining";
 
-	public BlockBlockSpawner(Block fullBlock, int regenTime, int xp, int fullSize)
-	{
-		this(fullBlock, regenTime, xp);
-		this.fullSize = fullSize;
-	}
-
 	public BlockBlockSpawner(Block fullBlock, int regenTime, int xp)
 	{
 		super(fullBlock.getMaterial());

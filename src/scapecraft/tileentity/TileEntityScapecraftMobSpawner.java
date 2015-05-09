@@ -8,9 +8,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 
 import scapecraft.entity.EntityScapecraft;
+import scapecraft.entity.MobSpawner;
 import scapecraft.entity.ScapecraftEntities;
 
-public class TileEntityScapecraftMobSpawner extends TileEntity
+public class TileEntityScapecraftMobSpawner extends TileEntity implements MobSpawner
 {
 	public String entityName = "";
 	public int spawnInterval = 1200;
@@ -102,7 +103,7 @@ public class TileEntityScapecraftMobSpawner extends TileEntity
 		}
 	}
 
-	public void onSpawnedDeath(EntityScapecraft entity)
+	public void onSpawnedDeath(Entity entity)
 	{
 		for(int i = 0; i < this.spawnedIds.size(); i++)
 		{

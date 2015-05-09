@@ -5,9 +5,9 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class Drop
 {
-	ItemStack stack;
-	int chance;
-	boolean custom;
+	public ItemStack stack;
+	public int chance;
+	public boolean custom;
 
 	public Drop(ItemStack stack, int chance, boolean custom)
 	{

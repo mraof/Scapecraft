@@ -122,9 +122,17 @@ public class EntityShapeshifter extends EntityScapecraft implements IEntityAddit
 			e.printStackTrace();
 		}
 
-		this.mobName = mobName;
-		this.addTargets(copiedMob.getClass());
-		this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(copiedMob.getEntityAttribute(SharedMonsterAttributes.maxHealth).getAttributeValue());
+		if(copiedMob != null)
+		{
+			this.mobName = mobName;
+			this.addTargets(copiedMob.getClass());
+			this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(copiedMob.getEntityAttribute(SharedMonsterAttributes.maxHealth).getAttributeValue());
+		}
+		else
+		{
+			System.err.println("Shapeshifter has null mob for " + mobName + " at " + this.posX + ", " + this.posY + ", " + this.posZ + " on " + (worldObj.isRemote ? "Client" : "Server"));
+			setMob(randomMobName());
+		}
 	}
 
 	protected void applyEntityAttributes()

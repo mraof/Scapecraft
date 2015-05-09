@@ -29,7 +29,6 @@ public class EntityBandit extends EntityScapecraft
 		this.tasks.addTask(5, new EntityAIWander(this, 1D));
 		this.tasks.addTask(6, new EntityAILookIdle(this));
 		this.tasks.addTask(6, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
-		this.lifespan = 8000;
 		this.addTargets(EntityBarbarian.class, EntityFarmer.class, EntityGreenDragon.class, EntityGuard.class, EntityHeroKnight.class, EntityKQ.class, EntityKQ2.class, EntityKing.class, EntityKingsGuard.class, EntityKos1.class, EntityKos2.class, EntityKos3.class, EntityPlayer.class, EntityTD.class, EntityWhiteKnight.class, EntityWizard.class);
 		level = 50;
 	}

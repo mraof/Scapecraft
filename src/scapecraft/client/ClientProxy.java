@@ -85,6 +85,7 @@ import scapecraft.client.model.Modeld2h;
 import scapecraft.client.renderer.entity.RenderBipedScapecraft;
 import scapecraft.client.renderer.entity.RenderEntityScapecraft;
 import scapecraft.client.renderer.entity.RenderGenericBiped;
+import scapecraft.client.renderer.entity.RenderKey;
 import scapecraft.client.renderer.entity.RenderShapeshifter;
 import scapecraft.client.renderer.item.RenderItemSpawnEgg;
 import scapecraft.client.renderer.item.RenderItemWeapon;
@@ -133,6 +134,7 @@ import scapecraft.entity.EntityKKspawn;
 import scapecraft.entity.EntityKQ;
 import scapecraft.entity.EntityKQ2;
 import scapecraft.entity.EntityKaril;
+import scapecraft.entity.EntityKey;
 import scapecraft.entity.EntityKing;
 import scapecraft.entity.EntityKingsGuard;
 import scapecraft.entity.EntityKos1;
@@ -303,6 +305,7 @@ public class ClientProxy extends CommonProxy
 		RenderingRegistry.registerEntityRenderingHandler(EntityKreearra.class, new RenderEntityScapecraft(new ModelKreearra(), 0.5F, new ResourceLocation("scapecraft", "textures/entity/Kreearra.png")));
 		RenderingRegistry.registerEntityRenderingHandler(EntityShapeshifter.class, new RenderShapeshifter()); 
 		RenderingRegistry.registerEntityRenderingHandler(EntityGenericBiped.class, new RenderGenericBiped()); 
+		RenderingRegistry.registerEntityRenderingHandler(EntityKey.class, new RenderKey());
 
 		MinecraftForgeClient.registerItemRenderer(ScapecraftItems.scapecraftSpawnEgg, new RenderItemSpawnEgg());
 		MinecraftForgeClient.registerItemRenderer(ScapecraftItems.bronzeHammer, new RenderItemWeapon(new ModelWarhammer(), Resources.TEXTURE_BronzeHammer, 0.85F, 230F).setOffset(-0.15F, 1.1F, 0F));
@@ -331,7 +334,7 @@ public class ClientProxy extends CommonProxy
 		MinecraftForgeClient.registerItemRenderer(ScapecraftItems.blackHalberd, new RenderItemWeapon(new ModelHalberd(), Resources.TEXTURE_BLACKHALBERD, 1F, 220F).setOffset(0F, 0F, 0F));
 		MinecraftForgeClient.registerItemRenderer(ScapecraftItems.dryRapier, new RenderItemWeapon(new ModelDryrapier(), Resources.TEXTURE_DRYRAPIER, 1F, 220F).setOffset(0F, 0F, 0F));
 		MinecraftForgeClient.registerItemRenderer(ScapecraftItems.dryMace, new RenderItemWeapon(new ModelDrymace(), Resources.TEXTURE_DRYMACE, 1F, 220F).setOffset(0F, 0F, 0F));
-		MinecraftForgeClient.registerItemRenderer(ScapecraftItems.dryLong, new RenderItemWeapon(new ModelDrylong(), Resources.TEXTURE_DRYLONG, 1F, 220F).setOffset(1F, 0.3F, 0F).setRotation(150F, 90F, 0F));
+		MinecraftForgeClient.registerItemRenderer(ScapecraftItems.dryLong, new RenderItemWeapon(new ModelDrylong(), Resources.TEXTURE_DRYLONG, 0.3F, 220F).setOffset(2F, 1F, 0F).setRotation(150F, 90F, 0F));
 		MinecraftForgeClient.registerItemRenderer(ScapecraftItems.dragon2hSword, new RenderItemWeapon(new Modeld2h(), Resources.TEXTURE_D2H, 0.5F, 220F).setOffset(1.3F, 0.9F, -0.1F));
 		MinecraftForgeClient.registerItemRenderer(ScapecraftItems.darkBow, new RenderItemWeapon(new ModelDarkBow(), Resources.TEXTURE_DARKBOW, 1F, 0F).setOffset(0F, 0.5F, 0F).setRotation(0F, 270F, 0F));
 		MinecraftForgeClient.registerItemRenderer(ScapecraftItems.karilBow, new RenderItemWeapon(new ModelKarilBow(), Resources.TEXTURE_KARIL, 1F, 180F).setOffset(0.1F, 0.3F, 1F));

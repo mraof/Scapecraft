@@ -5,11 +5,14 @@ import net.minecraft.item.Item;
 
 public enum ScapecraftBowMaterial
 {
-	KARIL(10000, 1.4F, 1, 8F, ScapecraftItems.boltRack),
-	YEW(384, 2.5F, 1),
-	MAGIC(384, 2.9F, 1),
-	CRYSTAL(4000, 3.8F, 1, 20F, null),
-	DARK(10000, 4.1F, 1);
+	KARIL(10000, -0.5F, 1, 8F, ScapecraftItems.boltRack),
+	OAK(384, 0.6F, 1),
+	WILLOW(384, 1.2F, 1),
+	MAPLE(384, 1.8F, 1),
+	YEW(384, 2.4F, 1),
+	MAGIC(384, 3F, 1),
+	CRYSTAL(4000, 3.6F, 1, 20F, null),
+	DARK(10000, 4.2F, 1);
 
 	int maxUses;
 	float damage;

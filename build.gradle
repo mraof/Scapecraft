@@ -24,9 +24,9 @@ group = "scapecraft"
 archivesBaseName = "Scapecraft"
 
 minecraft {
-    version = "1.7.10-10.13.2.1230"
+    version = "1.7.10-10.13.3.1395-1710ls"
     runDir = "eclipse"
-    mappings = "stable_9"
+    mappings = "stable_12"
 
     replace "@VERSION@", project.version
     replaceIn "Scapecraft.java"

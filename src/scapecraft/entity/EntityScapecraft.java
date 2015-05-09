@@ -11,9 +11,10 @@ import java.util.Set;
 import net.minecraft.command.IEntitySelector;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.monster.EntityMob;
+import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -23,23 +24,28 @@ import net.minecraft.world.World;
 
 import scapecraft.Stats;
 import scapecraft.economy.EconomyHandler;
-import scapecraft.tileentity.TileEntityScapecraftMobSpawner;
 
-public abstract class EntityScapecraft extends EntityMob implements XpDropper, IEntitySelector
+public abstract class EntityScapecraft extends EntityCreature implements XpDropper, IEntitySelector, IMob
 {
 	protected HashMap<EntityPlayer, Float> attackers = new HashMap<EntityPlayer, Float>();
 	public static HashMap<Class<? extends EntityScapecraft>, ArrayList<Drop>> drops = new HashMap<Class<? extends EntityScapecraft>, ArrayList<Drop>>();
 	public static HashMap<Class<? extends EntityScapecraft>, List<Integer>> moneyDrops = new HashMap<Class<? extends EntityScapecraft>, List<Integer>>();
-	protected int lifespan;
 	public Set<Class<? extends EntityLivingBase>> targetClasses = new HashSet<Class<? extends EntityLivingBase>>();
 	public boolean passive = true;
-	public TileEntityScapecraftMobSpawner mobSpawner = null;
-	public int level = 1;
+	public MobSpawner mobSpawner = null;
+	public int level = 0;
 
 	public EntityScapecraft(World par1World) 
 	{
 		super(par1World);
 		this.addArmor();
+	}
+
+	@Override
+	protected void applyEntityAttributes()
+	{
+		super.applyEntityAttributes();
+		this.getAttributeMap().registerAttribute(SharedMonsterAttributes.attackDamage);
 	}
 
 	public void giveXp()
@@ -53,10 +59,13 @@ public abstract class EntityScapecraft extends EntityMob implements XpDropper, I
 
 		for(Entry<EntityPlayer, Float> entry : attackers.entrySet())
 		{
-			Stats.addXp(entry.getKey(), "combat", (int) (damageTaken / entry.getValue() * this.getXpValue()));
-			if(money > 0)
+			if(entry.getKey() != null)
 			{
-				EconomyHandler.deposit(entry.getKey().getUniqueID(), damageTaken / entry.getValue() * money);
+				Stats.addXp(entry.getKey(), "combat", (int) (entry.getValue() / damageTaken * this.getXpValue()));
+				if(money > 0)
+				{
+					EconomyHandler.deposit(entry.getKey().getUniqueID(), entry.getValue() / damageTaken * money);
+				}
 			}
 		}
 	}
@@ -91,14 +100,6 @@ public abstract class EntityScapecraft extends EntityMob implements XpDropper, I
 	public static void setMoney(Class<? extends EntityScapecraft> entityClass, Integer... money)
 	{
 		moneyDrops.put(entityClass, Arrays.asList(money));
-	}
-
-	@Override
-	public void onLivingUpdate()
-	{
-		if(lifespan != 0 && ticksExisted > lifespan && this.entityToAttack != null && !this.entityToAttack.isDead)
-			setDead(); 
-		super.onLivingUpdate();
 	}
 
 	@Override
@@ -155,21 +156,23 @@ public abstract class EntityScapecraft extends EntityMob implements XpDropper, I
 	{
 		float oldHealth = this.getHealth();
 		boolean success = super.attackEntityFrom(source, damage);
-		if(success && !this.worldObj.isRemote && source.getEntity() instanceof EntityPlayer && !((EntityPlayer) source.getEntity()).capabilities.isCreativeMode)
+		if(success && !this.worldObj.isRemote)
 		{
-			EntityPlayer attacker = (EntityPlayer) source.getEntity();
-			if(attackers.get(attacker) == null)
+			EntityPlayer attacker = null;
+			if(source.getEntity() instanceof EntityLivingBase)
 			{
-				attackers.put(attacker, oldHealth - this.getHealth());
-			}
-			else
-			{
-				attackers.put(attacker, attackers.get(attacker) + oldHealth - this.getHealth());
-			}
-
-			if(this.getHealth() <= 0)
-			{
-				this.giveXp();
+				if(source.getEntity() instanceof EntityPlayer && !((EntityPlayer) source.getEntity()).capabilities.isCreativeMode)
+				{
+					attacker = (EntityPlayer) source.getEntity();
+				}
+				if(attackers.get(attacker) == null)
+				{
+					attackers.put(attacker, oldHealth - this.getHealth());
+				}
+				else
+				{
+					attackers.put(attacker, attackers.get(attacker) + oldHealth - this.getHealth());
+				}
 			}
 		}
 		return success;
@@ -188,7 +191,50 @@ public abstract class EntityScapecraft extends EntityMob implements XpDropper, I
 	@Override
 	protected Entity findPlayerToAttack()
 	{
-		return passive ? null : super.findPlayerToAttack();
+		if(passive)
+		{
+			return null;
+		}
+		else
+		{
+			EntityPlayer player = null;
+			double leastDistance = -1;
+			double maxDistance = 16;
+			for(int i = 0; i < this.worldObj.playerEntities.size(); i++)
+			{
+				EntityPlayer possiblePlayer = (EntityPlayer) this.worldObj.playerEntities.get(i);
+				if(!possiblePlayer.capabilities.disableDamage && possiblePlayer.isEntityAlive())
+				{
+					double distance = possiblePlayer.getDistanceSq(this.posX, this.posY, this.posZ);
+					if(distance <= maxDistance && (player == null || distance < leastDistance))
+					{
+						int playerLevel = Stats.getCombatLevel(possiblePlayer);
+						double chance = maxDistance;
+						if(possiblePlayer.isSneaking())
+						{
+							chance *= 0.8;
+						}
+
+						if(possiblePlayer.isInvisible())
+						{
+							float visibility = possiblePlayer.getArmorVisibility();
+							if(visibility < 0.1F)
+							{
+								visibility = 0.1F;
+							}
+
+							chance *= visibility;
+						}
+						if((player == null || distance < chance * chance) && (this.level == 0 || this.level - playerLevel - this.level < 10))
+						{
+							player = possiblePlayer;
+							leastDistance = distance;
+						}
+					}
+				}
+			}
+			return player != null && this.canEntityBeSeen(player) ? player : null;
+		}
 	}
 
 	/*
@@ -280,6 +326,11 @@ public abstract class EntityScapecraft extends EntityMob implements XpDropper, I
 		if(mobSpawner != null && !worldObj.isRemote)
 		{
 			mobSpawner.onSpawnedDeath(this);
+		}
+
+		if(!worldObj.isRemote)
+		{
+			this.giveXp();
 		}
 	}
 

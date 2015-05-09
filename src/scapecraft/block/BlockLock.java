@@ -4,10 +4,12 @@ import java.util.List;
 import java.util.Random;
 
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
@@ -17,13 +19,14 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class BlockLock extends BlockScapecraft
 {
 	Item key;
+	@SideOnly(Side.CLIENT)
+	private IIcon[] icons;
 
 	public BlockLock(Item key)
 	{
-		super(Material.rock);
+		super(Material.glass);
 		this.setBlockUnbreakable();
 		this.key = key;
-		this.setTextureName("scapecraft:KeyBlock");
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -83,5 +86,21 @@ public class BlockLock extends BlockScapecraft
 		}
 
 		return true;
+	}
+
+	@SideOnly(Side.CLIENT)
+	@Override
+	public IIcon getIcon(int side, int meta)
+	{
+		return icons[meta & 1];
+	}
+
+	@SideOnly(Side.CLIENT)
+	@Override
+	public void registerIcons(IIconRegister iconRegister)
+	{
+		icons = new IIcon[2];
+		icons[0] = iconRegister.registerIcon("scapecraft:KeyBlock");
+		icons[1] = iconRegister.registerIcon("scapecraft:Clear");
 	}
 }

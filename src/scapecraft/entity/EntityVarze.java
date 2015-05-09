@@ -24,6 +24,7 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
+import scapecraft.item.ItemScapecraftSpawnEgg;
 import scapecraft.item.ScapecraftItems;
 
 public class EntityVarze extends EntityScapecraft
@@ -136,50 +137,20 @@ public class EntityVarze extends EntityScapecraft
 	{
 		return true;
 	}
-	/**
-	 * Called to update the entity's position/logic.
-	 */
-	public void onUpdate()
-	{
-		super.onUpdate();
 
-
-	}
-
-
-	/**
-	 * Returns the sound this mob makes while it's alive.
-	 protected String getLivingSound()
-	 {
-	 return "mob.villager.default";
-	 }
-
-	/**
-	 * Returns the sound this mob makes when it is hurt.
-	 */
+	@Override
 	protected String getHurtSound()
 	{
 		return "mob.villager.defaulthurt";
 	}
 
-	/**
-	 * Returns the sound this mob makes on death.
-	 */
+	@Override
 	protected String getDeathSound()
 	{
 		return "mob.villager.defaultdeath";
 	}
-	/**
-	 * Plays step sound at given x, y, z for the entity
-	 */
-	protected void playStepSound(int var1, int var2, int var3, int var4)
-	{
-		this.worldObj.playSoundAtEntity(this, "mob.villager.default", 0.15F, 1.0F);
-	}
 
-	/**
-	 * Basic mob attack. Default to touch of death in EntityCreature. Overridden by each mob to define their attack.
-	 */
+	@Override
 	protected void attackEntity(Entity par1Entity, float par2)
 	{
 		float var3 = this.getBrightness(1.0F);
@@ -209,6 +180,7 @@ public class EntityVarze extends EntityScapecraft
 		}
 	}
 
+	@Override
 	public boolean interact(EntityPlayer par1EntityPlayer)
 	{
 
@@ -216,7 +188,7 @@ public class EntityVarze extends EntityScapecraft
 
 		if (itemstack != null && itemstack.getItem() == ScapecraftItems.invincibilityPotion)
 		{
-			ItemStack lootChest = new ItemStack(ScapecraftItems.scapecraftSpawnEgg, 1, ScapecraftEntities.entities.indexOf("EntityLootChest"));
+			ItemStack lootChest = ItemScapecraftSpawnEgg.setMob(new ItemStack(ScapecraftItems.scapecraftSpawnEgg), "LootChest");
 			if (itemstack.stackSize-- == 1)
 			{
 				par1EntityPlayer.inventory.setInventorySlotContents(par1EntityPlayer.inventory.currentItem, lootChest);

@@ -1,19 +1,14 @@
 package scapecraft.entity;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EnumCreatureAttribute;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.projectile.EntityLargeFireball;
-import net.minecraft.potion.Potion;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
 public class EntityIronDragon extends EntityScapecraft
 {
 	private int field_40152_d;
-	
-
 	public EntityIronDragon(World par1World)
 	{
 		super(par1World);
@@ -31,46 +26,31 @@ public class EntityIronDragon extends EntityScapecraft
 	protected void applyEntityAttributes()
 	{
 		super.applyEntityAttributes();
-		// Max Health - default 20.0D - min 0.0D - max Double.MAX_VALUE
 		this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(150.0D);
-		// Follow Range - default 32.0D - min 0.0D - max 2048.0D
 		this.getEntityAttribute(SharedMonsterAttributes.followRange).setBaseValue(32.0D);
-		// Movement Speed - default 0.699D - min 0.0D - max Double.MAX_VALUE
 		this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.550D);
-		// Attack Damage - default 2.0D - min 0.0D - max Doubt.MAX_VALUE
 		this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(10.0D);
 	}
 
-	protected void entityInit()
-	{
-		super.entityInit();
-		this.dataWatcher.addObject(16, new Byte((byte)0));
-	}
-
+	@Override
 	protected String getLivingSound()
 	{
 		return "mob.enderdragon.growl";
 	}
 
-	/**
-	 * Returns the sound this mob makes when it is hurt.
-	 */
+	@Override
 	protected String getHurtSound()
 	{
 		return "mob.enderdragon.hit";
 	}
-
-	/**
-	 * Returns the sound this mob makes on death.
-	 */
+	@Override
 	protected String getDeathSound()
 	{
 		return "mob.enderdragon.hit";
 	}
 
-	/**
-	 * Basic mob attack. Default to touch of death in EntityCreature. Overridden by each mob to define their attack.
-	 */
+	//TODO Make this attack better
+	@Override
 	protected void attackEntity(Entity par1Entity, float par2)
 	{
 		if (attackTime <= 0 && par2 < 2.0F && par1Entity.boundingBox.maxY > boundingBox.minY && par1Entity.boundingBox.minY < boundingBox.maxY)
@@ -91,7 +71,6 @@ public class EntityIronDragon extends EntityScapecraft
 				if (field_40152_d == 1)
 				{
 					attackTime = 20;
-					//func_40148_a(true); /* THIS METHOD MAY DIFFER. CHECK NEAR BOTTOM OF CLASS */
 				}
 				else if (field_40152_d <= 4)
 				{
@@ -101,7 +80,6 @@ public class EntityIronDragon extends EntityScapecraft
 				{
 					attackTime = 33;
 					field_40152_d = 0;
-					//func_40148_a(false);
 				}
 
 				if (field_40152_d > 1)
@@ -123,28 +101,10 @@ public class EntityIronDragon extends EntityScapecraft
 		}
 	}
 
+	@Override
 	public boolean isBurning()
 	{
 		return false;
-	}
-
-
-
-	public EnumCreatureAttribute getCreatureAttribute()
-	{
-		return EnumCreatureAttribute.UNDEAD;
-	}
-
-	public boolean isPotionApplicable(PotionEffect par1PotionEffect)
-	{
-		return par1PotionEffect.getPotionID() == Potion.poison.id ? false : super.isPotionApplicable(par1PotionEffect);
-	}
-
-
-	public void onLivingUpdate()
-	{
-		if(ticksExisted > 200 * 20) setDead(); 
-		super.onLivingUpdate();
 	}
 
 	@Override

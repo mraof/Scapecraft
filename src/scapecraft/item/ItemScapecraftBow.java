@@ -77,20 +77,15 @@ public class ItemScapecraftBow extends ItemBow
 				force = 1F;
 			}
 
-			EntityArrow entityArrow = new EntityArrow(world, player, material.getDamage() * force);
+			EntityArrow entityArrow = new EntityArrow(world, player, 2F * force);
 
 			if(force == 1F)
 			{
 				entityArrow.setIsCritical(true);
 			}
 
-			int power = EnchantmentHelper.getEnchantmentLevel(Enchantment.power.effectId, itemStack);
-
-			if(power > 0)
-			{
-				entityArrow.setDamage(entityArrow.getDamage() + (double)power * 0.5D + 0.5D);
-			}
-
+			int power = EnchantmentHelper.getEnchantmentLevel(Enchantment.power.effectId, itemStack) - 1;
+			entityArrow.setDamage(entityArrow.getDamage() + material.getDamage() + (double)power * 0.5D + 0.5D);
 			int punch = EnchantmentHelper.getEnchantmentLevel(Enchantment.punch.effectId, itemStack);
 
 			if(punch > 0)

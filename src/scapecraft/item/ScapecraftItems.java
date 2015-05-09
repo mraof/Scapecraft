@@ -156,6 +156,7 @@ public class ScapecraftItems
 	/*end armor*/
 
 	public static Item bronzeSword;
+	public static Item ironSword;
 	public static Item mithSword;
 	public static Item addySword;
 	public static Item runeSword;
@@ -217,6 +218,8 @@ public class ScapecraftItems
 	public static Item dragonPickaxe;
 	public static Item dragonPickaxeg;
 	public static Item bronzeAxe;
+	public static Item blackAxe;
+	public static Item whiteAxe;
 	public static Item mithAxe;
 	public static Item addyAxe;
 	public static Item runeAxe;
@@ -240,6 +243,9 @@ public class ScapecraftItems
 	public static Item greenDHide;
 	public static Item blackDLeather;
 	public static Item blackDHide;
+	public static Item strongOakStick;
+	public static Item willowStick;
+	public static Item mapleStick;
 	public static Item yewStick;
 	public static Item magicStick;
 	public static Item magicFruit;
@@ -290,6 +296,9 @@ public class ScapecraftItems
 	public static Item garlic;
 	public static Item invincibilityPotion;
 
+	public static Item strongOakBow;
+	public static Item willowBow;
+	public static Item mapleBow;
 	public static Item yewBow;
 	public static Item magicBow;
 	public static Item darkBow;
@@ -452,6 +461,7 @@ public class ScapecraftItems
 		/*end armor*/
 
 		bronzeSword = new ItemWeapon(ScapecraftToolMaterial.BRONZE, 4, "BronzeSword");
+		ironSword = new ItemWeapon(ScapecraftToolMaterial.IRON, 4, "IronSword");
 		mithSword = new ItemWeapon(ScapecraftToolMaterial.MITH, 4, "MithSword");
 		addySword = new ItemWeapon(ScapecraftToolMaterial.ADDY, 4, "AddySword");
 		runeSword = new ItemWeapon(ScapecraftToolMaterial.RUNE, 4, "RuneSword");
@@ -514,6 +524,8 @@ public class ScapecraftItems
 		dragonPickaxeg = new ItemScapecraftPickaxe(ScapecraftToolMaterial.DRAGONG).setTextureName("scapecraft:DragonPickaxeg");
 		runePickaxe = new ItemScapecraftPickaxe(ScapecraftToolMaterial.RUNE).setTextureName("scapecraft:RunePickaxe");
 		bronzeAxe = new ItemScapecraftAxe(ScapecraftToolMaterial.BRONZE).setTextureName("scapecraft:BronzeAxe");
+		blackAxe = new ItemScapecraftAxe(ScapecraftToolMaterial.BLACK).setTextureName("scapecraft:BlackAxe");
+		whiteAxe = new ItemScapecraftAxe(ScapecraftToolMaterial.BLACK).setTextureName("scapecraft:WhiteAxe").setUnlocalizedName("WHITEAxe");
 		mithAxe = new ItemScapecraftAxe(ScapecraftToolMaterial.MITH).setTextureName("scapecraft:MithAxe");
 		addyAxe = new ItemScapecraftAxe(ScapecraftToolMaterial.ADDY).setTextureName("scapecraft:AddyAxe");
 		runeAxe = new ItemScapecraftAxe(ScapecraftToolMaterial.RUNE).setTextureName("scapecraft:RuneAxe");
@@ -537,6 +549,9 @@ public class ScapecraftItems
 		greenDHide = new Item().setUnlocalizedName("greenDHide").setTextureName("scapecraft:GreenDHide").setCreativeTab(Scapecraft.tabScapecraftMisc);
 		blackDLeather = new Item().setUnlocalizedName("blackDLeather").setTextureName("scapecraft:BlackDLeather").setCreativeTab(Scapecraft.tabScapecraftMisc);
 		blackDHide = new Item().setUnlocalizedName("blackDHide").setTextureName("scapecraft:BlackDHide").setCreativeTab(Scapecraft.tabScapecraftMisc);
+		strongOakStick = new Item().setUnlocalizedName("strongOakStick").setTextureName("scapecraft:StrongOakStick").setCreativeTab(Scapecraft.tabScapecraftMisc);
+		willowStick = new Item().setUnlocalizedName("willowStick").setTextureName("scapecraft:WillowStick").setCreativeTab(Scapecraft.tabScapecraftMisc);
+		mapleStick = new Item().setUnlocalizedName("mapleStick").setTextureName("scapecraft:MapleStick").setCreativeTab(Scapecraft.tabScapecraftMisc);
 		yewStick = new Item().setUnlocalizedName("yewStick").setTextureName("scapecraft:YewStick").setCreativeTab(Scapecraft.tabScapecraftMisc);
 		magicStick = new Item().setUnlocalizedName("magicStick").setTextureName("scapecraft:MagicStick").setCreativeTab(Scapecraft.tabScapecraftMisc);
 		magicFruit = new ItemFood(20, false).setUnlocalizedName("magicFruit").setTextureName("scapecraft:MagicFruit").setCreativeTab(Scapecraft.tabScapecraftMisc);
@@ -588,6 +603,9 @@ public class ScapecraftItems
 		tormentedDemonsTab = new ItemTeletab("tds").setTextureName("scapecraft:tormentedDemonsTab").setUnlocalizedName("tormentedDemonsTab");
 		varrockTeletab = new ItemTeletab("varrock").setTextureName("scapecraft:varrockTab").setUnlocalizedName("varrockTab");
 
+		strongOakBow = new ItemScapecraftBow(ScapecraftBowMaterial.OAK, "StrongOakBow");
+		willowBow = new ItemScapecraftBow(ScapecraftBowMaterial.WILLOW, "WillowBow");
+		mapleBow = new ItemScapecraftBow(ScapecraftBowMaterial.MAPLE, "MapleBow");
 		yewBow = new ItemScapecraftBow(ScapecraftBowMaterial.YEW, "YewBow");
 		magicBow = new ItemScapecraftBow(ScapecraftBowMaterial.MAGIC, "MagicBow");
 		darkBow = new ItemScapecraftBow(ScapecraftBowMaterial.DARK, "DarkBow").setHasModel(true);
@@ -805,6 +823,8 @@ public class ScapecraftItems
 		GameRegistry.registerItem(dragonPickaxe, "dragonPickaxe");
 		GameRegistry.registerItem(dragonPickaxeg, "dragonPickaxeg");
 		GameRegistry.registerItem(bronzeAxe, "bronzeAxe");
+		GameRegistry.registerItem(blackAxe, "blackAxe");
+		GameRegistry.registerItem(whiteAxe, "whiteAxe");
 		GameRegistry.registerItem(mithAxe, "mithAxe");
 		GameRegistry.registerItem(addyAxe, "addyAxe");
 		GameRegistry.registerItem(runeAxe, "runeAxe");
@@ -828,6 +848,9 @@ public class ScapecraftItems
 		GameRegistry.registerItem(greenDHide, "greenDHide");
 		GameRegistry.registerItem(blackDLeather, "blackDLeather");
 		GameRegistry.registerItem(blackDHide, "blackDHide");
+		GameRegistry.registerItem(strongOakStick, "strongOakStick");
+		GameRegistry.registerItem(willowStick, "willowStick");
+		GameRegistry.registerItem(mapleStick, "mapleStick");
 		GameRegistry.registerItem(yewStick, "yewStick");
 		GameRegistry.registerItem(magicStick, "magicStick");
 		GameRegistry.registerItem(magicFruit, "magicFruit");
@@ -878,6 +901,9 @@ public class ScapecraftItems
 		GameRegistry.registerItem(tormentedDemonsTab, "tormentedDemonsTab");
 		GameRegistry.registerItem(varrockTeletab, "varrockTeletab");
 
+		GameRegistry.registerItem(strongOakBow, "strongOakBow");
+		GameRegistry.registerItem(willowBow, "willowBow");
+		GameRegistry.registerItem(mapleBow, "mapleBow");
 		GameRegistry.registerItem(yewBow, "yewBow");
 		GameRegistry.registerItem(magicBow, "magicBow");
 		GameRegistry.registerItem(darkBow, "darkBow");

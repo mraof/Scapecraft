@@ -131,32 +131,11 @@ public class EntityLavaBlock extends EntityScapecraft implements IRangedAttackMo
 		this.worldObj.playSoundAtEntity(this, "mob.villager.default", 0.15F, 1.0F);
 	}
 
-	/**
-	 * Basic mob attack. Default to touch of death in EntityCreature. Overridden by each mob to define their attack.
-	 */
-
-
-
-
-
-
-
-
-
-
-
-
+	@Override
 	public boolean isPotionApplicable(PotionEffect par1PotionEffect)
 	{
 		return par1PotionEffect.getPotionID() == Potion.poison.id ? false : super.isPotionApplicable(par1PotionEffect);
 	}
-
-
-
-
-
-
-
 
 	public void setCombatTask()
 	{
@@ -171,17 +150,11 @@ public class EntityLavaBlock extends EntityScapecraft implements IRangedAttackMo
 		return 10;
 	}
 
-
-
-
 	@Override
 	public void attackEntityWithRangedAttack(EntityLivingBase entitylivingbase,
 			float f) {
 		EntityArrow var2 = new EntityArrow(this.worldObj, this, entitylivingbase, 4.0F, 12.0F);
-
-
 		this.worldObj.spawnEntityInWorld(var2);
-
 	}
 
 	public void onLivingUpdate()

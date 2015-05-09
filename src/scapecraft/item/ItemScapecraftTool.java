@@ -28,6 +28,7 @@ public class ItemScapecraftTool extends ItemTool
 	protected ScapecraftToolMaterial toolMaterial;
 	protected float damageVsEntity;
 	protected String toolClass;
+	public String skill;
 
 	public ItemScapecraftTool(float damageVsEntity, ScapecraftToolMaterial toolMaterial, Set<Block> effectiveBlocks)
 	{
@@ -127,7 +128,7 @@ public class ItemScapecraftTool extends ItemTool
 		if(entityLiving instanceof EntityPlayer)
 		{
 			EntityPlayer player = (EntityPlayer) entityLiving;
-			return Scapecraft.requireLevels && ScapecraftItems.toolLevels.containsKey(this) && !player.capabilities.isCreativeMode && Stats.getCombatLevel(player) < this.toolMaterial.getMinLevel() && Stats.getMiningLevel(player) < ScapecraftItems.toolLevels.get(this);
+			return Scapecraft.requireLevels && skill != null && ScapecraftItems.toolLevels.containsKey(this) && !player.capabilities.isCreativeMode && Stats.getCombatLevel(player) < this.toolMaterial.getMinLevel() && Stats.getStat(player, skill + "Level") < ScapecraftItems.toolLevels.get(this);
 		}
 		return false;
 	}
