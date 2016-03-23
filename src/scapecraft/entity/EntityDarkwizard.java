@@ -6,7 +6,6 @@ import net.minecraft.entity.projectile.EntityLargeFireball;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
-
 import scapecraft.item.ScapecraftItems;
 
 public class EntityDarkwizard extends EntityScapecraft
@@ -102,6 +101,7 @@ public class EntityDarkwizard extends EntityScapecraft
 	}
 
 	private static final ItemStack defaultHeldItem;
+	@Override
 	public ItemStack getHeldItem()
 	{
 		return defaultHeldItem;
@@ -112,9 +112,4 @@ public class EntityDarkwizard extends EntityScapecraft
 		defaultHeldItem = new ItemStack(ScapecraftItems.zammyStaff, 1);
 	}
 
-	@Override
-	public int getXpValue()
-	{
-		return 50;
-	}
 }

@@ -3,7 +3,6 @@ package scapecraft.entity;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-
 import scapecraft.item.ScapecraftItems;
 
 public class EntityFremGuard extends EntityScapecraft
@@ -13,6 +12,7 @@ public class EntityFremGuard extends EntityScapecraft
 		super(par1World);
 	}
 
+	@Override
 	protected void applyEntityAttributes()
 	{
 		super.applyEntityAttributes();
@@ -41,36 +41,11 @@ public class EntityFremGuard extends EntityScapecraft
 		return "mob.villager.defaultdeath";
 	}
 
+	@Override
 	public void addArmor()
 	{
-
-			this.setCurrentItemOrArmor(3, new ItemStack(ScapecraftItems.runegChestplate));
-			this.setCurrentItemOrArmor(2, new ItemStack(ScapecraftItems.runegLeggings));
+			this.setCurrentItemOrArmor(3, new ItemStack(ScapecraftItems.equipmentSets.get("runePlatebody")));
+			this.setCurrentItemOrArmor(2, new ItemStack(ScapecraftItems.equipmentSets.get("runePlatelegs")));
 			this.equipmentDropChances[4] = 0.0F;
 	}
-
-	private static final ItemStack defaultHeldItem;
-	public ItemStack getHeldItem()
-	{
-		return defaultHeldItem;
-	}
-
-	static
-	{
-		defaultHeldItem = new ItemStack(ScapecraftItems.fremSword, 1);
-	}
-
-	public int getTotalArmorValue()
-	{
-		return 999;
-	}
-
-	@Override
-	public int getXpValue()
-	{
-		return 0;
-	}
-
-
-
 }

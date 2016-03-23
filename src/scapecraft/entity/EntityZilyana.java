@@ -3,13 +3,7 @@ package scapecraft.entity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.EntityAIAttackOnCollide;
-import net.minecraft.entity.ai.EntityAIHurtByTarget;
-import net.minecraft.entity.ai.EntityAILookIdle;
-import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
-import net.minecraft.entity.ai.EntityAISwimming;
-import net.minecraft.entity.ai.EntityAIWander;
-import net.minecraft.entity.ai.EntityAIWatchClosest;
+import net.minecraft.entity.ai.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
@@ -28,6 +22,7 @@ public class EntityZilyana extends EntityScapecraft
 		this.tasks.addTask(6, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
 		this.addTargets(EntityPlayer.class, EntityKrilTsutsaroth.class, EntityGeneralGraardor.class);
 	}
+	@Override
 	protected void applyEntityAttributes()
 	{
 		super.applyEntityAttributes();
@@ -35,12 +30,6 @@ public class EntityZilyana extends EntityScapecraft
 		this.getEntityAttribute(SharedMonsterAttributes.followRange).setBaseValue(32D);
 		this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.3D);
 		this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(50D);
-	}
-
-	@Override
-	public int getTotalArmorValue()
-	{
-		return 13;
 	}
 
 	@Override
@@ -57,12 +46,6 @@ public class EntityZilyana extends EntityScapecraft
 			this.attackTime = 16;
 			this.attackEntityAsMob(entity);
 		}
-	}
-
-	@Override
-	public int getXpValue()
-	{
-		return 2000;
 	}
 
 }

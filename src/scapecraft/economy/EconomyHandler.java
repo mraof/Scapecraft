@@ -1,5 +1,8 @@
 package scapecraft.economy;
 
+import scapecraft.economy.market.Listing;
+
+import java.util.ArrayList;
 import java.util.UUID;
 
 public class EconomyHandler
@@ -17,7 +20,7 @@ public class EconomyHandler
 		catch(Throwable e)
 		{
 			System.out.println("Vault not loaded");
-			e.printStackTrace();
+			//e.printStackTrace();
 			economy = scEconomy;
 		}
 	}
@@ -25,7 +28,9 @@ public class EconomyHandler
 	public static double getBalance(UUID uuid)
 	{
 		if(economy == null)
+		{
 			return 0;
+		}
 		double balance = economy.getBalance(uuid);
 		scEconomy.setBalance(uuid, balance);
 		return balance;
@@ -46,5 +51,10 @@ public class EconomyHandler
 	public static double depositBank(String bankname, double amount)
 	{
 		return economy.depositBank(bankname, amount);
+	}
+
+	public static ArrayList<Listing> getGlobalMarket()
+	{
+		return scEconomy.getGlobalMarket();
 	}
 }

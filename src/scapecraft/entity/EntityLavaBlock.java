@@ -3,14 +3,7 @@ package scapecraft.entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.IRangedAttackMob;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.EntityAIArrowAttack;
-import net.minecraft.entity.ai.EntityAIAttackOnCollide;
-import net.minecraft.entity.ai.EntityAIHurtByTarget;
-import net.minecraft.entity.ai.EntityAILookIdle;
-import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
-import net.minecraft.entity.ai.EntityAISwimming;
-import net.minecraft.entity.ai.EntityAIWander;
-import net.minecraft.entity.ai.EntityAIWatchClosest;
+import net.minecraft.entity.ai.*;
 import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.passive.EntityOcelot;
 import net.minecraft.entity.passive.EntityWolf;
@@ -62,6 +55,7 @@ public class EntityLavaBlock extends EntityScapecraft implements IRangedAttackMo
 		}
 	}
 
+	@Override
 	protected void applyEntityAttributes()
 	{
 		super.applyEntityAttributes();
@@ -74,15 +68,12 @@ public class EntityLavaBlock extends EntityScapecraft implements IRangedAttackMo
 		// Attack Damage - default 2.0D - min 0.0D - max Doubt.MAX_VALUE
 		this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(0.0D);
 	}
-	public String getEntityName()
-	{
-		return "Spark";
-	}
 
+	@Override
 	protected void entityInit()
 	{
 		super.entityInit();
-		this.dataWatcher.addObject(16, new Byte((byte)0));
+		this.dataWatcher.addObject(16, (byte) 0);
 	}
 	@Override
 	protected boolean canDespawn()
@@ -91,26 +82,14 @@ public class EntityLavaBlock extends EntityScapecraft implements IRangedAttackMo
 	}
 
 
+	@Override
 	public boolean isAIEnabled()
 	{
 		return true;
 	}
-	/**
-	 * Called to update the entity's position/logic.
-	 */
-	public void onUpdate()
-	{
-		super.onUpdate();
 
 
-	}
-
-
-	protected EntityBlackKnight createInstance()
-	{
-		return new EntityBlackKnight(this.worldObj);
-	}
-
+	@Override
 	protected String getHurtSound()
 	{
 		return "mob.villager.defaulthurt";
@@ -119,22 +98,16 @@ public class EntityLavaBlock extends EntityScapecraft implements IRangedAttackMo
 	/**
 	 * Returns the sound this mob makes on death.
 	 */
+	@Override
 	protected String getDeathSound()
 	{
 		return "mob.villager.defaultdeath";
-	}
-	/**
-	 * Plays step sound at given x, y, z for the entity
-	 */
-	protected void playStepSound(int var1, int var2, int var3, int var4)
-	{
-		this.worldObj.playSoundAtEntity(this, "mob.villager.default", 0.15F, 1.0F);
 	}
 
 	@Override
 	public boolean isPotionApplicable(PotionEffect par1PotionEffect)
 	{
-		return par1PotionEffect.getPotionID() == Potion.poison.id ? false : super.isPotionApplicable(par1PotionEffect);
+		return par1PotionEffect.getPotionID() != Potion.poison.id && super.isPotionApplicable(par1PotionEffect);
 	}
 
 	public void setCombatTask()
@@ -145,10 +118,7 @@ public class EntityLavaBlock extends EntityScapecraft implements IRangedAttackMo
 
 	}
 
-	public int getTotalArmorValue()
-	{
-		return 10;
-	}
+
 
 	@Override
 	public void attackEntityWithRangedAttack(EntityLivingBase entitylivingbase,
@@ -156,17 +126,4 @@ public class EntityLavaBlock extends EntityScapecraft implements IRangedAttackMo
 		EntityArrow var2 = new EntityArrow(this.worldObj, this, entitylivingbase, 4.0F, 12.0F);
 		this.worldObj.spawnEntityInWorld(var2);
 	}
-
-	public void onLivingUpdate()
-	{
-		if(ticksExisted > 15 * 20) setDead(); 
-		super.onLivingUpdate();
-	}	
-
-	@Override
-	public int getXpValue()
-	{
-		return 1;
-	}
-
 }

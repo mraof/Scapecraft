@@ -5,7 +5,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.play.server.S2DPacketOpenWindow;
 import net.minecraft.world.World;
-
 import scapecraft.Scapecraft;
 import scapecraft.inventory.ContainerUnbreakingRepair;
 

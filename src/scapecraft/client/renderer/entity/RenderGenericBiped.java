@@ -1,7 +1,6 @@
 package scapecraft.client.renderer.entity;
 
-import java.util.Map;
-
+import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.model.ModelBiped;
@@ -11,12 +10,10 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.common.MinecraftForge;
-
 import org.lwjgl.opengl.GL11;
-
 import scapecraft.entity.EntityGenericBiped;
 
-import com.mojang.authlib.minecraft.MinecraftProfileTexture;
+import java.util.Map;
 
 public class RenderGenericBiped extends RenderBiped
 {
@@ -47,11 +44,13 @@ public class RenderGenericBiped extends RenderBiped
 	@Override
 	protected void passSpecialRender(EntityLivingBase entity, double x, double y, double z)
 	{
-		if(MinecraftForge.EVENT_BUS.post(new RenderLivingEvent.Specials.Pre(entity, this, x, y, z))) return;
+		if(MinecraftForge.EVENT_BUS.post(new RenderLivingEvent.Specials.Pre(entity, this, x, y, z)))
+		{
+			return;
+		}
 		GL11.glAlphaFunc(GL11.GL_GREATER, 0.1F);
 
-		float f = 1.6F;
-		float f1 = 0.016666668F * f;
+		float f1 = 0.0266666688F;
 		double distance = entity.getDistanceSqToEntity(this.renderManager.livingPlayer);
 		float range = entity.isSneaking() ? NAME_TAG_RANGE_SNEAK : NAME_TAG_RANGE;
 

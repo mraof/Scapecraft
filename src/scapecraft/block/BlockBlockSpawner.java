@@ -1,5 +1,7 @@
 package scapecraft.block;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -16,21 +18,23 @@ import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
-
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import scapecraft.Scapecraft;
-import scapecraft.Stats;
+import scapecraft.event.WorldProtectionHandler;
 import scapecraft.tileentity.TileEntityBlockSpawner;
+import scapecraft.util.Stat;
+import scapecraft.util.Stats;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
-public class BlockBlockSpawner extends Block implements ITileEntityProvider
+public class BlockBlockSpawner extends Block implements ITileEntityProvider, WorldProtectionHandler.IRegionBlock
 {
 	public Block fullBlock;
 	int xp;
 	public int regenTime;
+	//metadata when the block is done growing
 	public int fullSize = 15;
-	public String stat = "mining";
+	public Stat stat = Stat.MINING;
+	//metadata for the fullBlock
+	public int fullMeta = 0;
 
 	public BlockBlockSpawner(Block fullBlock, int regenTime, int xp)
 	{
@@ -52,8 +56,10 @@ public class BlockBlockSpawner extends Block implements ITileEntityProvider
 	public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int x, int y, int z)
 	{
 		if(fullBlock.getCollisionBoundingBoxFromPool(world, x, y, z) == null)
+		{
 			return null;
-		float height = ((float) world.getBlockMetadata(x, y, z) + 1F) / 16F;
+		}
+		float height = ((float) world.getBlockMetadata(x, y, z) + 1F) / (fullSize + 1F);
 		return AxisAlignedBB.getBoundingBox(x + this.minX, y + this.minY, z + this.minZ, x + this.maxX, y + height, z + this.maxZ);
 	}
 	@Override
@@ -68,6 +74,7 @@ public class BlockBlockSpawner extends Block implements ITileEntityProvider
 		return false;
 	}
 
+	@Override
 	public int getRenderType()
 	{
 		return fullBlock.getRenderType();
@@ -76,7 +83,7 @@ public class BlockBlockSpawner extends Block implements ITileEntityProvider
 	@Override
 	public void setBlockBoundsForItemRender()
 	{
-		setBlockBoundsForDepth(15);
+		setBlockBoundsForDepth(fullSize);
 	}
 	
 	@Override
@@ -87,9 +94,11 @@ public class BlockBlockSpawner extends Block implements ITileEntityProvider
 
 	protected void setBlockBoundsForDepth(int metadata)
 	{
-		float height = (1 + metadata) / 16.0F;
+		float height = (1 + metadata) / (fullSize + 1F);
 		if(fullBlock.getBlockBoundsMaxY() < 1.0F)
+		{
 			height = (float) fullBlock.getBlockBoundsMaxY();
+		}
 		this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, height, 1.0F);
 	}
 	
@@ -97,14 +106,14 @@ public class BlockBlockSpawner extends Block implements ITileEntityProvider
 	@SideOnly(Side.CLIENT)
 	public boolean shouldSideBeRendered(IBlockAccess blockAccess, int x, int y, int z, int side)
 	{
-		return side == 1 ? true : super.shouldSideBeRendered(blockAccess, x, y, z, side);
+		return side == 1 || super.shouldSideBeRendered(blockAccess, x, y, z, side);
 	}
 
 	@SideOnly(Side.CLIENT)
 	@Override
 	public IIcon getIcon(int side, int meta)
 	{
-		return fullBlock.getIcon(side, 0);
+		return fullBlock.getIcon(side, fullMeta);
 	}
 
 	@Override
@@ -127,15 +136,13 @@ public class BlockBlockSpawner extends Block implements ITileEntityProvider
 	@Override
 	public boolean removedByPlayer(World world, EntityPlayer player, int x, int y, int z, boolean willHarvest)
 	{
-		if(player.capabilities.isCreativeMode || willHarvest && (!(world.getTileEntity(x, y, z) instanceof TileEntityBlockSpawner) || ((TileEntityBlockSpawner) world.getTileEntity(x, y, z)).uses == 0))
-			return world.setBlockToAir(x, y, z);
-		return true;
+		return !(player.capabilities.isCreativeMode || willHarvest && (!(world.getTileEntity(x, y, z) instanceof TileEntityBlockSpawner) || ((TileEntityBlockSpawner) world.getTileEntity(x, y, z)).uses == 0)) || world.setBlockToAir(x, y, z);
 	}
 
 	@Override
 	public boolean canHarvestBlock(EntityPlayer player, int meta)
 	{
-		return player.capabilities.isCreativeMode || meta == 15 && ForgeHooks.canHarvestBlock(fullBlock, player, meta);
+		return player.capabilities.isCreativeMode || meta >= fullSize && ForgeHooks.canHarvestBlock(fullBlock, player, meta);
 	}
 
 	@Override
@@ -146,7 +153,7 @@ public class BlockBlockSpawner extends Block implements ITileEntityProvider
 
 		harvesters.set(player);
 		int i1 = EnchantmentHelper.getFortuneModifier(player);
-		fullBlock.dropBlockAsItem(worldIn, x, y, z, meta, i1);
+		fullBlock.dropBlockAsItem(worldIn, x, y, z, fullMeta, i1);
 		harvesters.set(null);
 
 		Stats.addXp(player, stat, xp);
@@ -162,7 +169,9 @@ public class BlockBlockSpawner extends Block implements ITileEntityProvider
 		if(te.uses != 0)
 		{
 			if(te.uses > 0)
+			{
 				te.uses--;
+			}
 			te.growing = true;
 			worldIn.setBlockMetadataWithNotify(x, y, z, 0, 3);
 		}
@@ -209,7 +218,7 @@ public class BlockBlockSpawner extends Block implements ITileEntityProvider
 	}
 
 	@Override
-	public ItemStack getPickBlock(MovingObjectPosition target, World world, int x, int y, int z)
+	public ItemStack getPickBlock(MovingObjectPosition target, World world, int x, int y, int z, EntityPlayer player)
 	{
 		TileEntityBlockSpawner te = (TileEntityBlockSpawner) world.getTileEntity(x, y, z);
 		if(te == null)
@@ -225,5 +234,11 @@ public class BlockBlockSpawner extends Block implements ITileEntityProvider
 	@Override
 	public void registerIcons(IIconRegister iconRegister)
 	{
+	}
+
+	@Override
+	public void onPlayerBreakBlock(PlayerEvent.BreakSpeed event)
+	{
+
 	}
 }

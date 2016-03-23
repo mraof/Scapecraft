@@ -1,12 +1,10 @@
 package scapecraft.client.model;
 
 
-
-
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
-import net.minecraft.util.MathHelper;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.MathHelper;
 
 public class ModelGreenDragon extends ModelBase
 {
@@ -208,10 +206,11 @@ public class ModelGreenDragon extends ModelBase
 		setRotation(LeftWingSkin, 0F, 0F, -0.9599311F);
 	}
 
+	@Override
 	public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5)
 	{
 		super.render(entity, f, f1, f2, f3, f4, f5);
-		setRotationAngles(f, f1, f2, f3, f4, f5);
+		setRotationAngles(f, f1);
 		Body.render(f5);
 		BackLeftFoot.renderWithRotation(f5);
 		BackLeftTopLeg.renderWithRotation(f5);
@@ -248,7 +247,7 @@ public class ModelGreenDragon extends ModelBase
 		model.rotateAngleZ = z;
 	}
 
-	public void setRotationAngles(float f, float f1, float f2, float f3, float f4, float f5)
+	public void setRotationAngles(float f, float f1)
 	{
 		FrontRightFoot.rotateAngleX = MathHelper.cos(f * 0.6662F + (float)Math.PI) * 1.0F * f1;
 		FrontRightBottomLeg.rotateAngleX = MathHelper.cos(f * 0.6662F + (float)Math.PI) * 1.0F * f1;

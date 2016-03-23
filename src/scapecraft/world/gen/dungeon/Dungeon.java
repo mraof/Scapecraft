@@ -1,15 +1,16 @@
 package scapecraft.world.gen.dungeon;
 
-import java.util.ArrayList;
-import java.util.Random;
-
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 
+import java.util.ArrayList;
+import java.util.Random;
+
 public class Dungeon
 {
 	public static ArrayList<Dungeon> dungeons = new ArrayList<Dungeon>();
+	public static DungeonTeleporter teleporter;
 	public int minX;
 	public int minZ;
 	public int maxX;

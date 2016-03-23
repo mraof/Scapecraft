@@ -1,16 +1,16 @@
 package scapecraft.item;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import scapecraft.Scapecraft;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.world.World;
+import scapecraft.Scapecraft;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class ItemScapecraftPotion extends Item
 {
@@ -18,8 +18,7 @@ public class ItemScapecraftPotion extends Item
 
 	public ItemScapecraftPotion(PotionEffect... effects)
 	{
-		for(PotionEffect effect : effects)
-			this.effects.add(effect);
+		Collections.addAll(this.effects, effects);
 		this.setCreativeTab(Scapecraft.tabScapecraftMisc);
 	}
 

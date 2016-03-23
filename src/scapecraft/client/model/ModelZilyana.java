@@ -108,7 +108,7 @@ public class ModelZilyana extends ModelBase
 		leftArm.mirror = true;
 		setRotation(leftArm, -0.2617994F, 0F, -0.1745329F);
 
-		//Head
+		//head
 		head = new ModelRenderer(this, 50, 0);
 		head.addBox(0F, 0F, 0F, 12, 12, 12);
 		head.setRotationPoint(-6F, -41F, -2F);
@@ -354,6 +354,7 @@ public class ModelZilyana extends ModelBase
 		leftWing.addBox("Part", 6F, 0F, 0.5F, 2, 23, 0);
 	}
 
+	@Override
 	public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5)
 	{
 		super.render(entity, f, f1, f2, f3, f4, f5);

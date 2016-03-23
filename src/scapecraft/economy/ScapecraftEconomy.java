@@ -1,16 +1,23 @@
 package scapecraft.economy;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
+import scapecraft.Scapecraft;
+import scapecraft.economy.market.Listing;
+import scapecraft.economy.market.PlayerLister;
+import scapecraft.network.MoneyPacket;
+
+import java.util.*;
 
 public class ScapecraftEconomy implements Economy
 {
 	HashMap<UUID, Double> balances = new HashMap<UUID, Double>();
+	private ArrayList<Listing> listings = new ArrayList<Listing>();
 
 	@Override
 	public double getBalance(UUID uuid)
@@ -23,6 +30,16 @@ public class ScapecraftEconomy implements Economy
 	public void setBalance(UUID uuid, double amount)
 	{
 		balances.put(uuid, amount);
+		for(World world : MinecraftServer.getServer().worldServers)
+		{
+			EntityPlayer player;
+			if((player = world.getPlayerEntityByUUID(uuid)) != null)
+			{
+				MoneyPacket packet = new MoneyPacket(amount);
+				Scapecraft.network.sendTo(packet, (EntityPlayerMP) player);
+				break;
+			}
+		}
 	}
 
 	@Override
@@ -30,7 +47,9 @@ public class ScapecraftEconomy implements Economy
 	{
 		Double balance = balances.get(uuid);
 		if(balance == null)
+		{
 			balance = 0D;
+		}
 		balances.put(uuid, balance + amount);
 		return balances.get(uuid);
 	}
@@ -49,30 +68,84 @@ public class ScapecraftEconomy implements Economy
 
 	public void writeToNBT(NBTTagCompound tagCompound)
 	{
-		NBTTagList balancesNBT = new NBTTagList();
-		for(Map.Entry<UUID, Double> entry : balances.entrySet())
+		NBTTagList players = tagCompound.getTagList("players", 10);
+		HashMap<UUID, Double> map = new HashMap<UUID, Double>(balances);
+		for(int i = 0; i < players.tagCount(); i++)
 		{
-			NBTTagCompound currentTag = new NBTTagCompound();
-			currentTag.setString("uuid", entry.getKey().toString());
-			currentTag.setDouble("balance", entry.getValue());
-			balancesNBT.appendTag(currentTag);
+			NBTTagCompound playerTag = players.getCompoundTagAt(i);
+			UUID uuid = UUID.fromString(playerTag.getString("uuid"));
+			Double balance = map.remove(uuid);
+			if(balance == null)
+			{
+				balance = 0D;
+			}
+			playerTag.setDouble("balance", balance);
 		}
-
-		tagCompound.setTag("balances", balancesNBT);
+		for(Map.Entry<UUID, Double> entry : map.entrySet())
+		{
+			NBTTagCompound playerTag = new NBTTagCompound();
+			playerTag.setString("uuid", entry.getKey().toString());
+			playerTag.setDouble("balance", entry.getValue());
+			players.appendTag(playerTag);
+		}
+		tagCompound.setTag("players", players);
+		NBTTagList listingList = new NBTTagList();
+		for(Listing listing : listings)
+		{
+			listingList.appendTag(listing.toNBT());
+		}
+		tagCompound.setTag("listings", listingList);
+		//System.out.println(tagCompound);
 	}
 
 	public void readFromNBT(NBTTagCompound tagCompound)
 	{
-		NBTTagList balancesNBT = tagCompound.getTagList("balances", Constants.NBT.TAG_COMPOUND);
-		if(balancesNBT == null)
-			return;
-
-		balances.clear();
-
-		for(int i = 0; i < balancesNBT.tagCount(); i++)
+		balances = new HashMap<UUID, Double>();
+		if(tagCompound.getString("version").isEmpty())
 		{
-			NBTTagCompound currentTag = balancesNBT.getCompoundTagAt(i);
-			balances.put(UUID.fromString(currentTag.getString("uuid")), currentTag.getDouble("balance"));
+			NBTTagList balancesNBT = tagCompound.getTagList("balances", Constants.NBT.TAG_COMPOUND);
+			if (balancesNBT == null)
+			{
+				return;
+			}
+
+
+			for (int i = 0; i < balancesNBT.tagCount(); i++)
+			{
+				NBTTagCompound currentTag = balancesNBT.getCompoundTagAt(i);
+				balances.put(UUID.fromString(currentTag.getString("uuid")), currentTag.getDouble("balance"));
+			}
 		}
+		else
+		{
+			NBTTagList players = tagCompound.getTagList("players", 10);
+			for(int i = 0; i < players.tagCount(); i++)
+			{
+				NBTTagCompound playerTag = players.getCompoundTagAt(i);
+				setBalance(UUID.fromString(playerTag.getString("uuid")), playerTag.getDouble("balance"));
+			}
+		}
+		System.out.println(balances);
+		listings = new ArrayList<Listing>();
+		NBTTagList listingList = tagCompound.getTagList("listings", 10);
+		for(int i = 0; i < listingList.tagCount(); i++)
+		{
+			Listing listing = Listing.fromNBT(listingList.getCompoundTagAt(i));
+			listing.lister = PlayerLister.fromNBT(listingList.getCompoundTagAt(i).getCompoundTag("lister"));
+			listings.add(listing);
+		}
+	}
+
+	public ArrayList<Listing> getGlobalMarket()
+	{
+		for (Iterator<? extends Listing> iterator = listings.iterator(); iterator.hasNext(); )
+		{
+			Listing listing = iterator.next();
+			if(listing.stock <= 0)
+			{
+				iterator.remove();
+			}
+		}
+		return listings;
 	}
 }

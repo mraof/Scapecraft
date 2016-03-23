@@ -1,8 +1,7 @@
 package scapecraft.block;
 
-import java.util.List;
-import java.util.Random;
-
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.Entity;
@@ -13,8 +12,8 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import java.util.List;
+import java.util.Random;
 
 public class BlockLock extends BlockScapecraft
 {
@@ -34,7 +33,9 @@ public class BlockLock extends BlockScapecraft
 	public void addCollisionBoxesToList(World world, int x, int y, int z, AxisAlignedBB mask, List list, Entity entity)
 	{
 		if(world.getBlockMetadata(x, y, z) == 0)
+		{
 			super.addCollisionBoxesToList(world, x, y, z, mask, list, entity);
+		}
 	}
 
 	@Override
@@ -55,6 +56,7 @@ public class BlockLock extends BlockScapecraft
 		return AxisAlignedBB.getBoundingBox(x, y, z, x + 1, y + 1, z + 1);
 	}
 
+	@Override
 	@SideOnly(Side.CLIENT)
 	public boolean shouldSideBeRendered(IBlockAccess world, int x, int y, int z, int side)
 	{
@@ -72,7 +74,9 @@ public class BlockLock extends BlockScapecraft
 	public void updateTick(World world, int x, int y, int z, Random random)
 	{
 		if(!world.isRemote && world.getBlockMetadata(x, y, z) != 0)
+		{
 			world.setBlockMetadataWithNotify(x, y, z, 0, 3);
+		}
 
 	}
 

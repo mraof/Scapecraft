@@ -212,6 +212,7 @@ public class ModelHillGiant extends ModelBase
 		setRotation(BottomBeard, 0F, 0F, 0F);
 	}
 
+	@Override
 	public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5)
 	{
 		super.render(entity, f, f1, f2, f3, f4, f5);
@@ -255,7 +256,7 @@ public class ModelHillGiant extends ModelBase
 
 	public void setRotationAngles(float f, float f1, float f2, float f3, float f4, float f5)
 	{
-		super.setRotationAngles(f, f1, f2, f3, f4, f5, null);
+		setRotationAngles(f, f1, f2, f3, f4, f5, null);
 		LFoot.rotateAngleX = MathHelper.cos(f * 0.6662F) * 1.0F * f1;
 		LLeg.rotateAngleX = MathHelper.cos(f * 0.6662F) * 1.0F * f1;
 		LThigh.rotateAngleX = MathHelper.cos(f * 0.6662F) * 1.0F * f1;

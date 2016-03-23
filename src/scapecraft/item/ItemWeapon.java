@@ -1,7 +1,9 @@
 package scapecraft.item;
 
-import java.util.List;
-
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -12,32 +14,51 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.util.StatCollector;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
-
 import scapecraft.Scapecraft;
-import scapecraft.Stats;
+import scapecraft.util.Stat;
+import scapecraft.util.Stats;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
+import java.util.List;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
-public class ItemWeapon extends ItemSword
+public class ItemWeapon extends ItemSword implements QualityItem
 {
 	protected float weaponDamage;
-	protected final ScapecraftToolMaterial toolMaterial;
 	protected final String name;
+	protected double attackTime = 1; //lower values are faster
 
-	public ItemWeapon(ScapecraftToolMaterial toolMaterial, float baseDamage, String name)
+	private int minLevel = 0;
+
+	public ItemWeapon(float damage, String name, int level)
+	{
+		this(damage, name, level, 1);
+	}
+
+	public ItemWeapon(float damage, String name, int level, double attackTime)
 	{
 		super(ToolMaterial.GOLD);
-		this.toolMaterial = toolMaterial;
-		this.setMaxDurability(toolMaterial.getMaxUses());
-		this.weaponDamage = baseDamage + toolMaterial.getDamageVsEntity();
-		System.out.println(weaponDamage);
 		this.name = name;
+		this.weaponDamage = (float) (attackTime / 2 + 0.5) * damage;
+		this.setMaxDurability((int) (damage * 25));
 		this.setUnlocalizedName(name);
 		this.setCreativeTab(Scapecraft.tabScapecraftWeapon);
+		this.minLevel = level;
+		this.attackTime = attackTime;
+		System.out.println(weaponDamage);
+	}
+
+	@Override
+	public int getMaxDamage(ItemStack stack)
+	{
+		int durability = this.getMaxDurability();
+		if (stack.getTagCompound() != null && stack.getTagCompound().hasKey("level"))
+		{
+			durability = (int) (this.getMaxDurability() + 2 * this.weaponDamage / this.attackTime * (stack.getTagCompound().getInteger("level") - this.minLevel));
+			if (durability < this.getMaxDurability() / 2)
+			{
+				durability = this.getMaxDurability() / 2;
+			}
+		}
+		return durability;
 	}
 
 	@Override
@@ -45,7 +66,7 @@ public class ItemWeapon extends ItemSword
 	public Multimap getItemAttributeModifiers()
 	{
 		Multimap multimap = HashMultimap.create();
-		multimap.put(SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName(), new AttributeModifier(itemModifierUUID, "Weapon modifier", (double)this.weaponDamage, 0));
+		multimap.put(SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName(), new AttributeModifier(itemModifierUUID, "Weapon modifier", (double)this.getWeaponDamage(), 0));
 		return multimap;
 	}
 
@@ -55,23 +76,17 @@ public class ItemWeapon extends ItemSword
 		this.itemIcon = iconRegister.registerIcon("scapecraft:" + name);
 	}
 
-	/* Not 100% sure what this is for, but it isn't unused */
+	/* Return damage for looting mobs to determine if they should pick it up*/
 	@Override
 	public float func_150931_i()
 	{
-		return this.toolMaterial.getDamageVsEntity();
+		return this.getWeaponDamage() - 4;
 	}
 
 	@Override
 	public int getItemEnchantability()
 	{
-		return this.toolMaterial.getEnchantability();
-	}
-
-	@Override
-	public String getToolMaterialName()
-	{
-		return this.toolMaterial.toString();
+		return 0;
 	}
 
 	@Override
@@ -82,6 +97,7 @@ public class ItemWeapon extends ItemSword
 
 	public void onEntityHurt(LivingHurtEvent event)
 	{
+		event.entityLiving.hurtResistantTime *= this.attackTime;
 	}
 
 	@Override
@@ -92,15 +108,20 @@ public class ItemWeapon extends ItemSword
 		super.addInformation(itemStack, player, lines, advancedTooltips);
 		if(Scapecraft.requireLevels)
 		{
-			lines.add(StatCollector.translateToLocal("weapon.minlevel") + " " + toolMaterial.getMinLevel());
+			lines.add(StatCollector.translateToLocal("weapon.minlevel") + " " + this.minLevel);
 		}
+		if(itemStack.getTagCompound() != null && itemStack.getTagCompound().hasKey("source"))
+		{
+			lines.add(itemStack.getTagCompound().getString("source"));
+		}
+		lines.add("Uses remaining: " + (this.getMaxDamage(itemStack) - itemStack.getMetadata()));
 	}
 
 	public boolean unableToUse(EntityLivingBase entityLiving)
 	{
 		if(entityLiving instanceof EntityPlayer)
 		{
-			if(Scapecraft.requireLevels && Stats.getCombatLevel((EntityPlayer) entityLiving) < this.toolMaterial.getMinLevel() && !((EntityPlayer) entityLiving).capabilities.isCreativeMode)
+			if(Scapecraft.requireLevels && Stats.getLevel((EntityPlayer) entityLiving, Stat.ATTACK) < this.minLevel && !((EntityPlayer) entityLiving).capabilities.isCreativeMode)
 			{
 				return true;
 			}
@@ -118,5 +139,20 @@ public class ItemWeapon extends ItemSword
 	public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player, Entity target)
 	{
 		return unableToUse(player);
+	}
+
+	public double getAttackTime()
+	{
+		return attackTime;
+	}
+
+	public float getWeaponDamage()
+	{
+		return weaponDamage;
+	}
+
+	public int getMinLevel()
+	{
+		return minLevel;
 	}
 }

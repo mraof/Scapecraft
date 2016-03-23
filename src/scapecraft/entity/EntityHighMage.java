@@ -1,18 +1,10 @@
 package scapecraft.entity;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.IRangedAttackMob;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.EntityAIArrowAttack;
-import net.minecraft.entity.ai.EntityAIAttackOnCollide;
-import net.minecraft.entity.ai.EntityAIHurtByTarget;
-import net.minecraft.entity.ai.EntityAILookIdle;
-import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
-import net.minecraft.entity.ai.EntityAISwimming;
-import net.minecraft.entity.ai.EntityAIWander;
-import net.minecraft.entity.ai.EntityAIWatchClosest;
+import net.minecraft.entity.ai.*;
 import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.passive.EntityOcelot;
 import net.minecraft.entity.passive.EntityWolf;
@@ -23,7 +15,6 @@ import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
-
 import scapecraft.item.ScapecraftItems;
 
 public class EntityHighMage extends EntityScapecraft implements IRangedAttackMob
@@ -48,7 +39,7 @@ public class EntityHighMage extends EntityScapecraft implements IRangedAttackMob
 		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityKing.class, 0, true));
 		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityKingsGuard.class, 0, true));
 		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, 0, true));
-		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityTD.class, 0, true));
+		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityTormentedDemon.class, 0, true));
 		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityWhiteKnight.class, 0, true));
 		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityWither.class, 0, true));
 		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityWizard.class, 0, true));
@@ -58,7 +49,7 @@ public class EntityHighMage extends EntityScapecraft implements IRangedAttackMob
 		this.tasks.addTask(2, new EntityAIAttackOnCollide(this, EntityKos2.class, this.moveSpeed, false));
 		this.tasks.addTask(2, new EntityAIAttackOnCollide(this, EntityKos3.class, this.moveSpeed, false));
 		this.tasks.addTask(2, new EntityAIAttackOnCollide(this, EntityOcelot.class, this.moveSpeed, false));
-		this.tasks.addTask(2, new EntityAIAttackOnCollide(this, EntityTD.class, this.moveSpeed, false));
+		this.tasks.addTask(2, new EntityAIAttackOnCollide(this, EntityTormentedDemon.class, this.moveSpeed, false));
 		this.tasks.addTask(2, new EntityAIAttackOnCollide(this, EntityWolf.class, this.moveSpeed, false));
 		this.tasks.addTask(5, new EntityAIWander(this, this.moveSpeed));
 		this.tasks.addTask(6, new EntityAILookIdle(this));
@@ -72,6 +63,7 @@ public class EntityHighMage extends EntityScapecraft implements IRangedAttackMob
 		}
 	}
 
+	@Override
 	protected void applyEntityAttributes()
 	{
 		super.applyEntityAttributes();
@@ -85,15 +77,11 @@ public class EntityHighMage extends EntityScapecraft implements IRangedAttackMob
 		this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(20.0D);
 	}
 
-	public String getEntityName()
-	{
-		return "High Mage";
-	}
-
+	@Override
 	protected void entityInit()
 	{
 		super.entityInit();
-		this.dataWatcher.addObject(16, new Byte((byte)0));
+		this.dataWatcher.addObject(16, (byte) 0);
 	}
 	@Override
 	protected boolean canDespawn()
@@ -102,18 +90,10 @@ public class EntityHighMage extends EntityScapecraft implements IRangedAttackMob
 	}
 
 
+	@Override
 	public boolean isAIEnabled()
 	{
 		return true;
-	}
-	/**
-	 * Called to update the entity's position/logic.
-	 */
-	public void onUpdate()
-	{
-		super.onUpdate();
-
-
 	}
 
 
@@ -122,6 +102,7 @@ public class EntityHighMage extends EntityScapecraft implements IRangedAttackMob
 		return new EntityBlackKnight(this.worldObj);
 	}
 
+	@Override
 	public boolean attackEntityFrom(DamageSource par1DamageSource, float par2)
 	{
 		Entity entity;
@@ -150,6 +131,7 @@ public class EntityHighMage extends EntityScapecraft implements IRangedAttackMob
 		return super.attackEntityFrom(par1DamageSource, par2);
 	}
 
+	@Override
 	protected String getHurtSound()
 	{
 		return "mob.villager.defaulthurt";
@@ -158,35 +140,20 @@ public class EntityHighMage extends EntityScapecraft implements IRangedAttackMob
 	/**
 	 * Returns the sound this mob makes on death.
 	 */
+	@Override
 	protected String getDeathSound()
 	{
 		return "mob.villager.defaultdeath";
 	}
-	/**
-	 * Plays step sound at given x, y, z for the entity
-	 */
-	protected void playStepSound(int var1, int var2, int var3, int var4)
-	{
-		this.worldObj.playSoundAtEntity(this, "mob.villager.default", 0.15F, 1.0F);
-	}
 
-	/**
-	 * Basic mob attack. Default to touch of death in EntityCreature. Overridden by each mob to define their attack.
-	 */
-
-
-	public int getTotalArmorValue()
-	{
-		return 13;
-	}
-
-
+	@Override
 	public boolean isPotionApplicable(PotionEffect par1PotionEffect)
 	{
-		return par1PotionEffect.getPotionID() == Potion.poison.id ? false : super.isPotionApplicable(par1PotionEffect);
+		return par1PotionEffect.getPotionID() != Potion.poison.id && super.isPotionApplicable(par1PotionEffect);
 	}
 
 	private static final ItemStack defaultHeldItem;
+	@Override
 	public ItemStack getHeldItem()
 	{
 		return defaultHeldItem;
@@ -203,17 +170,6 @@ public class EntityHighMage extends EntityScapecraft implements IRangedAttackMob
 		this.tasks.addTask(4, this.aiArrowAttack);
 	}
 
-
-
-	public void attackEntityWithRangedAttack(EntityLiving entityliving, float f) {
-		EntityArrow var2 = new EntityArrow(this.worldObj, this, entityliving, 15.0F, 12.0F);
-
-
-		this.worldObj.spawnEntityInWorld(var2);
-	}
-
-
-
 	@Override
 	public void attackEntityWithRangedAttack(EntityLivingBase entitylivingbase,
 			float f) {
@@ -229,6 +185,7 @@ public class EntityHighMage extends EntityScapecraft implements IRangedAttackMob
 		return new EntityEliteBlackKnight(this.worldObj);
 	}
 	int spawnvar = 1;
+	@Override
 	public void onLivingUpdate()
 	{
 		++spawnvar;
@@ -252,14 +209,7 @@ public class EntityHighMage extends EntityScapecraft implements IRangedAttackMob
 			spawnvar = 0;
 
 		}
-		if(ticksExisted > 600 * 20) setDead(); 
 		super.onLivingUpdate();
-	}	
-
-	@Override
-	public int getXpValue()
-	{
-		return 800; //TODO Make a better value
 	}
 
 }

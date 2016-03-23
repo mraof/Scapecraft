@@ -1,16 +1,14 @@
 package scapecraft.entity;
 
-import java.util.ArrayList;
-
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
-
 import scapecraft.Scapecraft;
+import scapecraft.client.gui.GuiHandler;
 import scapecraft.item.ScapecraftItems;
-import scapecraft.network.ShopGuiPacket;
+
+import java.util.ArrayList;
 
 public class EntityShopshifter extends EntityShapeshifter
 {
@@ -24,7 +22,7 @@ public class EntityShopshifter extends EntityShapeshifter
 	public EntityShopshifter(World world, String mobName)
 	{
 		super(world, mobName);
-		stock.add(new ItemStack(ScapecraftItems.runeAxe, 64));
+		stock.add(new ItemStack(ScapecraftItems.equipmentSets.get("runeAxe"), 64));
 		this.targetClasses.clear();
 	}
 
@@ -44,9 +42,29 @@ public class EntityShopshifter extends EntityShapeshifter
 	{
 		if(!worldObj.isRemote)
 		{
-				ShopGuiPacket packet = new ShopGuiPacket(this);
-				Scapecraft.network.sendTo(packet, (EntityPlayerMP) player);
+			player.openGui(Scapecraft.instance, GuiHandler.GuiId.SHOP.ordinal(), worldObj, mobSpawnerX, mobSpawnerY, mobSpawnerZ);
 		}
 		return true;
+	}
+
+	@Override
+	public boolean isAIEnabled()
+	{
+		return false;
+	}
+
+	@Override
+	public void setMob(String mobName)
+	{
+		super.setMob(mobName);
+		if(!worldObj.isRemote)
+		{
+			ArrayList<Drop> drops = this.mobSpawner == null ? ScapecraftEntities.getDrops(this.getClass()) : this.mobSpawner.getDrops(this);
+			if(drops.size() > 0)
+			{
+				Drop drop = drops.get(rand.nextInt(drops.size()));
+				this.copiedMob.setCurrentItemOrArmor(0, drop.stack.copy());
+			}
+		}
 	}
 }

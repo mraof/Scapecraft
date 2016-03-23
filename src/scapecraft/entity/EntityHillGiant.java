@@ -2,13 +2,7 @@ package scapecraft.entity;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.EntityAIAttackOnCollide;
-import net.minecraft.entity.ai.EntityAIHurtByTarget;
-import net.minecraft.entity.ai.EntityAILookIdle;
-import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
-import net.minecraft.entity.ai.EntityAISwimming;
-import net.minecraft.entity.ai.EntityAIWander;
-import net.minecraft.entity.ai.EntityAIWatchClosest;
+import net.minecraft.entity.ai.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
@@ -17,7 +11,7 @@ public class EntityHillGiant extends EntityScapecraft
 	public EntityHillGiant(World par1World)
 	{
 		super(par1World);
-		this.setSize(this.width * 1.0F, this.height * 2.0F);
+		this.setSize(1.2f, 3f);
 
 		this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
 		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityLivingBase.class, 0, true, false, this));
@@ -30,6 +24,7 @@ public class EntityHillGiant extends EntityScapecraft
 	}
 
 
+	@Override
 	protected void applyEntityAttributes()
 	{
 		super.applyEntityAttributes();
@@ -55,10 +50,5 @@ public class EntityHillGiant extends EntityScapecraft
 	protected String getDeathSound()
 	{
 		return "mob.villager.defaultdeath";
-	}
-	@Override
-	public int getXpValue()
-	{
-		return 109;
 	}
 }

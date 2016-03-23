@@ -1,7 +1,7 @@
 package scapecraft.block;
 
-import java.util.Random;
-
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLeaves;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -10,11 +10,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-
 import scapecraft.Scapecraft;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import java.util.Random;
 
 public class BlockScapecraftLeaves extends BlockLeaves
 {
@@ -47,6 +45,7 @@ public class BlockScapecraftLeaves extends BlockLeaves
 		return new String[] {"leaves"};
 	}
 
+	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IIconRegister iconRegister)
 	{
@@ -59,7 +58,9 @@ public class BlockScapecraftLeaves extends BlockLeaves
         protected void func_150124_c(World world, int x, int y, int z, int metadata, int chance)
 	{
 		if(world.rand.nextInt(chance) == 0 && fruit != null)
+		{
 			this.dropBlockAsItem(world, x, y, z, new ItemStack(fruit));
+		}
 	}
 
 	@Override

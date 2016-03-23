@@ -5,7 +5,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.Teleporter;
 import net.minecraft.world.WorldServer;
-
 import scapecraft.Scapecraft;
 
 public class DungeonTeleporter extends Teleporter

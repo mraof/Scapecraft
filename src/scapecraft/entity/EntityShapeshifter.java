@@ -1,20 +1,13 @@
 package scapecraft.entity;
 
+import com.mojang.authlib.GameProfile;
+import cpw.mods.fml.common.network.ByteBufUtils;
+import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 import io.netty.buffer.ByteBuf;
-
-import java.util.ArrayList;
-import java.util.Random;
-
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.EntityAIAttackOnCollide;
-import net.minecraft.entity.ai.EntityAIHurtByTarget;
-import net.minecraft.entity.ai.EntityAILookIdle;
-import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
-import net.minecraft.entity.ai.EntityAISwimming;
-import net.minecraft.entity.ai.EntityAIWander;
-import net.minecraft.entity.ai.EntityAIWatchClosest;
+import net.minecraft.entity.ai.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -25,10 +18,8 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 
-import com.mojang.authlib.GameProfile;
-
-import cpw.mods.fml.common.network.ByteBufUtils;
-import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
+import java.util.ArrayList;
+import java.util.Random;
 
 public class EntityShapeshifter extends EntityScapecraft implements IEntityAdditionalSpawnData
 {
@@ -46,9 +37,13 @@ public class EntityShapeshifter extends EntityScapecraft implements IEntityAddit
 		super(world);
 
 		if(world == null)
+		{
 			this.setMob("Wizard");
+		}
 		else
+		{
 			this.setMob(mobName);
+		}
 		this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
 		this.tasks.addTask(1, new EntityAISwimming(this));
 		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityLivingBase.class, 0, true, false, this));
@@ -62,9 +57,13 @@ public class EntityShapeshifter extends EntityScapecraft implements IEntityAddit
 	{
 		int index = staticRand.nextInt(ScapecraftEntities.entities.size() + 1);
 		if(index == ScapecraftEntities.entities.size())
+		{
 			return "@p";
+		}
 		else
+		{
 			return ScapecraftEntities.entities.get(index);
+		}
 	}
 
 	@Override
@@ -88,21 +87,27 @@ public class EntityShapeshifter extends EntityScapecraft implements IEntityAddit
 	{
 		super.readEntityFromNBT(tagCompound);
 		this.setMob(tagCompound.getString("mobName"));
-		if(tagCompound.getCompoundTag("copiedMob") == null);
-		this.copiedMob.readEntityFromNBT(tagCompound.getCompoundTag("copiedMob"));
+		if(tagCompound.getCompoundTag("copiedMob") != null)
+		{
+			this.copiedMob.readEntityFromNBT(tagCompound.getCompoundTag("copiedMob"));
+		}
 	}
 
 	public void setMob(String mobName)
 	{
 		if(mobName.isEmpty())
+		{
 			mobName = randomMobName();
+		}
 		try
 		{
 			this.mobName = mobName;
 			if(mobName.startsWith("@p"))
 			{
 				if(mobName.length() == 2)
+				{
 					mobName = "@p" + selectRandomUsername();
+				}
 				copiedMob = new EntityGenericBiped(this.worldObj);
 				if(!worldObj.isRemote)
 				{
@@ -135,6 +140,7 @@ public class EntityShapeshifter extends EntityScapecraft implements IEntityAddit
 		}
 	}
 
+	@Override
 	protected void applyEntityAttributes()
 	{
 		super.applyEntityAttributes();
@@ -215,7 +221,9 @@ public class EntityShapeshifter extends EntityScapecraft implements IEntityAddit
 		{
 			NBTTagCompound stackCompound = new NBTTagCompound();
 			if(copiedMob.getInventory()[i] != null)
+			{
 				copiedMob.getInventory()[i].writeToNBT(stackCompound);
+			}
 			tagList.appendTag(stackCompound);
 		}
 		tagCompound.setTag("Equipment", tagList);
@@ -247,16 +255,12 @@ public class EntityShapeshifter extends EntityScapecraft implements IEntityAddit
 	}
 
 	@Override
-	public int getXpValue()
-	{
-		return 100;
-	}
-
-	@Override
 	public String getCommandSenderName()
 	{
-		if(worldObj.isRemote)
+		if(worldObj != null && worldObj.isRemote)
+		{
 			return copiedMob.getCommandSenderName();
+		}
 		return StatCollector.translateToLocalFormatted("entity.Scapecraft.Shapeshifter.mob", copiedMob.getCommandSenderName());
 	}
 
@@ -264,36 +268,52 @@ public class EntityShapeshifter extends EntityScapecraft implements IEntityAddit
 	public void setCustomNameTag(String name)
 	{
 		if(this.copiedMob instanceof EntityLiving)
-			((EntityLiving)this.copiedMob).setCustomNameTag(name);
+		{
+			((EntityLiving) this.copiedMob).setCustomNameTag(name);
+		}
 		else
+		{
 			super.setCustomNameTag(name);
+		}
 	}
 
 	@Override
 	public String getCustomNameTag()
 	{
 		if(this.copiedMob instanceof EntityLiving)
-			return ((EntityLiving)this.copiedMob).getCustomNameTag();
+		{
+			return ((EntityLiving) this.copiedMob).getCustomNameTag();
+		}
 		else
+		{
 			return super.getCustomNameTag();
+		}
 	}
 
 	@Override
 	public boolean hasCustomNameTag()
 	{
 		if(this.copiedMob instanceof EntityLiving)
-			return ((EntityLiving)this.copiedMob).hasCustomNameTag();
+		{
+			return ((EntityLiving) this.copiedMob).hasCustomNameTag();
+		}
 		else
+		{
 			return super.hasCustomNameTag();
+		}
 	}
 
 	@Override
 	public boolean getAlwaysRenderNameTag()
 	{
 		if(this.copiedMob instanceof EntityLiving)
-			return ((EntityLiving)this.copiedMob).getAlwaysRenderNameTag();
+		{
+			return ((EntityLiving) this.copiedMob).getAlwaysRenderNameTag();
+		}
 		else
+		{
 			return super.getAlwaysRenderNameTag();
+		}
 	}
 
 	public static String selectRandomUsername()
@@ -311,14 +331,26 @@ public class EntityShapeshifter extends EntityScapecraft implements IEntityAddit
 	}
 
 	@Override
-	public void onSpawnerSpawn(ArrayList<String> args)
+	public void parseSpawnArgument(String arg, String value)
 	{
-		for(int i = 1; i < args.size(); i++)
+		super.parseSpawnArgument(arg, value);
+		if("mob".equalsIgnoreCase(arg))
 		{
-			if(args.get(i).startsWith("mob="))
-			{
-				this.setMob(args.get(i).substring(4));
-			}
+			this.setMob(value);
+		}
+	}
+
+	@Override
+	public void setLevel(int level)
+	{
+		super.setLevel(level);
+		if(copiedMob instanceof EntityScapecraft)
+		{
+			EntityScapecraft entityScapecraft = (EntityScapecraft) copiedMob;
+			entityScapecraft.setLevel(level);
+			this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(copiedMob.getEntityAttribute(SharedMonsterAttributes.maxHealth).getAttributeValue());
+			this.setHealth(copiedMob.getMaxHealth());
+			this.defense = entityScapecraft.getDefense();
 		}
 	}
 }

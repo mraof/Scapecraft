@@ -1,10 +1,9 @@
 package scapecraft.world.gen.feature;
 
-import java.util.Random;
-
 import net.minecraft.world.World;
-
 import scapecraft.block.ScapecraftBlocks;
+
+import java.util.Random;
 
 public class WorldGenWillowTree extends WorldGenScapecraft
 {
@@ -17,8 +16,10 @@ public class WorldGenWillowTree extends WorldGenScapecraft
 	public boolean generate(World world, Random rand, int x, int y, int z)
 	{
 		int height = rand.nextInt(4) + 5;
-		for(int yOffset = 0; yOffset <= height; yOffset++) 
-			world.setBlock(x, y + yOffset, z, ScapecraftBlocks.willowLog);
+		for(int yOffset = 0; yOffset <= height; yOffset++)
+		{
+			setBlock(world, x, y + yOffset, z, ScapecraftBlocks.willowLog, 0, ScapecraftBlocks.willowTreeSpawn);
+		}
 		setBlocks(world, x - 1, y + height + 1, z - 1, x + 1, y + height + 1, z + 1, ScapecraftBlocks.willowLeaves);
 		for(int yOffset = 1; yOffset <= height; yOffset++) 
 		{
@@ -28,7 +29,7 @@ public class WorldGenWillowTree extends WorldGenScapecraft
 				{
 					if(rand.nextInt(height - yOffset + 1) < 2 && world.getBlock(x + xOffset, y + yOffset, z + zOffset).isReplaceable(world, x + xOffset, y + yOffset, z + zOffset))
 					{
-						world.setBlock(x + xOffset, y + yOffset, z + zOffset, ScapecraftBlocks.willowLeaves);
+						setBlock(world, x + xOffset, y + yOffset, z + zOffset, ScapecraftBlocks.willowLeaves, 0);
 					}
 				}
 			}

@@ -2,13 +2,7 @@ package scapecraft.entity;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.EntityAIAttackOnCollide;
-import net.minecraft.entity.ai.EntityAIHurtByTarget;
-import net.minecraft.entity.ai.EntityAILookIdle;
-import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
-import net.minecraft.entity.ai.EntityAISwimming;
-import net.minecraft.entity.ai.EntityAIWander;
-import net.minecraft.entity.ai.EntityAIWatchClosest;
+import net.minecraft.entity.ai.*;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.monster.EntitySkeleton;
 import net.minecraft.entity.monster.EntitySpider;
@@ -22,8 +16,8 @@ public class EntityBlackDragon extends EntityScapecraft
 	{
 		super(par1World);
 
+		this.setSize(6f, 4f);
 		this.isImmuneToFire = true;
-		this.setSize(this.width * 5.0F, this.height * 5.0F);
 		this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
 		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityLivingBase.class, 0, true, false, this));
 		this.tasks.addTask(1, new EntityAISwimming(this));
@@ -31,9 +25,10 @@ public class EntityBlackDragon extends EntityScapecraft
 		this.tasks.addTask(5, new EntityAIWander(this, 1D));
 		this.tasks.addTask(6, new EntityAILookIdle(this));
 		this.tasks.addTask(6, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
-		this.addTargets(EntityBlackGuard.class, EntityBlackKnight.class, EntityBot3.class, EntityCreeper.class, EntityFarmer.class, EntityGoblin.class, EntityGuard.class, EntityHeroKnight.class, EntityKing.class, EntityKingsGuard.class, EntityKos1.class, EntityKos2.class, EntityKos3.class, EntityPlayer.class, EntityScorpion.class, EntitySkeleton.class, EntitySpider.class, EntityTD.class, EntityTheif.class, EntityWhiteKnight.class, EntityWizard.class, EntityZombie.class);
+		this.addTargets(EntityBlackGuard.class, EntityBlackKnight.class, EntityCreeper.class, EntityFarmer.class, EntityGoblin.class, EntityGuard.class, EntityHeroKnight.class, EntityKing.class, EntityKingsGuard.class, EntityKos1.class, EntityKos2.class, EntityKos3.class, EntityPlayer.class, EntityScorpion.class, EntitySkeleton.class, EntitySpider.class, EntityTormentedDemon.class, EntityThief.class, EntityWhiteKnight.class, EntityWizard.class, EntityZombie.class);
 	}
 
+	@Override
 	protected void applyEntityAttributes()
 	{
 		super.applyEntityAttributes();
@@ -73,9 +68,4 @@ public class EntityBlackDragon extends EntityScapecraft
 		return 0.4F;
 	}
 
-	@Override
-	public int getXpValue()
-	{
-		return 276;
-	}
 }

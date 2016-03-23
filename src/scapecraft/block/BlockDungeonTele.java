@@ -5,17 +5,17 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
-
 import scapecraft.Scapecraft;
+import scapecraft.world.gen.dungeon.Dungeon;
 import scapecraft.world.gen.dungeon.DungeonTeleporter;
 
 public class BlockDungeonTele extends BlockScapecraft
 {
-	DungeonTeleporter teleporter;
 	public BlockDungeonTele()
 	{
 		super(Material.portal);
 		this.setTextureName("minecraft:portal");
+		this.setUnlocalizedName("dungeonTele");
 	}
 
 	@Override
@@ -23,17 +23,17 @@ public class BlockDungeonTele extends BlockScapecraft
 	{
 		if(!world.isRemote)
 		{
-			if(teleporter == null)
+			if(Dungeon.teleporter == null)
 			{
-				teleporter = new DungeonTeleporter();
+				Dungeon.teleporter = new DungeonTeleporter();
 			}
 			if(!(player.worldObj.provider.dimensionId == Scapecraft.dungeonDimensionId))
 			{
-				MinecraftServer.getServer().getConfigurationManager().transferPlayerToDimension((EntityPlayerMP) player, Scapecraft.dungeonDimensionId, teleporter);
+				MinecraftServer.getServer().getConfigurationManager().transferPlayerToDimension((EntityPlayerMP) player, Scapecraft.dungeonDimensionId, Dungeon.teleporter);
 			}
 			else
 			{
-				MinecraftServer.getServer().getConfigurationManager().transferPlayerToDimension((EntityPlayerMP) player, 0, teleporter);
+				MinecraftServer.getServer().getConfigurationManager().transferPlayerToDimension((EntityPlayerMP) player, 0, Dungeon.teleporter);
 			}
 			player.timeUntilPortal = 200;
 		}

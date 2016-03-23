@@ -3,7 +3,6 @@ package scapecraft.block;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.world.IBlockAccess;
-
 import scapecraft.Scapecraft;
 
 /**
@@ -19,9 +18,9 @@ public class BlockScapecraft extends Block
 		this.setCreativeTab(Scapecraft.tabScapecraftBlock);
 	}
 
-	public BlockScapecraft setBeaconBase(boolean beaconBase)
+	public BlockScapecraft setBeaconBase()
 	{
-		this.beaconBase = beaconBase;
+		this.beaconBase = true;
 		return this;
 	}
 

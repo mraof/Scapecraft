@@ -3,21 +3,12 @@ package scapecraft.entity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.EntityAIAttackOnCollide;
-import net.minecraft.entity.ai.EntityAIHurtByTarget;
-import net.minecraft.entity.ai.EntityAILookIdle;
-import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
-import net.minecraft.entity.ai.EntityAISwimming;
-import net.minecraft.entity.ai.EntityAIWander;
-import net.minecraft.entity.ai.EntityAIWatchClosest;
+import net.minecraft.entity.ai.*;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
-
-import scapecraft.item.ScapecraftItems;
 
 
 public class EntityKos2 extends EntityScapecraft
@@ -34,7 +25,7 @@ public class EntityKos2 extends EntityScapecraft
 		this.tasks.addTask(5, new EntityAIWander(this, 1D));
 		this.tasks.addTask(6, new EntityAILookIdle(this));
 		this.tasks.addTask(6, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
-		this.addTargets(EntityBlackDragon.class, EntityGreenDragon.class, EntityGuard.class, EntityHeroKnight.class, EntityKQ.class, EntityKing.class, EntityKingsGuard.class, EntityLavaBlock.class, EntityPlayer.class, EntityTD.class, EntityWhiteKnight.class, EntityWizard.class);
+		this.addTargets(EntityBlackDragon.class, EntityGreenDragon.class, EntityGuard.class, EntityHeroKnight.class, EntityKQ.class, EntityKing.class, EntityKingsGuard.class, EntityLavaBlock.class, EntityPlayer.class, EntityTormentedDemon.class, EntityWhiteKnight.class, EntityWizard.class);
 	}
 
 	@Override
@@ -49,19 +40,15 @@ public class EntityKos2 extends EntityScapecraft
 	}
 
 	@Override
-	public int getTotalArmorValue()
-	{
-		return 12;
-	}
-
 	public boolean isAIEnabled()
 	{
 		return true;
 	}
+	@Override
 	protected void entityInit()
 	{
 		super.entityInit();
-		this.dataWatcher.addObject(16, new Byte((byte)0));
+		this.dataWatcher.addObject(16, (byte) 0);
 	}
 
 	@Override
@@ -94,11 +81,12 @@ public class EntityKos2 extends EntityScapecraft
 		}
 	}
 
-	private static final ItemStack defaultHeldItem = new ItemStack(ScapecraftItems.fremSwordf, 1);
+	/*private static final ItemStack defaultHeldItem = new ItemStack(ScapecraftItems.fremSwordf, 1);
+	@Override
 	public ItemStack getHeldItem()
 	{
 		return defaultHeldItem;
-	}
+	}*/
 
 	@Override
 	public void onDeath(DamageSource par1DamageSource) 
@@ -122,7 +110,7 @@ public class EntityKos2 extends EntityScapecraft
 	@Override
 	public boolean isPotionApplicable(PotionEffect par1PotionEffect)
 	{
-		return par1PotionEffect.getPotionID() == Potion.poison.id ? false : super.isPotionApplicable(par1PotionEffect);
+		return par1PotionEffect.getPotionID() != Potion.poison.id && super.isPotionApplicable(par1PotionEffect);
 	}
 
 	@Override
@@ -131,7 +119,7 @@ public class EntityKos2 extends EntityScapecraft
 		return false;
 	}
 
-	int spawnvar = 1;
+	@Override
 	public void onLivingUpdate()
 	{
 		if (rand.nextInt(120) == 0 && !worldObj.isRemote)
@@ -142,9 +130,4 @@ public class EntityKos2 extends EntityScapecraft
 		}
 	}
 
-	@Override
-	public int getXpValue()
-	{
-		return 250;
-	}
 }

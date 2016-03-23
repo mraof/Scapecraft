@@ -5,7 +5,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
-
 import scapecraft.block.BlockBlockSpawner;
 
 public class TileEntityBlockSpawner extends TileEntity
@@ -55,6 +54,7 @@ public class TileEntityBlockSpawner extends TileEntity
 		}
 	}
 
+	@Override
 	public void writeToNBT(NBTTagCompound compound)
 	{
 		super.writeToNBT(compound);
@@ -64,13 +64,16 @@ public class TileEntityBlockSpawner extends TileEntity
 		compound.setBoolean("updated", true);
 	}
 
+	@Override
 	public void readFromNBT(NBTTagCompound compound)
 	{
 		super.readFromNBT(compound);
 		this.startTime = compound.getLong("startTime");
 		this.uses = compound.getInteger("uses");
 		this.growing = compound.getBoolean("growing");
-		if(compound.getBoolean("updated") == false)
+		if(!compound.getBoolean("updated"))
+		{
 			this.uses = 50;
+		}
 	}
 }

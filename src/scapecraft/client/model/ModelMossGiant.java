@@ -339,10 +339,10 @@ public class ModelMossGiant extends ModelBase
 		setRotation(BeardRBottom, -0.0872665F, 0F, 0.2617994F);
 	}
 
+	@Override
 	public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5)
 	{
 		super.render(entity, f, f1, f2, f3, f4, f5);
-		setRotationAngles(f, f1, f2, f3, f4, f5);
 		LFoot.render(f5);
 		LLeg.render(f5);
 		LThigh.render(f5);
@@ -397,10 +397,4 @@ public class ModelMossGiant extends ModelBase
 		model.rotateAngleY = y;
 		model.rotateAngleZ = z;
 	}
-
-	public void setRotationAngles(float f, float f1, float f2, float f3, float f4, float f5)
-	{
-		//super.setRotationAngles(f, f1, f2, f3, f4, f5, null);
-	}
-
 }

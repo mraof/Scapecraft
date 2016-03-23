@@ -2,13 +2,7 @@ package scapecraft.entity;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.EntityAIAttackOnCollide;
-import net.minecraft.entity.ai.EntityAIHurtByTarget;
-import net.minecraft.entity.ai.EntityAILookIdle;
-import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
-import net.minecraft.entity.ai.EntityAISwimming;
-import net.minecraft.entity.ai.EntityAIWander;
-import net.minecraft.entity.ai.EntityAIWatchClosest;
+import net.minecraft.entity.ai.*;
 import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.monster.EntitySkeleton;
@@ -18,7 +12,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-
+import scapecraft.entity.ai.EntityAIHurtByLevelTarget;
 import scapecraft.item.ScapecraftItems;
 
 public class EntityGuard extends EntityScapecraft
@@ -26,16 +20,20 @@ public class EntityGuard extends EntityScapecraft
 	public EntityGuard(World par1World)
 	{
 		super(par1World);
-		this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
+		//noinspection unchecked
+		EntityAIHurtByLevelTarget aiHurtByLevelTarget = new EntityAIHurtByLevelTarget(this, EntityGuard.class);
+		aiHurtByLevelTarget.bravery = 3;
+		this.targetTasks.addTask(1, aiHurtByLevelTarget);
 		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityLivingBase.class, 0, true, false, this));
 		this.tasks.addTask(1, new EntityAISwimming(this));
 		this.tasks.addTask(2, new EntityAIAttackOnCollide(this, EntityLivingBase.class, 1.1D, false));
 		this.tasks.addTask(5, new EntityAIWander(this, 1D));
 		this.tasks.addTask(6, new EntityAILookIdle(this));
 		this.tasks.addTask(6, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
-		this.addTargets(EntityAhrim.class, EntityAkrisae.class, EntityBlackDragon.class, EntityBlackGuard.class, EntityBlackKnight.class, EntityBot.class, EntityCreeper.class, EntityDarkwizard.class, EntityDharok.class, EntityEliteBlackKnight.class, EntityGeneralGraardor.class, EntityGoblin.class, EntityGreenDragon.class, EntityGuthan.class, EntityHellhound.class, EntityHighMage.class, EntityKQ.class, EntityKQ2.class, EntityKaril.class, EntityKos1.class, EntityKos2.class, EntityKos3.class, EntityLesserDemon.class, EntityLesserDemon2.class, EntityScorpion.class, EntitySergeantGrimspike.class, EntitySergeantSteelwill.class, EntitySergeantStrongstack.class, EntitySkeleton.class, EntitySpider.class, EntityTD.class, EntityTheif.class, EntityTorag.class, EntityVerac.class, EntityWither.class, EntityZombie.class);
+		this.addTargets(EntityAhrim.class, EntityAkrisae.class, EntityBlackDragon.class, EntityBlackGuard.class, EntityBlackKnight.class, EntityCreeper.class, EntityDarkwizard.class, EntityDharok.class, EntityEliteBlackKnight.class, EntityGeneralGraardor.class, EntityGoblin.class, EntityGreenDragon.class, EntityGuthan.class, EntityHellhound.class, EntityHighMage.class, EntityKQ.class, EntityKQ2.class, EntityKaril.class, EntityKos1.class, EntityKos2.class, EntityKos3.class, EntityLesserDemonUgly.class, EntityLesserDemon.class, EntityScorpion.class, EntitySergeantGrimspike.class, EntitySergeantSteelwill.class, EntitySergeantStrongstack.class, EntitySkeleton.class, EntitySpider.class, EntityTormentedDemon.class, EntityThief.class, EntityTorag.class, EntityVerac.class, EntityWither.class, EntityZombie.class);
 	}
 
+	@Override
 	protected void applyEntityAttributes()
 	{
 		super.applyEntityAttributes();
@@ -66,8 +64,8 @@ public class EntityGuard extends EntityScapecraft
 	@Override
 	public void addArmor()
 	{
-		this.setCurrentItemOrArmor(4, new ItemStack(ScapecraftItems.bronzeHelmet));
-		this.setCurrentItemOrArmor(3, new ItemStack(ScapecraftItems.guardChestplate));
+		this.setCurrentItemOrArmor(4, new ItemStack(ScapecraftItems.equipmentSets.get("bronzeHelmet")));
+		this.setCurrentItemOrArmor(3, new ItemStack(ScapecraftItems.equipmentSets.get("ironChainbody")));
 		this.equipmentDropChances[4] = 0.0F;
 	}
 
@@ -79,9 +77,4 @@ public class EntityGuard extends EntityScapecraft
 		return defaultHeldItem;
 	}
 
-	@Override
-	public int getXpValue()
-	{
-		return 35;
-	}
 }

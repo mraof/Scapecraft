@@ -18,11 +18,7 @@ public class EntityIronDragon extends EntityScapecraft
 
 	}
 
-	public String getEntityName()
-	{
-		return "Iron Dragon";
-	}
-
+	@Override
 	protected void applyEntityAttributes()
 	{
 		super.applyEntityAttributes();
@@ -107,9 +103,4 @@ public class EntityIronDragon extends EntityScapecraft
 		return false;
 	}
 
-	@Override
-	public int getXpValue()
-	{
-		return 100;
-	}
 }

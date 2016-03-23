@@ -270,6 +270,7 @@ public class ModelAkrisae extends ModelBase
 		setRotation(LSpike3, 0F, 0F, 0F);
 	}
 
+	@Override
 	public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5)
 	{
 		super.render(entity, f, f1, f2, f3, f4, f5);
@@ -321,7 +322,7 @@ public class ModelAkrisae extends ModelBase
 
 	public void setRotationAngles(float f, float f1, float f2, float f3, float f4, float f5)
 	{
-		super.setRotationAngles(f, f1, f2, f3, f4, f5, null);
+		setRotationAngles(f, f1, f2, f3, f4, f5, null);
 		leftarm.rotateAngleX = MathHelper.cos(f * .5F) * 0.7F * f1;
 		rightleg.rotateAngleX = MathHelper.cos(f * 0.6662F + (float)Math.PI) * 1.0F * f1;
 		leftleg.rotateAngleX = MathHelper.cos(f * 0.6662F) * 1.0F * f1;

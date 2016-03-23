@@ -1,7 +1,5 @@
 package scapecraft.item;
 
-import java.lang.reflect.Field;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.EntityLivingBase;
@@ -14,6 +12,8 @@ import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.world.World;
 import scapecraft.Scapecraft;
+
+import java.lang.reflect.Field;
 
 public class ItemTeletab extends Item implements ICommandSender
 {
@@ -96,8 +96,12 @@ public class ItemTeletab extends Item implements ICommandSender
 	public World getEntityWorld()
 	{
 		if(MinecraftServer.getServer() != null)
+		{
 			return MinecraftServer.getServer().getEntityWorld();
+		}
 		else
+		{
 			return Minecraft.getMinecraft().thePlayer.worldObj;
+		}
 	}
 }

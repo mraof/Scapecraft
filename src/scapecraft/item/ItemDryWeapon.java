@@ -1,21 +1,20 @@
 package scapecraft.item;
 
-import java.util.List;
-
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.StatCollector;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import java.util.List;
 
 public class ItemDryWeapon extends ItemWeapon
  {
 	public float extraDamage;
 	public ItemDryWeapon(float extraDamage, String name)
 	{
-		super(ScapecraftToolMaterial.DRYGORE, 4, name);
+		super(75, name, 75, 1);
 		this.extraDamage = extraDamage;
 	}
 
@@ -23,7 +22,9 @@ public class ItemDryWeapon extends ItemWeapon
 	public void onEntityHurt(LivingHurtEvent event)
 	{
 		if(!(event.entityLiving instanceof EntityPlayer))
+		{
 			event.ammount += extraDamage;
+		}
 	}
 
 	@Override

@@ -1,13 +1,12 @@
 package scapecraft.block;
 
-import java.util.Random;
-
 import net.minecraft.block.BlockBush;
 import net.minecraft.block.IGrowable;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.WorldGenerator;
-
 import scapecraft.Scapecraft;
+
+import java.util.Random;
 
 public class BlockScapecraftSapling extends BlockBush implements IGrowable
 {
@@ -26,7 +25,9 @@ public class BlockScapecraftSapling extends BlockBush implements IGrowable
 		{
 			super.updateTick(world, x, y, z, random);
 			if(world.getBlockLightValue(x, y + 1, z) >= 9 && random.nextInt(7) == 0)
+			{
 				this.grow(world, x, y, z, random);
+			}
 		}
 	}
 

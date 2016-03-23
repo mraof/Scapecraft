@@ -4,13 +4,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.EnumCreatureAttribute;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.EntityAIAttackOnCollide;
-import net.minecraft.entity.ai.EntityAIHurtByTarget;
-import net.minecraft.entity.ai.EntityAILookIdle;
-import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
-import net.minecraft.entity.ai.EntityAISwimming;
-import net.minecraft.entity.ai.EntityAIWander;
-import net.minecraft.entity.ai.EntityAIWatchClosest;
+import net.minecraft.entity.ai.*;
 import net.minecraft.entity.passive.EntityOcelot;
 import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.entity.player.EntityPlayer;
@@ -36,8 +30,8 @@ public class EntityTorag extends EntityScapecraft
 		this.tasks.addTask(2, new EntityAIAttackOnCollide(this, EntityKos2.class, this.moveSpeed, false));
 		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityKos3.class, 0, true));
 		this.tasks.addTask(2, new EntityAIAttackOnCollide(this, EntityKos3.class, this.moveSpeed, false));
-		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityTD.class, 0, true));
-		this.tasks.addTask(2, new EntityAIAttackOnCollide(this, EntityTD.class, this.moveSpeed, false));
+		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityTormentedDemon.class, 0, true));
+		this.tasks.addTask(2, new EntityAIAttackOnCollide(this, EntityTormentedDemon.class, this.moveSpeed, false));
 		this.moveSpeed = 0.6F;
 		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityKing.class, 0, true));
 		this.tasks.addTask(2, new EntityAIAttackOnCollide(this, EntityKing.class, this.moveSpeed, false));
@@ -72,6 +66,7 @@ public class EntityTorag extends EntityScapecraft
 		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityFarmer.class, 0, true));
 		this.tasks.addTask(2, new EntityAIAttackOnCollide(this, EntityFarmer.class, this.moveSpeed, false));
 	}
+	@Override
 	protected void applyEntityAttributes()
 	{
 		super.applyEntityAttributes();
@@ -85,44 +80,11 @@ public class EntityTorag extends EntityScapecraft
 		this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(12.0D);
 	}
 
-	public String getEntityName()
-	{
-		return "Torag the Corrupted";
-	}
-
+	@Override
 	public boolean isAIEnabled()
 	{
 		return true;
 	}
-	protected void entityInit()
-	{
-		super.entityInit();
-		this.dataWatcher.addObject(16, new Byte((byte)0));
-	}
-
-	/**
-	 * Called to update the entity's position/logic.
-	 */
-	public void onUpdate()
-	{
-		super.onUpdate();
-	}
-
-	protected Entity findPlayerToAttack()
-	{
-		float var1 = this.getBrightness(1.0F);
-
-		if (var1 < 0.5F)
-		{
-			double var2 = 16.0D;
-			return this.worldObj.getClosestVulnerablePlayerToEntity(this, var2);
-		}
-		else
-		{
-			return null;
-		}
-	}
-
 	/**
 	 * Returns the sound this mob makes while it's alive.
 	 protected String getLivingSound()
@@ -133,6 +95,7 @@ public class EntityTorag extends EntityScapecraft
 	/**
 	 * Returns the sound this mob makes when it is hurt.
 	 */
+	@Override
 	protected String getHurtSound()
 	{
 		return "mob.villager.defaulthurt";
@@ -141,21 +104,16 @@ public class EntityTorag extends EntityScapecraft
 	/**
 	 * Returns the sound this mob makes on death.
 	 */
+	@Override
 	protected String getDeathSound()
 	{
 		return "mob.villager.defaultdeath";
-	}
-	/**
-	 * Plays step sound at given x, y, z for the entity
-	 */
-	protected void playStepSound(int var1, int var2, int var3, int var4)
-	{
-		this.worldObj.playSoundAtEntity(this, "mob.villager.default", 0.15F, 1.0F);
 	}
 
 	/**
 	 * Basic mob attack. Default to touch of death in EntityCreature. Overridden by each mob to define their attack.
 	 */
+	@Override
 	public boolean attackEntityAsMob(Entity par1Entity)
 	{
 		if (super.attackEntityAsMob(par1Entity))
@@ -173,30 +131,24 @@ public class EntityTorag extends EntityScapecraft
 		}
 	}
 
+	@Override
 	public EnumCreatureAttribute getCreatureAttribute()
 	{
 		return EnumCreatureAttribute.UNDEAD;
 	}
 
+	@Override
 	public boolean isPotionApplicable(PotionEffect par1PotionEffect)
 	{
-		return par1PotionEffect.getPotionID() == Potion.poison.id ? false : super.isPotionApplicable(par1PotionEffect);
+		return par1PotionEffect.getPotionID() != Potion.poison.id && super.isPotionApplicable(par1PotionEffect);
 	}
 
-	public int getTotalArmorValue()
-	{
-		return 18;
-	}
-
+	@Override
 	public boolean attackEntityFrom(DamageSource par1DamageSource, float par2)
 	{
 		Entity entity;
 		entity = par1DamageSource.getSourceOfDamage();
-		if(entity instanceof EntityArrow)
-		{
-			return false;
-		}
-		return super.attackEntityFrom(par1DamageSource, par2);
+		return !(entity instanceof EntityArrow) && super.attackEntityFrom(par1DamageSource, par2);
 	}
 
 }

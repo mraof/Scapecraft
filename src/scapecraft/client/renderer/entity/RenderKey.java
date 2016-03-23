@@ -4,7 +4,6 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
-
 import org.lwjgl.opengl.GL11;
 
 public class RenderKey extends Render
@@ -27,10 +26,10 @@ public class RenderKey extends Render
 		tessellator.startDrawingQuads();
 		tessellator.setColorRGBA_I(0x33C3B1, 128);
 		tessellator.setNormal(0.0F, 1.0F, 0.0F);
-		tessellator.addVertexWithUV((double)(0.0D - 0.5D), 0.0D, 0.0D, (double)0, (double)0.25);
-		tessellator.addVertexWithUV((double)(1.0D - 0.5D), 0.0D, 0.0D, (double)0.25, (double)0.25);
-		tessellator.addVertexWithUV((double)(1.0D - 0.5D), 1.0D, 0.0D, (double)0.25, (double)0);
-		tessellator.addVertexWithUV((double)(0.0D - 0.5D), 1.0D, 0.0D, (double)0, (double)0);
+		tessellator.addVertexWithUV(0.0D - 0.5D, 0.0D, 0.0D, (double)0, 0.25);
+		tessellator.addVertexWithUV(1.0D - 0.5D, 0.0D, 0.0D, 0.25, 0.25);
+		tessellator.addVertexWithUV(1.0D - 0.5D, 1.0D, 0.0D, 0.25, (double)0);
+		tessellator.addVertexWithUV(0.0D - 0.5D, 1.0D, 0.0D, (double)0, (double)0);
 		tessellator.draw();
 		GL11.glPopMatrix();
 	}

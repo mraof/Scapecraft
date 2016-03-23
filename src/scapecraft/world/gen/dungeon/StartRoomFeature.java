@@ -1,8 +1,7 @@
 package scapecraft.world.gen.dungeon;
 
-import scapecraft.block.ScapecraftBlocks;
-
 import net.minecraft.world.World;
+import scapecraft.block.ScapecraftBlocks;
 
 public class StartRoomFeature extends RoomFeature
 {

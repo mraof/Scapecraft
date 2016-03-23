@@ -1,7 +1,6 @@
 package scapecraft.world.gen.dungeon;
 
 import net.minecraft.world.World;
-
 import scapecraft.entity.EntityShapeshifter;
 
 public class BossRoomFeature extends RoomFeature

@@ -2,11 +2,7 @@ package scapecraft.entity;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.EntityAIHurtByTarget;
-import net.minecraft.entity.ai.EntityAILookIdle;
-import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
-import net.minecraft.entity.ai.EntityAIWander;
-import net.minecraft.entity.ai.EntityAIWatchClosest;
+import net.minecraft.entity.ai.*;
 import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.monster.EntitySkeleton;
@@ -16,7 +12,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-
 import scapecraft.item.ScapecraftItems;
 
 public class EntityKingsGuard extends EntityScapecraft
@@ -29,7 +24,7 @@ public class EntityKingsGuard extends EntityScapecraft
 		this.tasks.addTask(5, new EntityAIWander(this, 1D));
 		this.tasks.addTask(6, new EntityAILookIdle(this));
 		this.tasks.addTask(6, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
-		this.addTargets(EntityAhrim.class, EntityAkrisae.class, EntityBlackDragon.class, EntityBlackGuard.class, EntityBlackKnight.class, EntityBot.class, EntityCreeper.class, EntityDarkwizard.class, EntityDharok.class, EntityEliteBlackKnight.class, EntityGeneralGraardor.class, EntityGoblin.class, EntityGreenDragon.class, EntityGuthan.class, EntityHellhound.class, EntityHighMage.class, EntityKQ.class, EntityKQ2.class, EntityKaril.class, EntityKos1.class, EntityKos2.class, EntityKos3.class, EntityLesserDemon.class, EntityPlayer.class, EntityScorpion.class, EntitySergeantGrimspike.class, EntitySergeantSteelwill.class, EntitySergeantStrongstack.class, EntitySkeleton.class, EntitySpider.class, EntityTD.class, EntityTheif.class, EntityTorag.class, EntityVerac.class, EntityWither.class, EntityZombie.class);
+		this.addTargets(EntityAhrim.class, EntityAkrisae.class, EntityBlackDragon.class, EntityBlackGuard.class, EntityBlackKnight.class, EntityCreeper.class, EntityDarkwizard.class, EntityDharok.class, EntityEliteBlackKnight.class, EntityGeneralGraardor.class, EntityGoblin.class, EntityGreenDragon.class, EntityGuthan.class, EntityHellhound.class, EntityHighMage.class, EntityKQ.class, EntityKQ2.class, EntityKaril.class, EntityKos1.class, EntityKos2.class, EntityKos3.class, EntityLesserDemonUgly.class, EntityPlayer.class, EntityScorpion.class, EntitySergeantGrimspike.class, EntitySergeantSteelwill.class, EntitySergeantStrongstack.class, EntitySkeleton.class, EntitySpider.class, EntityTormentedDemon.class, EntityThief.class, EntityTorag.class, EntityVerac.class, EntityWither.class, EntityZombie.class);
 	}
 
 	@Override
@@ -63,23 +58,10 @@ public class EntityKingsGuard extends EntityScapecraft
 	@Override
 	public void addArmor()
 	{
-		this.setCurrentItemOrArmor(4, new ItemStack(ScapecraftItems.bronzeHelmet));
-		this.setCurrentItemOrArmor(3, new ItemStack(ScapecraftItems.guardChestplate));
+		this.setCurrentItemOrArmor(4, new ItemStack(ScapecraftItems.equipmentSets.get("bronzeHelmet")));
+		this.setCurrentItemOrArmor(3, new ItemStack(ScapecraftItems.equipmentSets.get("ironChainbody")));
 		this.setCurrentItemOrArmor(2, new ItemStack(Items.golden_leggings));
 		this.equipmentDropChances[4] = 0.0F;
 	}
-
-	private static final ItemStack defaultHeldItem = new ItemStack(ScapecraftItems.saraSword, 1);
-
-	@Override
-	public ItemStack getHeldItem()
-	{
-		return defaultHeldItem;
-	}
-		
-	@Override
-	public int getXpValue()
-	{
-		return 10;
-	}
 }
+

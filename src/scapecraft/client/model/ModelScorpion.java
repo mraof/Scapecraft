@@ -205,10 +205,11 @@ public class ModelScorpion extends ModelBase
 		setRotation(Leg1, 0F, 0.5759587F, -0.1919862F);
 	}
 
+	@Override
 	public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5)
 	{
 		super.render(entity, f, f1, f2, f3, f4, f5);
-		setRotationAngles(f, f1, f2, f3, f4, f5);
+		setRotationAngles(f, f1, f3, f4);
 		Tail1.renderWithRotation(f5);
 		Tail2.renderWithRotation(f5);
 		Tail3.renderWithRotation(f5);
@@ -245,7 +246,7 @@ public class ModelScorpion extends ModelBase
 		model.rotateAngleZ = z;
 	}
 
-	public void setRotationAngles(float f, float f1, float f2, float f3, float f4, float f5)
+	public void setRotationAngles(float f, float f1, float f3, float f4)
 	{
 
 		this.Head.rotateAngleY = f3/ (180F / (float)Math.PI);
@@ -292,7 +293,7 @@ public class ModelScorpion extends ModelBase
 		this.Leg5.rotateAngleZ += var17;
 		this.Leg6.rotateAngleZ += -var17;
 		this.Leg7.rotateAngleZ += var18;
-		this.Leg8.rotateAngleZ += -var18;;
+		this.Leg8.rotateAngleZ += -var18;
 	}
 
 }

@@ -1,18 +1,10 @@
 package scapecraft.entity;
 
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.EnumCreatureAttribute;
 import net.minecraft.entity.IRangedAttackMob;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.EntityAIArrowAttack;
-import net.minecraft.entity.ai.EntityAIAttackOnCollide;
-import net.minecraft.entity.ai.EntityAIHurtByTarget;
-import net.minecraft.entity.ai.EntityAILookIdle;
-import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
-import net.minecraft.entity.ai.EntityAISwimming;
-import net.minecraft.entity.ai.EntityAIWander;
-import net.minecraft.entity.ai.EntityAIWatchClosest;
+import net.minecraft.entity.ai.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.potion.Potion;
@@ -40,7 +32,7 @@ public class EntitySergeantGrimspike extends EntityScapecraft implements IRanged
 		this.tasks.addTask(2, new EntityAIAttackOnCollide(this, EntityKos2.class, this.moveSpeed, false));
 
 		this.tasks.addTask(2, new EntityAIAttackOnCollide(this, EntityKos3.class, this.moveSpeed, false));
-		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityTD.class, 0, true));
+		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityTormentedDemon.class, 0, true));
 
 		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityWhiteKnight.class, 0, true));
 
@@ -76,6 +68,7 @@ public class EntitySergeantGrimspike extends EntityScapecraft implements IRanged
 
 	}
 
+	@Override
 	protected void applyEntityAttributes()
 	{
 		super.applyEntityAttributes();
@@ -89,32 +82,17 @@ public class EntitySergeantGrimspike extends EntityScapecraft implements IRanged
 		this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(12.0D);
 	}
 
-	public String getEntityName()
-	{
-		return "Sergeant Grimspike";
-	}
-
+	@Override
 	public boolean isAIEnabled()
 	{
 		return true;
 	}
+	@Override
 	protected void entityInit()
 	{
 		super.entityInit();
-		this.dataWatcher.addObject(16, new Byte((byte)0));
+		this.dataWatcher.addObject(16, (byte) 0);
 	}
-
-	/**
-	 * Called to update the entity's position/logic.
-	 */
-	public void onUpdate()
-	{
-		super.onUpdate();
-
-
-	}
-
-
 
 
 	/**
@@ -127,6 +105,7 @@ public class EntitySergeantGrimspike extends EntityScapecraft implements IRanged
 	/**
 	 * Returns the sound this mob makes when it is hurt.
 	 */
+	@Override
 	protected String getHurtSound()
 	{
 		return "mob.villager.defaulthurt";
@@ -135,36 +114,23 @@ public class EntitySergeantGrimspike extends EntityScapecraft implements IRanged
 	/**
 	 * Returns the sound this mob makes on death.
 	 */
+	@Override
 	protected String getDeathSound()
 	{
 		return "mob.villager.defaultdeath";
 	}
-	/**
-	 * Plays step sound at given x, y, z for the entity
-	 */
-	protected void playStepSound(int var1, int var2, int var3, int var4)
-	{
-		this.worldObj.playSoundAtEntity(this, "mob.villager.default", 0.15F, 1.0F);
-	}
 
+	@Override
 	public EnumCreatureAttribute getCreatureAttribute()
 	{
 		return EnumCreatureAttribute.UNDEAD;
 	}
 
+	@Override
 	public boolean isPotionApplicable(PotionEffect par1PotionEffect)
 	{
-		return par1PotionEffect.getPotionID() == Potion.poison.id ? false : super.isPotionApplicable(par1PotionEffect);
+		return par1PotionEffect.getPotionID() != Potion.poison.id && super.isPotionApplicable(par1PotionEffect);
 	}
-
-
-	public void onLivingUpdate()
-	{
-		if(ticksExisted > 30 * 20) setDead(); 
-		super.onLivingUpdate();
-	}
-
-
 
 	public void setCombatTask()
 	{
@@ -174,16 +140,10 @@ public class EntitySergeantGrimspike extends EntityScapecraft implements IRanged
 
 	}
 
+	@Override
 	public boolean isBurning()
 	{
 		return false;
-	}
-
-	public void attackEntityWithRangedAttack(EntityLiving entityliving, float f) {
-		EntityArrow var2 = new EntityArrow(this.worldObj, this, entityliving, 5.6F, 12.0F);
-
-
-		this.worldObj.spawnEntityInWorld(var2);
 	}
 
 	@Override
@@ -196,9 +156,4 @@ public class EntitySergeantGrimspike extends EntityScapecraft implements IRanged
 
 	}
 
-	@Override
-	public int getXpValue()
-	{
-		return 100;
-	}
 }

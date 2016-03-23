@@ -5,7 +5,6 @@ import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-
 import scapecraft.Scapecraft;
 import scapecraft.tileentity.TileEntityStall;
 
@@ -28,8 +27,7 @@ public class BlockStall extends BlockContainer
 	@Override
 	public TileEntity createTileEntity(World world, int metadata)
 	{
-		TileEntityStall tileEntity = new TileEntityStall();
-		return tileEntity;
+		return new TileEntityStall();
 	}
 
 	@Override

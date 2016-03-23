@@ -2,24 +2,14 @@ package scapecraft.entity;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.EntityAIAttackOnCollide;
-import net.minecraft.entity.ai.EntityAIHurtByTarget;
-import net.minecraft.entity.ai.EntityAILookIdle;
-import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
-import net.minecraft.entity.ai.EntityAISwimming;
-import net.minecraft.entity.ai.EntityAIWander;
-import net.minecraft.entity.ai.EntityAIWatchClosest;
+import net.minecraft.entity.ai.*;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
-
-import scapecraft.item.ScapecraftItems;
 
 
 public class EntityKos1 extends EntityScapecraft
 {
-	private static final ItemStack defaultHeldItem = new ItemStack(ScapecraftItems.fremSword, 1);
 	public EntityKos1(World par1World)
 	{
 		super(par1World);
@@ -33,7 +23,7 @@ public class EntityKos1 extends EntityScapecraft
 		this.tasks.addTask(6, new EntityAILookIdle(this));
 		this.tasks.addTask(6, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
 		this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
-		this.addTargets(EntityBlackDragon.class, EntityGreenDragon.class, EntityGuard.class, EntityHeroKnight.class, EntityKQ.class, EntityKing.class, EntityKingsGuard.class, EntityLavaBlock.class, EntityPlayer.class, EntityTD.class, EntityWhiteKnight.class, EntityWizard.class);
+		this.addTargets(EntityBlackDragon.class, EntityGreenDragon.class, EntityGuard.class, EntityHeroKnight.class, EntityKQ.class, EntityKing.class, EntityKingsGuard.class, EntityLavaBlock.class, EntityPlayer.class, EntityTormentedDemon.class, EntityWhiteKnight.class, EntityWizard.class);
 	}
 
 	@Override
@@ -47,17 +37,6 @@ public class EntityKos1 extends EntityScapecraft
 		this.getEntityAttribute(SharedMonsterAttributes.knockbackResistance).setBaseValue(0.6D);
 	}
 
-	@Override
-	public ItemStack getHeldItem()
-	{
-		return defaultHeldItem;
-	}
-
-	@Override
-	public int getTotalArmorValue()
-	{
-		return 10;
-	}
 
 	@Override
 	public boolean isAIEnabled()
@@ -94,9 +73,4 @@ public class EntityKos1 extends EntityScapecraft
 		}
 	}
 
-	@Override
-	public int getXpValue()
-	{
-		return 100;
-	}
 }

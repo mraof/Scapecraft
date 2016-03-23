@@ -21,6 +21,7 @@ public class EntitySergeantSteelwill extends EntityScapecraft
 		this.isImmuneToFire = true;
 	}
 
+	@Override
 	protected void applyEntityAttributes()
 	{
 		super.applyEntityAttributes();
@@ -35,17 +36,14 @@ public class EntitySergeantSteelwill extends EntityScapecraft
 	}
 
 
-	public String getEntityName()
-	{
-		return "Sergeant Steelwill";
-	}
-
+	@Override
 	protected void entityInit()
 	{
 		super.entityInit();
-		this.dataWatcher.addObject(16, new Byte((byte)0));
+		this.dataWatcher.addObject(16, (byte) 0);
 	}
 
+	@Override
 	protected String getHurtSound()
 	{
 		return "mob.villager.defaulthurt";
@@ -54,21 +52,16 @@ public class EntitySergeantSteelwill extends EntityScapecraft
 	/**
 	 * Returns the sound this mob makes on death.
 	 */
+	@Override
 	protected String getDeathSound()
 	{
 		return "mob.villager.defaultdeath";
-	}
-	/**
-	 * Plays step sound at given x, y, z for the entity
-	 */
-	protected void playStepSound(int var1, int var2, int var3, int var4)
-	{
-		this.worldObj.playSoundAtEntity(this, "mob.villager.default", 0.15F, 1.0F);
 	}
 
 	/**
 	 * Basic mob attack. Default to touch of death in EntityCreature. Overridden by each mob to define their attack.
 	 */
+	@Override
 	protected void attackEntity(Entity par1Entity, float par2)
 	{
 		if (attackTime <= 0 && par2 < 2.0F && par1Entity.boundingBox.maxY > boundingBox.minY && par1Entity.boundingBox.minY < boundingBox.maxY)
@@ -121,6 +114,7 @@ public class EntitySergeantSteelwill extends EntityScapecraft
 		}
 	}
 
+	@Override
 	public boolean isBurning()
 	{
 		return false;
@@ -128,26 +122,15 @@ public class EntitySergeantSteelwill extends EntityScapecraft
 
 
 
+	@Override
 	public EnumCreatureAttribute getCreatureAttribute()
 	{
 		return EnumCreatureAttribute.UNDEAD;
 	}
 
+	@Override
 	public boolean isPotionApplicable(PotionEffect par1PotionEffect)
 	{
-		return par1PotionEffect.getPotionID() == Potion.poison.id ? false : super.isPotionApplicable(par1PotionEffect);
-	}
-
-
-	public void onLivingUpdate()
-	{
-		if(ticksExisted > 30 * 20) setDead(); 
-		super.onLivingUpdate();
-	}
-
-	@Override
-	public int getXpValue()
-	{
-		return 100;
+		return par1PotionEffect.getPotionID() != Potion.poison.id && super.isPotionApplicable(par1PotionEffect);
 	}
 }

@@ -1,15 +1,14 @@
 package scapecraft.block;
 
-import java.util.Random;
-
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-
 import scapecraft.Scapecraft;
 import scapecraft.tileentity.TileEntityFire;
+
+import java.util.Random;
 
 
 
@@ -43,10 +42,12 @@ public class BlockScapecraftFire extends BlockContainer
 		return false;
 	}
 
+	@Override
 	public boolean renderAsNormalBlock()
 	{
 		return false;
 	}
+	@Override
 	public void randomDisplayTick(World par1World, int par2, int par3, int par4, Random par5Random)
 	{
 
@@ -68,6 +69,7 @@ public class BlockScapecraftFire extends BlockContainer
 		par1World.spawnParticle("flame", (double)(f + f4), (double)f1, (double)(f2 + f3), 0.0D, 0.0D, 0.0D);
 	}
 
+	@Override
 	public void onEntityCollidedWithBlock(World par1World, int par2, int par3, int par4, Entity par5Entity)
 	{
 		par5Entity.motionY = 0.55D;

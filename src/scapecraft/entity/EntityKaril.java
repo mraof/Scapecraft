@@ -3,13 +3,7 @@ package scapecraft.entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.IRangedAttackMob;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.EntityAIArrowAttack;
-import net.minecraft.entity.ai.EntityAIHurtByTarget;
-import net.minecraft.entity.ai.EntityAILookIdle;
-import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
-import net.minecraft.entity.ai.EntityAISwimming;
-import net.minecraft.entity.ai.EntityAIWander;
-import net.minecraft.entity.ai.EntityAIWatchClosest;
+import net.minecraft.entity.ai.*;
 import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
@@ -28,10 +22,11 @@ public class EntityKaril extends EntityScapecraft implements IRangedAttackMob
 		this.tasks.addTask(5, new EntityAIWander(this, 1D));
 		this.tasks.addTask(6, new EntityAILookIdle(this));
 		this.tasks.addTask(6, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
-		this.addTargets(EntityBarbarian.class, EntityBlackDragon.class, EntityFarmer.class, EntityGuard.class, EntityHellhound.class, EntityKing.class, EntityKingsGuard.class, EntityPlayer.class, EntityTD.class, EntityWhiteKnight.class, EntityWither.class, EntityWizard.class);
+		this.addTargets(EntityBarbarian.class, EntityBlackDragon.class, EntityFarmer.class, EntityGuard.class, EntityHellhound.class, EntityKing.class, EntityKingsGuard.class, EntityPlayer.class, EntityTormentedDemon.class, EntityWhiteKnight.class, EntityWither.class, EntityWizard.class);
 		this.tasks.addTask(4, new EntityAIArrowAttack(this, 0.25F, 18, 20.0F));
 	}
 
+	@Override
 	protected void applyEntityAttributes()
 	{
 		super.applyEntityAttributes();
@@ -57,10 +52,6 @@ public class EntityKaril extends EntityScapecraft implements IRangedAttackMob
 	protected String getDeathSound()
 	{
 		return "mob.villager.defaultdeath";
-	}
-	public int getTotalArmorValue()
-	{
-		return 10;
 	}
 
 	@Override

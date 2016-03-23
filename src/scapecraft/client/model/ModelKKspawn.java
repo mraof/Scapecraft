@@ -253,6 +253,7 @@ public class ModelKKspawn extends ModelBase
 		setRotation(antenae_r, 0F, 0F, 0.4363323F);
 	}
 
+	@Override
 	public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5)
 	{
 		super.render(entity, f, f1, f2, f3, f4, f5);
@@ -298,11 +299,6 @@ public class ModelKKspawn extends ModelBase
 		model.rotateAngleX = x;
 		model.rotateAngleY = y;
 		model.rotateAngleZ = z;
-	}
-
-	public void setRotationAngles(float f, float f1, float f2, float f3, float f4, float f5, Entity ent)
-	{
-		super.setRotationAngles(f, f1, f2, f3, f4, f5, ent);
 	}
 
 

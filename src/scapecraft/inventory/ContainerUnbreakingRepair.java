@@ -23,8 +23,9 @@ public class ContainerUnbreakingRepair extends ContainerRepair
 		this.z = z;
 	}
 
+	@Override
 	public boolean canInteractWith(EntityPlayer player)
 	{
-		return !(this.theWorld.getBlock(this.x, this.y, this.z) instanceof BlockAnvil) ? false : player.getDistanceSq((double)this.x + 0.5D, (double)this.y + 0.5D, (double)this.z + 0.5D) <= 64.0D;
+		return this.theWorld.getBlock(this.x, this.y, this.z) instanceof BlockAnvil && player.getDistanceSq((double) this.x + 0.5D, (double) this.y + 0.5D, (double) this.z + 0.5D) <= 64.0D;
 	}
 }

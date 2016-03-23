@@ -42,6 +42,7 @@ public class ModelMagicBoat extends ModelBoat
 	/**
 	 * Sets the scapecraft.models various rotation angles then renders the model.
 	 */
+	@Override
 	public void render(Entity par1Entity, float par2, float par3, float par4, float par5, float par6, float par7)
 	{
 		for (int i = 0; i < 5; ++i)

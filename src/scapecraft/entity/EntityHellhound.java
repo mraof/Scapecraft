@@ -1,21 +1,13 @@
 package scapecraft.entity;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.BlockColored;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.EntityAIAttackOnCollide;
-import net.minecraft.entity.ai.EntityAIFollowOwner;
-import net.minecraft.entity.ai.EntityAIHurtByTarget;
-import net.minecraft.entity.ai.EntityAILeapAtTarget;
-import net.minecraft.entity.ai.EntityAILookIdle;
-import net.minecraft.entity.ai.EntityAIMate;
-import net.minecraft.entity.ai.EntityAIOwnerHurtByTarget;
-import net.minecraft.entity.ai.EntityAIOwnerHurtTarget;
-import net.minecraft.entity.ai.EntityAISwimming;
-import net.minecraft.entity.ai.EntityAIWander;
-import net.minecraft.entity.ai.EntityAIWatchClosest;
+import net.minecraft.entity.ai.*;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.monster.EntityGhast;
 import net.minecraft.entity.passive.EntityAnimal;
@@ -27,13 +19,9 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class EntityHellhound extends EntityTameable
 {
@@ -71,10 +59,8 @@ public class EntityHellhound extends EntityTameable
 
 		this.setTamed(false);
 	}
-	public String getEntityName()
-	{
-		return "Hellhound";
-	}
+
+	@Override
 	protected void applyEntityAttributes()
 	{
 		super.applyEntityAttributes();
@@ -93,6 +79,7 @@ public class EntityHellhound extends EntityTameable
 	/**
 	 * Returns true if the newer Entity AI code should be run
 	 */
+	@Override
 	public boolean isAIEnabled()
 	{
 		return true;
@@ -101,6 +88,7 @@ public class EntityHellhound extends EntityTameable
 	/**
 	 * Sets the active target the Task system uses for tracking
 	 */
+	@Override
 	public void setAttackTarget(EntityLivingBase par1EntityLivingBase)
 	{
 		super.setAttackTarget(par1EntityLivingBase);
@@ -118,30 +106,25 @@ public class EntityHellhound extends EntityTameable
 	/**
 	 * main AI tick function, replaces updateEntityActionState
 	 */
+	@Override
 	protected void updateAITick()
 	{
-		this.dataWatcher.updateObject(18, Float.valueOf(this.getHealth()));
+		this.dataWatcher.updateObject(18, this.getHealth());
 	}
 
+	@Override
 	protected void entityInit()
 	{
 		super.entityInit();
-		this.dataWatcher.addObject(18, new Float(this.getHealth()));
-		this.dataWatcher.addObject(19, new Byte((byte)0));
-		this.dataWatcher.addObject(20, new Byte((byte)BlockColored.func_150032_b(1)));
-	}
-
-	/**
-	 * Plays step sound at given x, y, z for the entity
-	 */
-	protected void playStepSound(int par1, int par2, int par3, int par4)
-	{
-		this.playSound("mob.wolf.step", 0.15F, 1.0F);
+		this.dataWatcher.addObject(18, this.getHealth());
+		this.dataWatcher.addObject(19, (byte) 0);
+		this.dataWatcher.addObject(20, (byte) BlockColored.func_150032_b(1));
 	}
 
 	/**
 	 * (abstract) Protected helper method to write subclass entity data to NBT.
 	 */
+	@Override
 	public void writeEntityToNBT(NBTTagCompound par1NBTTagCompound)
 	{
 		super.writeEntityToNBT(par1NBTTagCompound);
@@ -152,6 +135,7 @@ public class EntityHellhound extends EntityTameable
 	/**
 	 * (abstract) Protected helper method to read subclass entity data from NBT.
 	 */
+	@Override
 	public void readEntityFromNBT(NBTTagCompound par1NBTTagCompound)
 	{
 		super.readEntityFromNBT(par1NBTTagCompound);
@@ -166,6 +150,7 @@ public class EntityHellhound extends EntityTameable
 	/**
 	 * Returns the sound this mob makes while it's alive.
 	 */
+	@Override
 	protected String getLivingSound()
 	{
 		return this.isAngry() ? "mob.wolf.growl" : (this.rand.nextInt(3) == 0 ? (this.isTamed() && this.dataWatcher.getWatchableObjectFloat(18) < 10.0F ? "mob.wolf.whine" : "mob.wolf.panting") : "mob.wolf.bark");
@@ -174,6 +159,7 @@ public class EntityHellhound extends EntityTameable
 	/**
 	 * Returns the sound this mob makes when it is hurt.
 	 */
+	@Override
 	protected String getHurtSound()
 	{
 		return "mob.wolf.hurt";
@@ -182,6 +168,7 @@ public class EntityHellhound extends EntityTameable
 	/**
 	 * Returns the sound this mob makes on death.
 	 */
+	@Override
 	protected String getDeathSound()
 	{
 		return "mob.wolf.death";
@@ -190,23 +177,17 @@ public class EntityHellhound extends EntityTameable
 	/**
 	 * Returns the volume for the sounds this mob makes.
 	 */
+	@Override
 	protected float getSoundVolume()
 	{
 		return 0.4F;
 	}
 
 	/**
-	 * Returns the item ID for the item the mob drops on death.
-	 */
-	protected int getDropItemId()
-	{
-		return -1;
-	}
-
-	/**
 	 * Called frequently so the entity can update its state every tick as required. For example, zombies and skeletons
 	 * use this to react to sunlight and start to burn.
 	 */
+	@Override
 	public void onLivingUpdate()
 	{
 		super.onLivingUpdate();
@@ -223,6 +204,7 @@ public class EntityHellhound extends EntityTameable
 	/**
 	 * Called to update the entity's position/logic.
 	 */
+	@Override
 	public void onUpdate()
 	{
 		super.onUpdate();
@@ -283,22 +265,6 @@ public class EntityHellhound extends EntityTameable
 	}
 
 	@SideOnly(Side.CLIENT)
-	public boolean getWolfShaking()
-	{
-		return this.isShaking;
-	}
-
-	@SideOnly(Side.CLIENT)
-
-	/**
-	 * Used when calculating the amount of shading to apply while the wolf is shaking.
-	 */
-	public float getShadingWhileShaking(float par1)
-	{
-		return 0.75F + (this.prevTimeWolfIsShaking + (this.timeWolfIsShaking - this.prevTimeWolfIsShaking) * par1) / 2.0F * 0.25F;
-	}
-
-	@SideOnly(Side.CLIENT)
 	public float getShakeAngle(float par1, float par2)
 	{
 		float f2 = (this.prevTimeWolfIsShaking + (this.timeWolfIsShaking - this.prevTimeWolfIsShaking) * par1 + par2) / 1.8F;
@@ -321,6 +287,7 @@ public class EntityHellhound extends EntityTameable
 		return (this.field_70924_f + (this.field_70926_e - this.field_70924_f) * par1) * 0.15F * (float)Math.PI;
 	}
 
+	@Override
 	public float getEyeHeight()
 	{
 		return this.height * 0.8F;
@@ -330,6 +297,7 @@ public class EntityHellhound extends EntityTameable
 	 * The speed it takes to move the entityliving's rotationPitch through the faceEntity method. This is only currently
 	 * use in wolves.
 	 */
+	@Override
 	public int getVerticalFaceSpeed()
 	{
 		return this.isSitting() ? 20 : super.getVerticalFaceSpeed();
@@ -338,6 +306,7 @@ public class EntityHellhound extends EntityTameable
 	/**
 	 * Called when the entity is attacked.
 	 */
+	@Override
 	public boolean attackEntityFrom(DamageSource par1DamageSource, float par2)
 	{
 		if (this.isEntityInvulnerable())
@@ -358,12 +327,14 @@ public class EntityHellhound extends EntityTameable
 		}
 	}
 
+	@Override
 	public boolean attackEntityAsMob(Entity par1Entity)
 	{
 		int i = this.isTamed() ? 4 : 2;
 		return par1Entity.attackEntityFrom(DamageSource.causeMobDamage(this), (float)i);
 	}
 
+	@Override
 	public void setTamed(boolean par1)
 	{
 		super.setTamed(par1);
@@ -379,8 +350,9 @@ public class EntityHellhound extends EntityTameable
 	}
 
 	/**
-	 * Called when a player interacts with a mob. e.g. gets milk from a cow, gets into the saddle on a pig.
+	 * Called when a entityPlayer interacts with a mob. e.g. gets milk from a cow, gets into the saddle on a pig.
 	 */
+	@Override
 	public boolean interact(EntityPlayer par1EntityPlayer)
 	{
 		ItemStack itemstack = par1EntityPlayer.inventory.getCurrentItem();
@@ -404,7 +376,7 @@ public class EntityHellhound extends EntityTameable
 
 						if (itemstack.stackSize <= 0)
 						{
-							par1EntityPlayer.inventory.setInventorySlotContents(par1EntityPlayer.inventory.currentItem, (ItemStack)null);
+							par1EntityPlayer.inventory.setInventorySlotContents(par1EntityPlayer.inventory.currentItem, null);
 						}
 
 						return true;
@@ -420,7 +392,7 @@ public class EntityHellhound extends EntityTameable
 
 						if (!par1EntityPlayer.capabilities.isCreativeMode && --itemstack.stackSize <= 0)
 						{
-							par1EntityPlayer.inventory.setInventorySlotContents(par1EntityPlayer.inventory.currentItem, (ItemStack)null);
+							par1EntityPlayer.inventory.setInventorySlotContents(par1EntityPlayer.inventory.currentItem, null);
 						}
 
 						return true;
@@ -432,9 +404,9 @@ public class EntityHellhound extends EntityTameable
 			{
 				this.aiSit.setSitting(!this.isSitting());
 				this.isJumping = false;
-				this.setPathToEntity((PathEntity)null);
-				this.setTarget((Entity)null);
-				this.setAttackTarget((EntityLivingBase)null);
+				this.setPathToEntity(null);
+				this.setTarget(null);
+				this.setAttackTarget(null);
 			}
 		}
 		else if (itemstack != null && itemstack.getItem() == Items.bone && !this.isAngry())
@@ -446,7 +418,7 @@ public class EntityHellhound extends EntityTameable
 
 			if (itemstack.stackSize <= 0)
 			{
-				par1EntityPlayer.inventory.setInventorySlotContents(par1EntityPlayer.inventory.currentItem, (ItemStack)null);
+				par1EntityPlayer.inventory.setInventorySlotContents(par1EntityPlayer.inventory.currentItem, null);
 			}
 
 			if (!this.worldObj.isRemote)
@@ -454,8 +426,8 @@ public class EntityHellhound extends EntityTameable
 				if (this.rand.nextInt(3) == 0)
 				{
 					this.setTamed(true);
-					this.setPathToEntity((PathEntity)null);
-					this.setAttackTarget((EntityLivingBase)null);
+					this.setPathToEntity(null);
+					this.setAttackTarget(null);
 					this.aiSit.setSitting(true);
 					this.setHealth(20.0F);
 					this.func_152115_b(par1EntityPlayer.getUniqueID().toString());
@@ -475,6 +447,7 @@ public class EntityHellhound extends EntityTameable
 		return super.interact(par1EntityPlayer);
 	}
 
+	@Override
 	@SideOnly(Side.CLIENT)
 	public void handleHealthUpdate(byte par1)
 	{
@@ -490,24 +463,20 @@ public class EntityHellhound extends EntityTameable
 		}
 	}
 
-	@SideOnly(Side.CLIENT)
-	public float getTailRotation()
-	{
-		return this.isAngry() ? 1.5393804F : (this.isTamed() ? (0.55F - (20.0F - this.dataWatcher.getWatchableObjectFloat(18)) * 0.02F) * (float)Math.PI : ((float)Math.PI / 5F));
-	}
-
 	/**
 	 * Checks if the parameter is an item which this animal can be fed to breed it (wheat, carrots or seeds depending on
 	 * the animal type)
 	 */
+	@Override
 	public boolean isBreedingItem(ItemStack par1ItemStack)
 	{
-		return par1ItemStack == null ? false : (!(par1ItemStack.getItem() instanceof ItemFood) ? false : ((ItemFood)par1ItemStack.getItem()).isWolfsFavoriteMeat());
+		return par1ItemStack != null && (par1ItemStack.getItem() instanceof ItemFood && ((ItemFood) par1ItemStack.getItem()).isWolfsFavoriteMeat());
 	}
 
 	/**
 	 * Will return how many at most can spawn in a chunk at once.
 	 */
+	@Override
 	public int getMaxSpawnedInChunk()
 	{
 		return 8;
@@ -530,11 +499,11 @@ public class EntityHellhound extends EntityTameable
 
 		if (par1)
 		{
-			this.dataWatcher.updateObject(16, Byte.valueOf((byte)(b0 | 2)));
+			this.dataWatcher.updateObject(16, (byte) (b0 | 2));
 		}
 		else
 		{
-			this.dataWatcher.updateObject(16, Byte.valueOf((byte)(b0 & -3)));
+			this.dataWatcher.updateObject(16, (byte) (b0 & -3));
 		}
 	}
 
@@ -551,13 +520,13 @@ public class EntityHellhound extends EntityTameable
 	 */
 	public void setCollarColor(int par1)
 	{
-		this.dataWatcher.updateObject(20, Byte.valueOf((byte)(par1 & 15)));
+		this.dataWatcher.updateObject(20, (byte) (par1 & 15));
 	}
 
 	/**
 	 * This function is used when two same-species animals in 'love mode' breed to generate the new baby animal.
 	 */
-	public EntityHellhound spawnBabyAnimal(EntityAgeable par1EntityAgeable)
+	public EntityHellhound spawnBabyAnimal()
 	{
 		EntityHellhound entitywolf = new EntityHellhound(this.worldObj);
 		String s = this.func_152113_b();
@@ -571,21 +540,10 @@ public class EntityHellhound extends EntityTameable
 		return entitywolf;
 	}
 
-	public void func_70918_i(boolean par1)
-	{
-		if (par1)
-		{
-			this.dataWatcher.updateObject(19, Byte.valueOf((byte)1));
-		}
-		else
-		{
-			this.dataWatcher.updateObject(19, Byte.valueOf((byte)0));
-		}
-	}
-
 	/**
 	 * Returns true if the mob is currently able to mate with the specified mob.
 	 */
+	@Override
 	public boolean canMateWith(EntityAnimal par1EntityAnimal)
 	{
 		if (par1EntityAnimal == this)
@@ -603,21 +561,13 @@ public class EntityHellhound extends EntityTameable
 		else
 		{
 			EntityHellhound entitywolf = (EntityHellhound)par1EntityAnimal;
-			return !entitywolf.isTamed() ? false : (entitywolf.isSitting() ? false : this.isInLove() && entitywolf.isInLove());
+			return entitywolf.isTamed() && (!entitywolf.isSitting() && (this.isInLove() && entitywolf.isInLove()));
 		}
 	}
 
 	public boolean func_70922_bv()
 	{
 		return this.dataWatcher.getWatchableObjectByte(19) == 1;
-	}
-
-	/**
-	 * Determines if an entity can be despawned, used on idle far away entities
-	 */
-	protected boolean canDespawn()
-	{
-		return !this.isTamed() && this.ticksExisted > 2400;
 	}
 
 	@Override
@@ -635,7 +585,7 @@ public class EntityHellhound extends EntityTameable
 				}
 			}
 
-			return par1EntityLivingBase instanceof EntityPlayer && par2EntityLivingBase instanceof EntityPlayer && !((EntityPlayer)par2EntityLivingBase).canAttackPlayer((EntityPlayer)par1EntityLivingBase) ? false : !(par1EntityLivingBase instanceof EntityHorse) || !((EntityHorse)par1EntityLivingBase).isTame();
+			return !(par1EntityLivingBase instanceof EntityPlayer && par2EntityLivingBase instanceof EntityPlayer && !((EntityPlayer) par2EntityLivingBase).canAttackPlayer((EntityPlayer) par1EntityLivingBase)) && (!(par1EntityLivingBase instanceof EntityHorse) || !((EntityHorse) par1EntityLivingBase).isTame());
 		}
 		else
 		{
@@ -643,8 +593,9 @@ public class EntityHellhound extends EntityTameable
 		}
 	}
 
+	@Override
 	public EntityAgeable createChild(EntityAgeable par1EntityAgeable)
 	{
-		return this.spawnBabyAnimal(par1EntityAgeable);
+		return this.spawnBabyAnimal();
 	}
 }

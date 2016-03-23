@@ -18,7 +18,7 @@ public class EntityKQ extends EntityScapecraft
 		super(par1World);
 
 		this.setSize(this.width * 3.5F, this.height * 3.0F);
-		this.addTargets(EntityBarbarian.class, EntityBlackDragon.class, EntityBlackKnight.class, EntityCreeper.class, EntityEliteBlackKnight.class, EntityFarmer.class, EntityGoblin.class, EntityGuard.class, EntityHeroKnight.class, EntityKing.class, EntityKingsGuard.class, EntityKos1.class, EntityKos2.class, EntityKos3.class, EntityPlayer.class, EntityScorpion.class, EntitySkeleton.class, EntitySpider.class, EntityTD.class, EntityTheif.class, EntityWhiteKnight.class, EntityWither.class, EntityWizard.class, EntityZombie.class);
+		this.addTargets(EntityBarbarian.class, EntityBlackDragon.class, EntityBlackKnight.class, EntityCreeper.class, EntityEliteBlackKnight.class, EntityFarmer.class, EntityGoblin.class, EntityGuard.class, EntityHeroKnight.class, EntityKing.class, EntityKingsGuard.class, EntityKos1.class, EntityKos2.class, EntityKos3.class, EntityPlayer.class, EntityScorpion.class, EntitySkeleton.class, EntitySpider.class, EntityTormentedDemon.class, EntityThief.class, EntityWhiteKnight.class, EntityWither.class, EntityWizard.class, EntityZombie.class);
 	}
 
 	@Override
@@ -29,10 +29,6 @@ public class EntityKQ extends EntityScapecraft
 		this.getEntityAttribute(SharedMonsterAttributes.followRange).setBaseValue(32.0D);
 		this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.42D);
 		this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(40.0D);
-	}
-	public int getTotalArmorValue()
-	{
-		return 14;
 	}
 
 	@Override
@@ -97,9 +93,4 @@ public class EntityKQ extends EntityScapecraft
 		return EnumCreatureAttribute.ARTHROPOD;
 	}
 
-	@Override
-	public int getXpValue()
-	{
-		return 2404;
-	}
 }

@@ -1,8 +1,10 @@
 package scapecraft.item;
 
-import java.util.List;
-import java.util.Set;
-
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Multimap;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -12,34 +14,45 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTool;
 import net.minecraft.util.StatCollector;
-
 import scapecraft.Scapecraft;
-import scapecraft.Stats;
+import scapecraft.util.Stat;
+import scapecraft.util.Stats;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Multimap;
+import java.util.List;
+import java.util.Set;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
-public class ItemScapecraftTool extends ItemTool
+public class ItemScapecraftTool extends ItemTool implements QualityItem
 {
-	protected ScapecraftToolMaterial toolMaterial;
 	protected float damageVsEntity;
 	protected String toolClass;
-	public String skill;
+	public Stat skill;
+	protected int level;
 
-	public ItemScapecraftTool(float damageVsEntity, ScapecraftToolMaterial toolMaterial, Set<Block> effectiveBlocks)
+	public ItemScapecraftTool(float damageVsEntity, int level, Set<Block> effectiveBlocks)
 	{
 		super(0, ToolMaterial.GOLD, effectiveBlocks); //None of these arguments matter, but extending ItemTool is needed for enchantments
-		this.setMaxDurability(toolMaterial.getMaxUses());
-		this.efficiencyOnProperMaterial = toolMaterial.getEfficiencyOnProperMaterial();
-		this.damageVsEntity = damageVsEntity + toolMaterial.getDamageVsEntity();
+		this.damageVsEntity = damageVsEntity;
+		this.level = level;
+		this.setMaxDurability((level * level / 2 + 50) * 2);
+		this.efficiencyOnProperMaterial = 5 + (level / 10f) * (level / 20f);
 		this.setCreativeTab(Scapecraft.tabScapecraftTool);
-		this.toolMaterial = toolMaterial;
 	}
-	
+
+	@Override
+	public int getMaxDamage(ItemStack stack)
+	{
+		int durability = this.getMaxDurability();
+		if (stack.getTagCompound() != null && stack.getTagCompound().hasKey("level"))
+		{
+			durability = (this.getMaxDurability() + (2 * this.level * (stack.getTagCompound().getInteger("level") - this.level)));
+			if (durability < this.getMaxDurability() / 2)
+			{
+				durability = this.getMaxDurability() / 2;
+			}
+		}
+		return durability;
+	}
+
 	//Code copied from ItemTool, looks the same but uses variables declared here instead
 	@Override
 	public int getHarvestLevel(ItemStack stack, String toolClass)
@@ -61,11 +74,6 @@ public class ItemScapecraftTool extends ItemTool
 		return toolClass != null ? ImmutableSet.of(toolClass) : super.getToolClasses(stack);
 	}
 
-	public ScapecraftToolMaterial getScapecraftToolMaterial()
-	{
-		return toolMaterial;
-	}
-
 	@Override
 	public String getToolMaterialName()
 	{
@@ -75,7 +83,7 @@ public class ItemScapecraftTool extends ItemTool
 	@Override
 	public boolean getIsRepairable(ItemStack toolStack, ItemStack materialStack)
 	{
-		return this.toolMaterial.getBaseItemForRepair() == materialStack.getItem();
+		return false;
 	}
 
 	@Override
@@ -104,22 +112,24 @@ public class ItemScapecraftTool extends ItemTool
 		super.addInformation(itemStack, player, lines, advancedTooltips);
 		if(Scapecraft.requireLevels)
 		{
-			lines.add(StatCollector.translateToLocal("tool.minlevel.combat") + " " + toolMaterial.getMinLevel());
+			lines.add(StatCollector.translateToLocal("tool.minlevel.combat") + " " + this.level);
 			if(ScapecraftItems.toolLevels.get(this) != null)
 			{
 				lines.add(StatCollector.translateToLocal("tool.minlevel." + toolClass) + " " + ScapecraftItems.toolLevels.get(this));
 			}
+
+			if(itemStack.getTagCompound() != null && itemStack.getTagCompound().hasKey("source"))
+			{
+				lines.add(itemStack.getTagCompound().getString("source"));
+			}
+			lines.add("Uses remaining: " + (this.getMaxDamage(itemStack) - itemStack.getMetadata()));
 		}
 	}
 
 	@Override
 	public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player, Entity target)
 	{
-		if(Scapecraft.requireLevels && Stats.getCombatLevel(player) < this.toolMaterial.getMinLevel() && !player.capabilities.isCreativeMode)
-		{
-			return true;
-		}
-		return false;
+		return Scapecraft.requireLevels && Stats.getLevel(player, Stat.ATTACK) < this.level && !player.capabilities.isCreativeMode;
 	}
 
 	@Override
@@ -128,7 +138,7 @@ public class ItemScapecraftTool extends ItemTool
 		if(entityLiving instanceof EntityPlayer)
 		{
 			EntityPlayer player = (EntityPlayer) entityLiving;
-			return Scapecraft.requireLevels && skill != null && ScapecraftItems.toolLevels.containsKey(this) && !player.capabilities.isCreativeMode && Stats.getCombatLevel(player) < this.toolMaterial.getMinLevel() && Stats.getStat(player, skill + "Level") < ScapecraftItems.toolLevels.get(this);
+			return Scapecraft.requireLevels && skill != null && ScapecraftItems.toolLevels.containsKey(this) && !player.capabilities.isCreativeMode && Stats.getLevel(player, Stat.ATTACK) < this.level && Stats.getLevel(player, skill) < ScapecraftItems.toolLevels.get(this);
 		}
 		return false;
 	}

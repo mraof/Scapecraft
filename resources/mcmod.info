@@ -1,0 +1,22 @@
+[
+    {
+        "name": "Scapecraft", 
+        "parent": "", 
+        "updateUrl": "http://ci.mraof.com/job/Scapecraft/", 
+        "version": "${version}", 
+        "modid": "Scapecraft", 
+        "authors": [
+            "Programmer: Mraof", 
+            "Modeler: Wooddzz",
+            "Modeler: Geo",
+            "Modeler: ",
+            "999134fishy: Original mod"
+        ], 
+        "mcversion": "${mcversion}", 
+        "screenshots": [], 
+        "dependencies": [
+            "Forge"
+        ], 
+        "description": ""
+    }
+]

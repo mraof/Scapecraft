@@ -1,7 +1,6 @@
 package scapecraft.world.gen.dungeon;
 
 import net.minecraft.world.World;
-
 import scapecraft.entity.EntityKey;
 
 public class KeyRoomFeature extends RoomFeature

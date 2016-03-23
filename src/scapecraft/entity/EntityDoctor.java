@@ -8,7 +8,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
-
 import scapecraft.item.ScapecraftItems;
 
 public class EntityDoctor extends EntityScapecraft
@@ -22,6 +21,7 @@ public class EntityDoctor extends EntityScapecraft
 		this.tasks.addTask(6, new EntityAILookIdle(this));
 	}
 
+	@Override
 	protected void applyEntityAttributes()
 	{
 		super.applyEntityAttributes();
@@ -75,19 +75,10 @@ public class EntityDoctor extends EntityScapecraft
 
 
 		else
+		{
 			par1EntityPlayer.addChatComponentMessage(new ChatComponentText("\u00a7EDr Harlow: Bring me a beer and then we can talk"));
+		}
 
 		return super.interact(par1EntityPlayer);
-	}
-
-	public int getTotalArmorValue()
-	{
-		return 999;
-	}
-
-	@Override
-	public int getXpValue()
-	{
-		return 0;
 	}
 }

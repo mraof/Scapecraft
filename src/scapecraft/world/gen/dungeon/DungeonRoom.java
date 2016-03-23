@@ -1,13 +1,14 @@
 package scapecraft.world.gen.dungeon;
 
-import java.util.ArrayList;
-import java.util.Random;
-
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
-
+import scapecraft.entity.Drop;
+import scapecraft.entity.EntityScapecraft;
 import scapecraft.entity.MobSpawner;
+
+import java.util.ArrayList;
+import java.util.Random;
 
 public class DungeonRoom implements MobSpawner
 {
@@ -127,5 +128,17 @@ public class DungeonRoom implements MobSpawner
 	{
 		roomMobs.remove(entity);
 		System.out.println(entity.getCommandSenderName() + " in room " + roomX + ", " + roomZ + " has been killed");
+	}
+
+	@Override
+	public ArrayList<Drop> getDrops(EntityScapecraft entityScapecraft)
+	{
+		return new ArrayList<Drop>();
+	}
+
+	@Override
+	public int[] getMoneyDrops(EntityScapecraft entityScapecraft)
+	{
+		return new int[0];
 	}
 }

@@ -2,22 +2,15 @@ package scapecraft.entity;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.EntityAIAttackOnCollide;
-import net.minecraft.entity.ai.EntityAIHurtByTarget;
-import net.minecraft.entity.ai.EntityAILookIdle;
-import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
-import net.minecraft.entity.ai.EntityAISwimming;
-import net.minecraft.entity.ai.EntityAIWander;
-import net.minecraft.entity.ai.EntityAIWatchClosest;
+import net.minecraft.entity.ai.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-
 import scapecraft.item.ScapecraftItems;
 
 public class EntityBlackKnight extends EntityScapecraft
 {
-	private static final ItemStack defaultHeldItem = new ItemStack(ScapecraftItems.blackSword, 1);
+	private static final ItemStack defaultHeldItem = new ItemStack(ScapecraftItems.equipmentSets.get("blackSword"), 1);
 
 	public EntityBlackKnight(World par1World)
 	{
@@ -30,7 +23,7 @@ public class EntityBlackKnight extends EntityScapecraft
 		this.tasks.addTask(5, new EntityAIWander(this, 1D));
 		this.tasks.addTask(6, new EntityAILookIdle(this));
 		this.tasks.addTask(6, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
-		this.addTargets(EntityBarbarian.class, EntityBlackDragon.class, EntityBlackDragon.class, EntityFarmer.class, EntityGreenDragon.class, EntityGuard.class, EntityHeroKnight.class, EntityKQ.class, EntityKQ2.class, EntityKing.class, EntityKingsGuard.class, EntityKos1.class, EntityKos2.class, EntityKos3.class, EntityPlayer.class, EntityTD.class, EntityWhiteKnight.class, EntityWizard.class);
+		this.addTargets(EntityBarbarian.class, EntityBlackDragon.class, EntityBlackDragon.class, EntityFarmer.class, EntityGreenDragon.class, EntityGuard.class, EntityHeroKnight.class, EntityKQ.class, EntityKQ2.class, EntityKing.class, EntityKingsGuard.class, EntityKos1.class, EntityKos2.class, EntityKos3.class, EntityPlayer.class, EntityTormentedDemon.class, EntityWhiteKnight.class, EntityWizard.class);
 	}
 
 	@Override
@@ -64,21 +57,17 @@ public class EntityBlackKnight extends EntityScapecraft
 	@Override
 	public void addArmor()
 	{
-			this.setCurrentItemOrArmor(1, new ItemStack(ScapecraftItems.blackBoots));
-			this.setCurrentItemOrArmor(2, new ItemStack(ScapecraftItems.blackLeggings));
-			this.setCurrentItemOrArmor(3, new ItemStack(ScapecraftItems.blackChestplate));
-			this.setCurrentItemOrArmor(4, new ItemStack(ScapecraftItems.blackHelmet));
+			this.setCurrentItemOrArmor(1, new ItemStack(ScapecraftItems.equipmentSets.get("blackBoots")));
+			this.setCurrentItemOrArmor(2, new ItemStack(ScapecraftItems.equipmentSets.get("blackPlatelegs")));
+			this.setCurrentItemOrArmor(3, new ItemStack(ScapecraftItems.equipmentSets.get("blackPlatebody")));
+			this.setCurrentItemOrArmor(4, new ItemStack(ScapecraftItems.equipmentSets.get("blackHelmet")));
 			this.equipmentDropChances[4] = 0.0F;
 	}
 
+	@Override
 	public ItemStack getHeldItem()
 	{
 		return defaultHeldItem;
 	}
 
-	@Override
-	public int getXpValue()
-	{
-		return 40;
-	}
 }

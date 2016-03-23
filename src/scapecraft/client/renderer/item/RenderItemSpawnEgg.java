@@ -6,10 +6,8 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.IItemRenderer;
-
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
-
 import scapecraft.entity.ScapecraftEntities;
 
 public class RenderItemSpawnEgg implements IItemRenderer
@@ -39,7 +37,7 @@ public class RenderItemSpawnEgg implements IItemRenderer
 		GL11.glPushMatrix();
 		if(type == ItemRenderType.INVENTORY)
 		{
-			float scaleFactor = 2F / (entity.height + entity.width);
+			float scaleFactor = 1F / (entity.height > entity.width ? entity.height : entity.width);
 			GL11.glScalef(scaleFactor, scaleFactor, scaleFactor);
 			GL11.glTranslatef(-entity.width / 2F, -entity.height / 2F, 0F);
 		}

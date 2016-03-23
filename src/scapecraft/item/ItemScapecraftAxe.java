@@ -1,24 +1,25 @@
 package scapecraft.item;
 
-import java.util.Set;
-
+import com.google.common.collect.Sets;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import scapecraft.util.Stat;
 
-import com.google.common.collect.Sets;
+import java.util.Set;
 
 public class ItemScapecraftAxe extends ItemScapecraftTool
 {
-	private static final Set<Block> effectiveBlocks = Sets.newHashSet(new Block[] {Blocks.planks, Blocks.bookshelf, Blocks.log, Blocks.log2, Blocks.chest, Blocks.pumpkin, Blocks.lit_pumpkin});
+	private static final Set<Block> effectiveBlocks = Sets.newHashSet(Blocks.planks, Blocks.bookshelf, Blocks.log, Blocks.log2, Blocks.chest, Blocks.pumpkin, Blocks.lit_pumpkin);
 
-	public ItemScapecraftAxe(ScapecraftToolMaterial material)
+	public ItemScapecraftAxe(float damage, int level, String name)
 	{
-		super(3F, material, effectiveBlocks);
+		super(damage, level, effectiveBlocks);
 		this.toolClass = "axe";
-		this.setUnlocalizedName(toolMaterial + "Axe");
-		this.skill = "woodcutting";
+		this.skill = Stat.WOODCUTTING;
+		this.setUnlocalizedName(name);
+		this.setTextureName("scapecraft:" + name);
 	}
 
 	@Override

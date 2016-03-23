@@ -1,13 +1,15 @@
 package scapecraft.client.renderer.item;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.IItemRenderer;
-
 import org.lwjgl.opengl.GL11;
+
+import java.io.IOException;
 
 public class RenderItemWeapon implements IItemRenderer
 {
@@ -32,6 +34,13 @@ public class RenderItemWeapon implements IItemRenderer
 		this.texture = texture;
 		this.scale = scale;
 		this.rotationZ = rotationZ;
+		try
+		{
+			Minecraft.getMinecraft().getResourceManager().getResource(this.texture);
+		} catch (IOException e)
+		{
+			System.err.printf("Missing item texture: %s%n", this.texture);
+		}
 	}
 
 	@Override
@@ -67,7 +76,9 @@ public class RenderItemWeapon implements IItemRenderer
 	{
 		GL11.glPushMatrix();
 		if(RenderManager.instance.renderEngine == null)
+		{
 			return;
+		}
 
 		switch(type)
 		{

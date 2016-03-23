@@ -1,11 +1,12 @@
 package scapecraft.command;
 
 import net.minecraft.command.CommandBase;
+import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ChatComponentText;
-
-import scapecraft.Stats;
+import scapecraft.util.Stat;
+import scapecraft.util.Stats;
 
 public class StatCommand extends CommandBase
 {
@@ -21,6 +22,7 @@ public class StatCommand extends CommandBase
 		return "commands.stat.usage";
 	}
 
+	@Override
 	public int getRequiredPermissionLevel()
 	{
 		return 2;
@@ -30,18 +32,39 @@ public class StatCommand extends CommandBase
 	public void processCommand(ICommandSender sender, String[] args)
 	{
 		if(args.length < 3)
+		{
 			return;
-		EntityPlayerMP player = getPlayer(sender, args[0]);;
-		if(args[1].equalsIgnoreCase("get"))
-		{
-			getCommandSenderAsPlayer(sender).addChatMessage(new ChatComponentText(player.getCommandSenderName() + " is level " + Stats.getStat(player, args[2].toLowerCase() + "Level") + " (" + Stats.getStat(player, args[2].toLowerCase() + "xp") + "xp) for " + args[2]));
 		}
-		else if(args[1].equalsIgnoreCase("set") && args.length >= 4)
+		EntityPlayerMP player = getPlayer(sender, args[0]);
+		if("get".equalsIgnoreCase(args[1]))
 		{
-			Stats.setStat(player, args[2].toLowerCase() + "xp", Integer.parseInt(args[3]));
-			Stats.setStat(player, args[2].toLowerCase() + "Level", Stats.getLevelFromXp(Integer.parseInt(args[3])));
-			getCommandSenderAsPlayer(sender).addChatMessage(new ChatComponentText(player.getCommandSenderName() + " is level " + Stats.getStat(player, args[2].toLowerCase() + "Level") + " (" + Stats.getStat(player, args[2].toLowerCase() + "xp") + "xp) for " + args[2]));
+			getCommandSenderAsPlayer(sender).addChatMessage(new ChatComponentText(player.getCommandSenderName() + " is level " + Stats.getLevel(player, Stat.valueOf(args[2].toUpperCase())) + " (" + Stats.getXp(player, Stat.valueOf(args[2].toUpperCase())) + "xp) for " + args[2]));
 		}
+		else if("set".equalsIgnoreCase(args[1]) && args.length >= 4)
+		{
+			Stat stat = Stat.valueOf(args[2].toUpperCase());
+			Stats.setXp(player, stat, Long.parseLong(args[3]));
+			getCommandSenderAsPlayer(sender).addChatMessage(new ChatComponentText(player.getCommandSenderName() + " is level " + Stats.getLevel(player, Stat.valueOf(args[2].toUpperCase())) + " (" + Stats.getXp(player, Stat.valueOf(args[2].toUpperCase())) + "xp) for " + args[2]));
+		}
+		else if("add".equalsIgnoreCase(args[1]) && args.length >= 4)
+		{
+			Stat stat = Stat.valueOf(args[2].toUpperCase());
+			Stats.addXp(player, stat, Long.parseLong(args[3]));
+			getCommandSenderAsPlayer(sender).addChatMessage(new ChatComponentText(player.getCommandSenderName() + " is level " + Stats.getLevel(player, Stat.valueOf(args[2].toUpperCase())) + " (" + Stats.getXp(player, Stat.valueOf(args[2].toUpperCase())) + "xp) for " + args[2]));
+		}
+		else if("check".equalsIgnoreCase(args[1]) && args.length >= 4)
+		{
+			if(Stats.getLevel(player, Stat.valueOf(args[2].toUpperCase())) < Integer.parseInt(args[3]))
+			{
+				throw new CommandException("commands.stat.failed"); //Have to throw an exception to say the command failed for some reason
+			}
+		}
+	}
+
+	@Override
+	public boolean isUsernameIndex(String[] args, int index)
+	{
+		return index == 0;
 	}
 }
 

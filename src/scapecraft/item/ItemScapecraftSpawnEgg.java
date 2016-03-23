@@ -1,7 +1,7 @@
 package scapecraft.item;
 
-import java.util.List;
-
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
@@ -12,14 +12,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.Facing;
+import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
-
 import scapecraft.Scapecraft;
 import scapecraft.entity.EntityScapecraft;
 import scapecraft.entity.ScapecraftEntities;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import java.util.List;
 
 public class ItemScapecraftSpawnEgg extends Item
 {
@@ -43,7 +42,9 @@ public class ItemScapecraftSpawnEgg extends Item
 
 			EntityScapecraft entity = ScapecraftEntities.spawnScapecraftEntity(ScapecraftEntities.entities.get(itemStack.getMetadata()), world);
 			if(entity == null)
+			{
 				return false;
+			}
 
 			entity.setLocationAndAngles(x + 0.5D, y + yOffset, z + 0.5D, 0F, 0F);
 			entity.onSpawnWithEgg(null);
@@ -51,7 +52,9 @@ public class ItemScapecraftSpawnEgg extends Item
 			entity.playLivingSound();
 
 			if (!player.capabilities.isCreativeMode)
+			{
 				--itemStack.stackSize;
+			}
 		}
 		return true;
 	}
@@ -62,7 +65,9 @@ public class ItemScapecraftSpawnEgg extends Item
 	public void getSubItems(Item item, CreativeTabs tab, List subItems)
 	{
 		for(int id = 0; id < ScapecraftEntities.entities.size(); id++)
+		{
 			subItems.add(new ItemStack(this, 1, id));
+		}
 	}
 
 	@Override
@@ -77,7 +82,9 @@ public class ItemScapecraftSpawnEgg extends Item
 	{
 		checkStack(stack);
 		if(attacker instanceof EntityPlayer && ((EntityPlayer) attacker).capabilities.isCreativeMode)
-			target.attackEntityFrom(new EntityDamageSource("player", attacker), (float) ((EntityScapecraft)ScapecraftEntities.entityObjects.get(stack.getMetadata())).getEntityAttribute(SharedMonsterAttributes.attackDamage).getAttributeValue());
+		{
+			target.attackEntityFrom(new EntityDamageSource("entityPlayer", attacker), (float) ScapecraftEntities.entityObjects.get(stack.getMetadata()).getEntityAttribute(SharedMonsterAttributes.attackDamage).getAttributeValue());
+		}
 		return true;
 	}
 
@@ -87,12 +94,16 @@ public class ItemScapecraftSpawnEgg extends Item
 		 {
 			 int newMeta = ScapecraftEntities.entities.indexOf(stack.getTagCompound().getString("mob"));
 			 if(newMeta != -1)
+			 {
 				 stack.setMetadata(newMeta);
+			 }
 		 }
 		 else
 		 {
 			 if(!stack.hasTagCompound())
+			 {
 				 stack.setTagCompound(new NBTTagCompound());
+			 }
 			 stack.getTagCompound().setString("mob", ScapecraftEntities.entities.get(stack.getMetadata()));
 		 }
 	}
@@ -102,5 +113,18 @@ public class ItemScapecraftSpawnEgg extends Item
 		stack.setMetadata(ScapecraftEntities.entities.indexOf(mobName));
 		checkStack(stack);
 		return stack;
+	}
+
+	@Override
+	public String getItemStackDisplayName(ItemStack stack)
+	{
+		if(stack.getMetadata() < ScapecraftEntities.entityObjects.size())
+		{
+			return StatCollector.translateToLocalFormatted("item.scapecraftSpawnEgg.name", ScapecraftEntities.entityObjects.get(stack.getMetadata()).getCommandSenderName());
+		}
+		else
+		{
+			return stack.toString();
+		}
 	}
 }

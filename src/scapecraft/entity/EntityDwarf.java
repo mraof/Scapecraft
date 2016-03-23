@@ -2,27 +2,21 @@ package scapecraft.entity;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.EntityAIAttackOnCollide;
-import net.minecraft.entity.ai.EntityAIHurtByTarget;
-import net.minecraft.entity.ai.EntityAILookIdle;
-import net.minecraft.entity.ai.EntityAISwimming;
-import net.minecraft.entity.ai.EntityAIWander;
-import net.minecraft.entity.ai.EntityAIWatchClosest;
+import net.minecraft.entity.ai.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-
 import scapecraft.item.ScapecraftItems;
 
 
 public class EntityDwarf extends EntityScapecraft
 {
-	private static final ItemStack defaultHeldItem = new ItemStack(ScapecraftItems.dragonPickaxe, 1);
+	private static final ItemStack defaultHeldItem = new ItemStack(ScapecraftItems.equipmentSets.get("dragonPickaxe"), 1);
 
 	public EntityDwarf(World par1World)
 	{
 		super(par1World);
-		super.setSize(0.6F, 1.5F);
+		setSize(0.6F, 1.5F);
 		this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
 		this.tasks.addTask(1, new EntityAISwimming(this));
 		this.tasks.addTask(2, new EntityAIAttackOnCollide(this, EntityLivingBase.class, 1.1D, false));
@@ -31,6 +25,7 @@ public class EntityDwarf extends EntityScapecraft
 		this.tasks.addTask(6, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
 	}
 
+	@Override
 	protected void applyEntityAttributes()
 	{
 		super.applyEntityAttributes();
@@ -62,12 +57,6 @@ public class EntityDwarf extends EntityScapecraft
 	public ItemStack getHeldItem()
 	{
 		return defaultHeldItem;
-	}
-
-	@Override
-	public int getXpValue()
-	{
-		return 30;
 	}
 
 }

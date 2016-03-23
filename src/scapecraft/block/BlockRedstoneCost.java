@@ -1,12 +1,12 @@
 package scapecraft.block;
 
-import java.util.Random;
-
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+
+import java.util.Random;
 
 public class BlockRedstoneCost extends BlockScapecraft
 {
@@ -40,7 +40,9 @@ public class BlockRedstoneCost extends BlockScapecraft
 	public void updateTick(World world, int x, int y, int z, Random random)
 	{
 		if(!world.isRemote && world.getBlockMetadata(x, y, z) != 0)
+		{
 			world.setBlockMetadataWithNotify(x, y, z, 0, 3);
+		}
 
 	}
 

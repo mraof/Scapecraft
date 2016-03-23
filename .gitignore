@@ -1,0 +1,15 @@
+/unwanted
+/textures
+/overlay
+.*
+!/.gitignore
+/assets/forge/
+/bin
+/build
+/download
+/eclipse
+/gradle.properties
+/libs
+*.iml
+*.ipr
+*.iws

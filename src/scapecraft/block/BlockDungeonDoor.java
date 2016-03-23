@@ -8,7 +8,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
-
 import scapecraft.tileentity.TileEntityDungeonDoor;
 import scapecraft.world.gen.dungeon.Dungeon;
 
@@ -18,6 +17,7 @@ public class BlockDungeonDoor extends BlockScapecraft implements ITileEntityProv
 	{
 		super(Material.glass);
 		this.setBlockUnbreakable();
+		this.setUnlocalizedName("dungeonDoor");
 	}
 
 	@Override
@@ -31,8 +31,7 @@ public class BlockDungeonDoor extends BlockScapecraft implements ITileEntityProv
 	{
 		if(metadata == 0)
 		{
-			TileEntityDungeonDoor tileEntity = new TileEntityDungeonDoor();
-			return tileEntity;
+			return new TileEntityDungeonDoor();
 		}
 		else
 		{

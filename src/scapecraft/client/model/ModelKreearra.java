@@ -617,10 +617,10 @@ public class ModelKreearra extends ModelBase
 		setRotation(back_feather_3, 0.1745329F, 0.0872665F, 0F);
 	}
 
+	@Override
 	public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5)
 	{
 		super.render(entity, f, f1, f2, f3, f4, f5);
-		//setRotationAngles(f, f1, f2, f3, f4, f5);
 		beak_2.render(f5);
 		beak_3.render(f5);
 		beak_curv.render(f5);

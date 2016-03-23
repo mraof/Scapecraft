@@ -444,6 +444,7 @@ public class ModelIceGiant extends ModelBase
 		setRotation(RightCrest10, 0F, -0.1745329F, 0F);
 	}
 
+	@Override
 	public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5)
 	{
 		super.render(entity, f, f1, f2, f3, f4, f5);
@@ -520,7 +521,7 @@ public class ModelIceGiant extends ModelBase
 
 	public void setRotationAngles(float f, float f1, float f2, float f3, float f4, float f5)
 	{
-		super.setRotationAngles(f, f1, f2, f3, f4, f5, null);
+		setRotationAngles(f, f1, f2, f3, f4, f5, null);
 		LeftLegBottom.rotateAngleX = MathHelper.cos(f * 0.6662F + (float)Math.PI) * 1.0F * f1;
 		//RightLegTop.rotateAngleX = MathHelper.cos(f * 0.6662F) * 1.0F * f1;
 		//LeftLegTop.rotateAngleX = MathHelper.cos(f * 0.6662F + (float)Math.PI) * 1.0F * f1;

@@ -15,6 +15,13 @@ buildscript {
     }
 }
 
+repositories {
+    maven {
+        name = "dynmap"
+        url = "http://repo.mikeprimm.com/"
+    }
+}
+
 defaultTasks "runClient"
 
 apply plugin: 'forge'
@@ -24,20 +31,25 @@ group = "scapecraft"
 archivesBaseName = "Scapecraft"
 
 minecraft {
-    version = "1.7.10-10.13.3.1395-1710ls"
+    version = "1.7.10-10.13.4.1558-1.7.10"
     runDir = "eclipse"
     mappings = "stable_12"
 
     replace "@VERSION@", project.version
     replaceIn "Scapecraft.java"
 }
+
+dependencies {
+    compile 'us.dynmap:DynmapCoreAPI:2.3-SNAPSHOT'
+}
+
 sourceSets {
     main {
         java {
             srcDir 'src'
         }
         resources {
-            srcDir 'src'
+            srcDir 'resources'
         }
     }
 }
@@ -46,11 +58,11 @@ processResources
     // replace stuff in mcmod.info, nothing else
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'
-                
+
         // replace version and mcversion
         expand 'version':project.version, 'mcversion':project.minecraft.version
     }
-        
+
     // copy everything else, thats not the mcmod.info
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
@@ -58,7 +70,7 @@ processResources
 }
 build {
     doLast{
-        String filename = project.archivesBaseName + "-" + project.version + ".jar"
+        String filename = project.archivesBaseName + ".jar"
         copy{
             from 'build/libs/' + filename
             into 'build/release/'
@@ -68,6 +80,11 @@ build {
 }
 
 runClient {
+    if(project.hasProperty('systemProp.socksProxyHost'))
+    {
+        systemProperty "socksProxyHost", System.getProperty('socksProxyHost')
+        systemProperty "socksProxyPort", System.getProperty('socksProxyPort')
+    }
     if(project.hasProperty('username')) {
         args "--username", project.username
         if(project.hasProperty('password')) {
@@ -76,3 +93,13 @@ runClient {
     }
 }
 
+//Use lwjgl 2.9.3 instead of 2.9.1
+extractUserDev{
+    File devJson = new File(getOut().toString() + '/dev.json')
+    if(devJson.exists())
+    {
+        String contents = new File(getOut().toString() + '/dev.json').getText('UTF-8')
+        contents=contents.replaceAll('2.9.1', '2.9.3')
+        devJson.write(contents, 'UTF-8')
+    }
+}

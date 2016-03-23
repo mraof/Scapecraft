@@ -8,7 +8,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.IItemRenderer;
 import net.minecraftforge.client.IItemRenderer.ItemRenderType;
 import net.minecraftforge.client.MinecraftForgeClient;
-
 import scapecraft.client.renderer.item.RenderItemWeapon;
 
 public class WeaponModelCommand extends CommandBase
@@ -38,11 +37,17 @@ public class WeaponModelCommand extends CommandBase
 		if(itemRenderer instanceof RenderItemWeapon && args.length > 0)
 		{
 			if(args[0].toLowerCase().startsWith("o") && args.length == 4)
+			{
 				((RenderItemWeapon) itemRenderer).setOffset(Float.parseFloat(args[1]), Float.parseFloat(args[2]), Float.parseFloat(args[3]));
+			}
 			else if(args[0].toLowerCase().startsWith("r") && args.length == 4)
+			{
 				((RenderItemWeapon) itemRenderer).setRotation(Float.parseFloat(args[1]), Float.parseFloat(args[2]), Float.parseFloat(args[3]));
+			}
 			else if(args[0].toLowerCase().startsWith("s") && args.length == 2)
+			{
 				((RenderItemWeapon) itemRenderer).scale = Float.parseFloat(args[1]);
+			}
 
 		}
 		else if(args.length == 2 && args[0].toLowerCase().startsWith("m"))
@@ -51,9 +56,11 @@ public class WeaponModelCommand extends CommandBase
 			{
 				Object model = Class.forName("scapecraft.client.model." + args[1]).newInstance();
 				if(model instanceof ModelBase)
+				{
 					MinecraftForgeClient.registerItemRenderer(Minecraft.getMinecraft().thePlayer.getHeldItem().getItem(), new RenderItemWeapon((ModelBase) model, new ResourceLocation("scapecraft", "NOTSET"), 1F, 220F));
+				}
 			}
-			catch(Exception e)
+			catch(Exception ignored)
 			{
 			}
 		}
