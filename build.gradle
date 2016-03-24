@@ -26,7 +26,7 @@ defaultTasks "runClient"
 
 apply plugin: 'forge'
 
-version = System.getenv()['BUILD_NUMBER']
+version = System.getenv('BUILD_NUMBER') ?: "test"
 group = "scapecraft"
 archivesBaseName = "Scapecraft"
 
@@ -70,7 +70,7 @@ processResources
 }
 build {
     doLast{
-        String filename = project.archivesBaseName + ".jar"
+        String filename = project.archivesBaseName + "-" + version + ".jar"
         copy{
             from 'build/libs/' + filename
             into 'build/release/'
