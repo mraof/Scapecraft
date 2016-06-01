@@ -56,18 +56,14 @@ public class CacheListPacket implements IMessage
             HashMap<String, Long> cache = new HashMap<String, Long>();
             for (Map.Entry<String, Long> entry : Scapecraft.proxy.cache.entrySet())
             {
-                if(!message.cache.get(entry.getKey()).equals(entry.getValue()))
+                if(!entry.getValue().equals(message.cache.get(entry.getKey())) && Scapecraft.proxy.textureData.containsKey(entry.getKey()))
                 {
                     textures.put(entry.getKey(), Scapecraft.proxy.textureData.get(entry.getKey()));
                     cache.put(entry.getKey(), entry.getValue());
                 }
             }
             System.out.println(cache);
-            if(!cache.isEmpty())
-            {
-                return new TextureDataPacket(textures, cache);
-            }
-            return null;
+            return new TextureDataPacket(textures, cache);
         }
     }
 }

@@ -1,6 +1,7 @@
 package scapecraft.event;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagIntArray;
@@ -15,6 +16,7 @@ import net.minecraftforge.event.entity.player.PlayerDropsEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import scapecraft.compat.Compat;
+import scapecraft.entity.EntityDrop;
 
 import java.util.ArrayList;
 
@@ -50,20 +52,6 @@ public class WorldProtectionHandler
             if (region != null && !region.isEditable())
             {
                 event.newSpeed = -1;
-            }
-        }
-    }
-
-
-    @SubscribeEvent
-    public void onPlayerDrop(PlayerDropsEvent event)
-    {
-        Region region = getRegion(event.entityPlayer.dimension, (int) event.entityPlayer.posX, (int) event.entityPlayer.posY, (int) event.entityPlayer.posZ);
-        if(region != null && region.getKeepInventorySize() > 0)
-        {
-            for(int i = 0; i < region.getKeepInventorySize() && i < event.drops.size(); i++)
-            {
-                event.entityPlayer.inventory.addItemStackToInventory(event.drops.get(i).getEntityItem());
             }
         }
     }
@@ -162,6 +150,37 @@ public class WorldProtectionHandler
             if(Compat.dynmap)
             {
                 scapecraft.compat.dynmap.DynmapHandler.api.assertPlayerInvisibility(event.entityLiving.getCommandSenderName(), region.getPvp(), "Scapecraft");
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public void onPlayerDrops(PlayerDropsEvent event)
+    {
+        Region region = getRegion(event.entityPlayer.dimension, (int) event.entityPlayer.posX, (int) event.entityPlayer.posY, (int) event.entityPlayer.posZ);
+        if(!event.drops.isEmpty())
+        {
+            /*if(region.getKeepInventorySize() > 0)
+            {
+                for(int i = 0; i < region.getKeepInventorySize() && !event.drops.isEmpty(); i++)
+                {
+                    event.entityPlayer.inventory.addItemStackToInventory(event.drops.remove(0).getEntityItem().copy());
+                }
+            }*/
+            if(!region.getPvp())
+            {
+                EntityDrop entityDrop = new EntityDrop(event.entityPlayer.worldObj);
+                for (EntityItem entityItem : event.drops)
+                {
+                    entityDrop.addItem(entityItem);
+                }
+                entityDrop.owner = event.entityPlayer.getCommandSenderName();
+                entityDrop.setPosition(event.drops.get(0).posX, event.drops.get(0).posY, event.drops.get(0).posZ);
+                entityDrop.forceSpawn = true;
+                if(event.entityPlayer.worldObj.spawnEntityInWorld(entityDrop))
+                {
+                    event.setCanceled(true);
+                }
             }
         }
     }
@@ -267,6 +286,25 @@ public class WorldProtectionHandler
 
         public void addArea(int dimension, int xMin, int xMax, int yMin, int yMax, int zMin, int zMax, int tier)
         {
+            int tmp;
+            if(xMin > xMax)
+            {
+                tmp = xMax;
+                xMax = xMin;
+                xMin = tmp;
+            }
+            if(yMin > yMax)
+            {
+                tmp = yMax;
+                yMax = yMin;
+                yMin = tmp;
+            }
+            if(zMin > zMax)
+            {
+                tmp = zMax;
+                zMax = zMin;
+                zMin = tmp;
+            }
             areas.add(new int[]{dimension, xMin, xMax, yMin, yMax, zMin, zMax, tier});
         }
 
@@ -279,6 +317,7 @@ public class WorldProtectionHandler
             tagCompound.setBoolean("pvp", pvp);
             tagCompound.setBoolean("pve", pve);
             tagCompound.setBoolean("editable", editable);
+            tagCompound.setBoolean("noEntry", noEntry);
             tagCompound.setInteger("keepInventorySize", keepInventorySize);
             tagCompound.setString("name", name);
             NBTTagList areaList = new NBTTagList();
@@ -295,6 +334,7 @@ public class WorldProtectionHandler
             this.pvp = tagCompound.getBoolean("pvp");
             this.pve = tagCompound.getBoolean("pve");
             this.editable = tagCompound.getBoolean("editable");
+            this.noEntry = tagCompound.getBoolean("noEntry");
             this.keepInventorySize = tagCompound.getInteger("keepInventorySize");
             this.areas = new ArrayList<int[]>();
             this.name = tagCompound.getString("name");

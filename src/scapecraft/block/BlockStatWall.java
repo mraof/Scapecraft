@@ -5,8 +5,6 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -17,7 +15,6 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import scapecraft.client.renderer.texture.TextureStat;
 import scapecraft.util.Stat;
 import scapecraft.util.Stats;
 
@@ -153,10 +150,6 @@ public class BlockStatWall extends BlockScapecraft
 	@Override
 	public void registerIcons(IIconRegister reg)
 	{
-		if(reg instanceof TextureMap)
-		{
-			this.blockIcon = new TextureStat("scapecraft:" + stat.toString(), stat);
-			((TextureMap) reg).setTextureEntry("scapecraft:" + stat.toString(), (TextureAtlasSprite) this.blockIcon);
-		}
+		this.blockIcon = reg.registerIcon("scapecraft:stat/" + stat.toString());
 	}
 }

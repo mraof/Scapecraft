@@ -20,6 +20,18 @@ repositories {
         name = "dynmap"
         url = "http://repo.mikeprimm.com/"
     }
+    maven {
+        name = "forge"
+        url = "http://files.minecraftforge.net/maven"
+    }
+    maven {
+        name = "sk89q"
+        url = "http://maven.sk89q.com/repo/"
+    }
+    maven {
+        name = "sponge"
+        url = "http://repo.spongepowered.org/maven/"
+    }
 }
 
 defaultTasks "runClient"
@@ -39,8 +51,11 @@ minecraft {
     replaceIn "Scapecraft.java"
 }
 
-dependencies {
-    compile 'us.dynmap:DynmapCoreAPI:2.3-SNAPSHOT'
+compileJava {
+    dependencies {
+        compile 'us.dynmap:DynmapCoreAPI:2.3-SNAPSHOT'
+        compile group: "com.forgeessentials", name: "forgeessentials", version: "1.4.4-SNAPSHOT", classifier: "dev", changing: true
+    }
 }
 
 sourceSets {

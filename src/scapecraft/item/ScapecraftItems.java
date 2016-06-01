@@ -160,13 +160,13 @@ public class ScapecraftItems
 		applePieUncooked = new Item().setUnlocalizedName("applePieUncooked").setTextureName("scapecraft:ApplePie").setCreativeTab(Scapecraft.tabScapecraftMisc);
 		fishPieUncooked = new Item().setUnlocalizedName("fishPieUncooked").setTextureName("scapecraft:FishPie").setCreativeTab(Scapecraft.tabScapecraftMisc);
 		cutCabbage = new ItemFood(2, true).setAlwaysEdible().setUnlocalizedName("cutCabbage").setTextureName("scapecraft:CutCabbage").setCreativeTab(Scapecraft.tabScapecraftMisc);
-		cabbagePie = new ItemScapecraftFood(3);
+		cabbagePie = new ItemScapecraftFood(5);
 		cabbagePie.setAlwaysEdible().setUnlocalizedName("cabbagePie").setTextureName("scapecraft:CabbagePie").setCreativeTab(Scapecraft.tabScapecraftMisc);
-		fishPie = new ItemScapecraftFood(12);
+		fishPie = new ItemScapecraftFood(20);
 		fishPie.setAlwaysEdible().setUnlocalizedName("fishPie").setTextureName("scapecraft:FishPie").setCreativeTab(Scapecraft.tabScapecraftMisc);
-		meatPie = new ItemScapecraftFood(5);
+		meatPie = new ItemScapecraftFood(15);
 		meatPie.setAlwaysEdible().setUnlocalizedName("meatPie").setTextureName("scapecraft:MeatPie").setCreativeTab(Scapecraft.tabScapecraftMisc);
-		applePie = new ItemScapecraftFood(4);
+		applePie = new ItemScapecraftFood(10);
 		applePie.setAlwaysEdible().setUnlocalizedName("applePie").setTextureName("scapecraft:ApplePie").setCreativeTab(Scapecraft.tabScapecraftMisc);
 		beer = new ItemScapecraftFood(2);
 		beer.setAlwaysEdible().setUnlocalizedName("beer").setTextureName("scapecraft:Beer").setCreativeTab(Scapecraft.tabScapecraftMisc);
@@ -187,9 +187,9 @@ public class ScapecraftItems
 		createMetalSet("steel", 20, steelIngot, 30);
 		createMetalSet("white", 25, null, 0);
 		createMetalSet("black", 25, null, 0);
-		createMetalSet("mithril", 30, mithrilIngot, 50);
-		createMetalSet("adamant", 40, adamantIngot, 70);
-		createMetalSet("rune", 50, runeIngot, 85);
+		createMetalSet("mithril", 30, mithrilIngot, 45);
+		createMetalSet("adamant", 40, adamantIngot, 60);
+		createMetalSet("rune", 50, runeIngot, 75);
 		createMetalSet("dragon", 60, null, 0);
 		for(Item item : createMetalSet("dragonC", 60, null, 0))
 		{

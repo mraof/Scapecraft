@@ -13,6 +13,7 @@ import scapecraft.economy.market.Listing;
 import scapecraft.entity.EntityDrop;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * Created by mraof on 2016 March 02.
@@ -23,11 +24,12 @@ public class ContainerShop extends ContainerScapecraft
     public Listing[] listings = new Listing[SECTION_SIZE * 2];
     public int tabs = 0;
     public int tabNumber;
+    int tabOffset;
     private final int srcX;
     private final int srcY;
     private final int srcZ;
 
-    public ContainerShop(InventoryPlayer inventoryPlayer, ArrayList<Listing> listings, int tabNumber, int srcX, int srcY, int srcZ)
+    public ContainerShop(InventoryPlayer inventoryPlayer, Collection<Listing> listings, int tabNumber, int srcX, int srcY, int srcZ)
     {
         super(new InventoryScapecraft(SECTION_SIZE * 2));
         this.tabNumber = tabNumber;
@@ -41,7 +43,8 @@ public class ContainerShop extends ContainerScapecraft
         int sellingOffset = SECTION_SIZE - SECTION_SIZE * tabNumber;
         int buyingTabs = 0;
         int sellingTabs = 0;
-        System.out.println(listings);
+        tabOffset = 0;
+        //System.out.println(listings);
         InventoryScapecraft inventoryTabs = new InventoryScapecraft(9);
         for(Listing listing : listings)
         {
@@ -49,9 +52,21 @@ public class ContainerShop extends ContainerScapecraft
             {
                 if(sellingOffset % SECTION_SIZE == 0)
                 {
-                    if(inventoryTabs.getStackInSlot(sellingTabs) == null)
+                    if (sellingTabs - tabOffset >= 9)
                     {
-                        inventoryTabs.setInventorySlotContents(sellingTabs, listing.stack);
+                        if(tabNumber < sellingTabs - 4)
+                        {
+                            continue;
+                        }
+                        for (int i = 1; i < 9; i++)
+                        {
+                            inventoryTabs.setInventorySlotContents(i - 1, inventoryTabs.getStackInSlot(i));
+                        }
+                        tabOffset++;
+                    }
+                    if(sellingTabs >= tabOffset && inventoryTabs.getStackInSlot(sellingTabs - tabOffset) == null)
+                    {
+                        inventoryTabs.setInventorySlotContents(sellingTabs - tabOffset, listing.stack);
                     }
                     sellingTabs++;
                 }
@@ -66,9 +81,21 @@ public class ContainerShop extends ContainerScapecraft
             {
                 if(buyingOffset % SECTION_SIZE == 0)
                 {
-                    if(inventoryTabs.getStackInSlot(buyingTabs) == null)
+                    if (buyingTabs - tabOffset == 9)
                     {
-                        inventoryTabs.setInventorySlotContents(buyingTabs, listing.stack);
+                        if(tabNumber < buyingTabs - 4)
+                        {
+                            continue;
+                        }
+                        for (int i = 1; i < 9; i++)
+                        {
+                            inventoryTabs.setInventorySlotContents(i - 1, inventoryTabs.getStackInSlot(i));
+                        }
+                        tabOffset++;
+                    }
+                    if(buyingTabs >= tabOffset && inventoryTabs.getStackInSlot(buyingTabs - tabOffset) == null)
+                    {
+                        inventoryTabs.setInventorySlotContents(buyingTabs - tabOffset, listing.stack);
                     }
                     buyingTabs++;
                 }
@@ -80,12 +107,12 @@ public class ContainerShop extends ContainerScapecraft
                 buyingOffset++;
             }
         }
-        tabs = sellingTabs > buyingOffset ? sellingTabs : buyingTabs;
+        tabs = sellingTabs > buyingOffset ? sellingTabs - tabOffset : buyingTabs - tabOffset;
         if(tabs == 1)
         {
             inventoryTabs.setInventorySlotContents(0, null);
         }
-        System.out.println(tabs + " " + tabNumber);
+        //System.out.println(tabs + " " + tabNumber);
         for(int y = 0; y < 2; y++)
         {
             for(int x = 0; x < SECTION_SIZE / 2; x++)
@@ -104,8 +131,8 @@ public class ContainerShop extends ContainerScapecraft
         {
             addSlotToContainer(new SlotPreview(inventoryTabs, x, 6 + x * 26, -18));
         }
-        System.out.println(inventoryScapecraft);
-        System.out.println(inventorySlots);
+        //System.out.println(inventoryScapecraft);
+        //System.out.println(inventorySlots);
     }
 
     @Override
@@ -120,7 +147,7 @@ public class ContainerShop extends ContainerScapecraft
                 iCrafting.sendProgressBarUpdate(this, i + SECTION_SIZE * 2, listings[i].stock);
             }
         }
-        iCrafting.sendProgressBarUpdate(this, -1, tabNumber);
+        iCrafting.sendProgressBarUpdate(this, -1, tabNumber - tabOffset);
         iCrafting.sendProgressBarUpdate(this, -2, tabs);
     }
 
@@ -174,8 +201,12 @@ public class ContainerShop extends ContainerScapecraft
                     return null;
                 }
                 ItemStack stack = listing.stack;
-                System.out.println(stack + " " + slotId + " " + listing);
+                //System.out.println(stack + " " + slotId + " " + listing);
                 int oldStock = listing.stock;
+                if(clickedButton == 2 && player.capabilities.isCreativeMode)
+                {
+                    listing.stock--;
+                }
                 if (listing.selling)
                 {
                     if (stack != null && EconomyHandler.getBalance(player.getUniqueID()) >= listing.price)
@@ -216,10 +247,6 @@ public class ContainerShop extends ContainerScapecraft
                                 }
                                 break;
                             }
-                            else
-                            {
-                                System.out.println(stack + " " + player.inventory.getStackInSlot(i));
-                            }
                         }
                     }
                 }
@@ -230,9 +257,9 @@ public class ContainerShop extends ContainerScapecraft
                     detectAndSendChanges();
                 }
             }
-            else if((slotId -= SECTION_SIZE * 2) < tabs && slotId != tabNumber)
+            else if((slotId -= SECTION_SIZE * 2) < tabs && slotId + tabOffset != tabNumber)
             {
-                this.tabNumber = slotId;
+                this.tabNumber = slotId + tabOffset;
                 player.openGui(Scapecraft.instance, GuiHandler.GuiId.SHOP.ordinal(), player.worldObj, srcX, srcY, srcZ);
             }
         }

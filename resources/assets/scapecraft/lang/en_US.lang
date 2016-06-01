@@ -1,5 +1,6 @@
 armor.attackboost=Damage
 armor.healthboost=Health Boost:
+armor.defense=Defense: %.2f
 bow.speed=Speed:
 entity.Scapecraft.AbbyDemon.name=Abyssal Demon
 entity.Scapecraft.Ahrim.name=Ahrim
@@ -685,3 +686,4 @@ weapon.fullseteffect=Full Set Effect:
 weapon.minlevel=Level Required:
 weapon.special=Special:
 weapon.specialcost=Energy Required:
+entity.Scapecraft.RockCrab.name=Rock Crab

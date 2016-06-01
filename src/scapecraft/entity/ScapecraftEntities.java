@@ -167,9 +167,15 @@ public class ScapecraftEntities
 		EntityList.idToClassMap.remove(18);
 		EntityList.addMapping(EntityItemFrame.class, "ItemFrame", 18);
 
+		NBTTagCompound tag = new NBTTagCompound();
+		tag.setString("name", "RockCrab");
+		tag.setString("model", "RockCrab");
+		registerDynamicMob(tag);
+
 		setStats(EntityGoblin.class, 18, 3, 2.7f, 0.7f, 0, 0.5f, 24, 4);
-		setStats(EntityBandit.class, 25, 6, 1, 0.3f, 0, 0.5f, 13, 4);
+		setStats(EntityBandit.class, 25, 6, 1, 1, 0, 0.5f, 13, 4);
 		setStats(EntityHillGiant.class, 16, 4, 1, 0.1f, 0.5f, 0.4f, 21, 4);
+		setStats(EntityRockCrab.class, -1, -1, -1, -1, 2, 0.9f, -1, 6);
 		setDefaultLevel(EntityBandit.class, 49, 52);
 		setDefaultLevel(EntityHillGiant.class, 50, 50);
 	}
@@ -184,7 +190,7 @@ public class ScapecraftEntities
 			entities.add(name);
 			try
 			{
-				entityObjects.add((EntityScapecraft) entityClass.getConstructor(new Class[] { World.class }).newInstance(new Object[] { null }));
+				entityObjects.add((EntityScapecraft) entityClass.getConstructor(World.class).newInstance(new Object[] { null }));
 			} catch(Exception e) {e.printStackTrace(); }
 		}
 
@@ -195,7 +201,16 @@ public class ScapecraftEntities
 	{
 		if (!entityNames.containsKey(tag.getString("name").toLowerCase()))
 		{
-			registerEntity(createNewEntityClass("Entity" + tag.getString("name")));
+			Class<? extends Entity> mobClass;
+			try
+			{
+				//noinspection unchecked
+				mobClass = (Class<? extends Entity>) Class.forName("scapecraft.entity.Entity" + tag.getString("name"));
+			} catch (ClassNotFoundException e)
+			{
+				mobClass = createNewEntityClass("Entity" + tag.getString("name"));
+			}
+			registerEntity(mobClass);
 			dynamicMobs.appendTag(tag);
 		}
 		Scapecraft.proxy.registerMobRenderer(tag);
@@ -289,7 +304,7 @@ public class ScapecraftEntities
 		addDrop(EntityBarbarian.class, 6, new ItemStack(Blocks.iron_ore));
 		addDrop(EntityBarbarian.class, 2, "Scapecraft:beer");
 		addDrop(EntityBarbarian.class, 4, new ItemStack(Items.cooked_beef));
-		addDrop(EntityBarbarian.class, 20, "Scapecraft:ironChestplate");
+		addDrop(EntityBarbarian.class, 20, "Scapecraft:ironChainbody");
 
 		//addDrop(EntityBlackDemon.class, 15, "Scapecraft:adamantIngot");
 		//addDrop(EntityBlackDemon.class, 2000, "Scapecraft:chaoticMaul");
@@ -439,8 +454,8 @@ public class ScapecraftEntities
 		addDrop(EntityGuard.class, 20, "Scapecraft:bronzeHelmet");
 		addDrop(EntityGuard.class, 20, "Scapecraft:ironPlatebody");
 		addDrop(EntityGuard.class, 30, "Scapecraft:ironSword");
-		addDrop(EntityGuard.class, 50, "Scapecraft:ironChestplate");
-		addDrop(EntityGuard.class, 50, "Scapecraft:ironLeggings");
+		addDrop(EntityGuard.class, 50, "Scapecraft:ironChainbody");
+		addDrop(EntityGuard.class, 50, "Scapecraft:ironPlatelegs");
 		addDrop(EntityGuard.class, 50, "Scapecraft:ironHammer");
 		addDrop(EntityGuard.class, 30, new ItemStack(Items.arrow, 8));
 		addDrop(EntityGuard.class, 30, new ItemStack(Items.iron_ingot));
@@ -482,8 +497,8 @@ public class ScapecraftEntities
 		addDrop(EntityHillGiant.class, 60, "Scapecraft:mithrilPlatebody");
 		addDrop(EntityHillGiant.class, 35, "Scapecraft:ironSword");
 		addDrop(EntityHillGiant.class, 35, "Scapecraft:ironHelmet");
-		addDrop(EntityHillGiant.class, 35, "Scapecraft:ironChestplate");
-		addDrop(EntityHillGiant.class, 35, "Scapecraft:ironLeggings");
+		addDrop(EntityHillGiant.class, 35, "Scapecraft:ironChainbody");
+		addDrop(EntityHillGiant.class, 35, "Scapecraft:ironPlatelegs");
 		addDrop(EntityHillGiant.class, 35, "Scapecraft:ironBoots");
 
 		addDrop(EntityIceGiant.class, 1, new ItemStack(Items.snowball, 4));

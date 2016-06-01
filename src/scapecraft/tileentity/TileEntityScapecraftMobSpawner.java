@@ -1,11 +1,15 @@
 package scapecraft.tileentity;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ChatComponentText;
+import scapecraft.Scapecraft;
 import scapecraft.entity.Drop;
 import scapecraft.entity.EntityScapecraft;
 import scapecraft.entity.MobSpawner;
@@ -69,7 +73,11 @@ public class TileEntityScapecraftMobSpawner extends TileEntity implements MobSpa
 			NBTTagList dropList = tagCompound.getTagList("drops", tagCompound.getId());
 			for (int i = 0; i < dropList.tagCount(); i++)
 			{
-				drops.add(Drop.fromNBT(dropList.getCompoundTagAt(i)));
+				Drop drop = Drop.fromNBT(dropList.getCompoundTagAt(i));
+				if(drop.stack != null)
+				{
+					drops.add(drop);
+				}
 			}
 		}
 		if(tagCompound.hasKey("moneyDrops"))
@@ -83,6 +91,14 @@ public class TileEntityScapecraftMobSpawner extends TileEntity implements MobSpa
 	{
 		if(this.worldObj != null && !this.worldObj.isRemote && this.worldObj.getTotalWorldTime() % 20L == 0L)
 		{
+			for (Iterator<Integer> iterator = spawnedIds.iterator(); iterator.hasNext(); )
+			{
+				Integer id = iterator.next();
+				if(this.worldObj.getEntityByID(id) == null || this.worldObj.getEntityByID(id).isDead)
+				{
+					iterator.remove();
+				}
+			}
 			if(spawnedIds.size() < this.maxSpawn)
 			{
 				if(this.worldObj.getBlockMetadata(this.xCoord, this.yCoord, this.zCoord) == 1)
@@ -122,7 +138,14 @@ public class TileEntityScapecraftMobSpawner extends TileEntity implements MobSpa
 					EntityScapecraft entity = ScapecraftEntities.spawnScapecraftEntity(args.get(0), this.worldObj);
 					if(entity == null)
 					{
-						System.out.printf("Mob Spawner at %d, %d, %d spawned null entity \"%s\"\n", this.xCoord, this.yCoord, this.zCoord, entityName);
+						String message = String.format("Mob Spawner at %d, %d, %d spawned null entity \"%s\"\n", this.xCoord, this.yCoord, this.zCoord, entityName);
+						for(Object player : FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().playerEntityList)
+						{
+							if(player instanceof EntityPlayerMP && ((EntityPlayerMP) player).capabilities.isCreativeMode)
+							{
+								((EntityPlayerMP) player).addChatMessage(new ChatComponentText(message));
+							}
+						}
 						return;
 					}
 					ArrayList<KillTime> expired = new ArrayList<KillTime>();
@@ -138,7 +161,7 @@ public class TileEntityScapecraftMobSpawner extends TileEntity implements MobSpa
 							level += killTime.level;
 						}
 						level /= nonExpired.size();
-						System.out.println("Hero level " + level);
+						//System.out.println("Hero level " + level);
 						entity.minLevel = level;
 						entity.maxLevel = level;
 					}
@@ -150,6 +173,10 @@ public class TileEntityScapecraftMobSpawner extends TileEntity implements MobSpa
 					while( y < this.yCoord + radius && this.worldObj.getBlock(x, y, z).isOpaqueCube())
 					{
 						y++;
+					}
+					while(!this.worldObj.getBlock(x, y - 1, z).isOpaqueCube() && y > this.yCoord - radius)
+					{
+						y--;
 					}
 					entity.setLocationAndAngles(x, y, z, 0F, 0F);
 					entity.onSpawnerSpawn(args);
@@ -202,7 +229,7 @@ public class TileEntityScapecraftMobSpawner extends TileEntity implements MobSpa
 		int index = entityName.indexOf(' ');
 		if(index != -1)
 		{
-			name = entityName.substring(0, index);
+			name = entityName.substring(0, index).toLowerCase();
 		}
 		return (drops == null) ? ((entity == null) ? ScapecraftEntities.getDrops(ScapecraftEntities.entityNames.get(name)) : ScapecraftEntities.getDrops(entity.getClass())) : drops;
 	}

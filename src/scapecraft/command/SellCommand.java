@@ -8,7 +8,7 @@ import scapecraft.economy.EconomyHandler;
 import scapecraft.economy.market.Listing;
 import scapecraft.economy.market.PlayerLister;
 
-import java.util.ArrayList;
+import java.util.TreeSet;
 import java.util.UUID;
 
 /**
@@ -16,6 +16,7 @@ import java.util.UUID;
  */
 public class SellCommand extends CommandBase
 {
+
     @Override
     public String getCommandName()
     {
@@ -39,7 +40,7 @@ public class SellCommand extends CommandBase
             if(player.getHeldItem() != null && price >= 0)
             {
                 ItemStack stack = player.getHeldItem();
-                ArrayList<Listing> listings = EconomyHandler.scEconomy.getGlobalMarket();
+                TreeSet<Listing> listings = EconomyHandler.scEconomy.getGlobalMarket();
                 for(Listing listing : listings)
                 {
                     if(listing.lister instanceof PlayerLister && ((PlayerLister) listing.lister).uuid.equals(uuid) && listing.price == price && ItemStack.areItemStacksEqual(listing.stack, stack))

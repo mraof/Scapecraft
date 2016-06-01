@@ -110,7 +110,7 @@ public class Config
 				ArrayList<Drop> drops = new ArrayList<Drop>();
 				for(int j = 0; j < currentDrops.tagCount(); j++)
 				{
-					drops.add(Drop.fromNBT(currentDrops.getCompoundTagAt(i)));
+					drops.add(Drop.fromNBT(currentDrops.getCompoundTagAt(j)));
 				}
 				ScapecraftEntities.setDrops(mobClass, drops);
 			}
@@ -142,12 +142,9 @@ public class Config
 			NBTTagList currentDrops = new NBTTagList();
 			for(Drop drop : entry.getValue())
 			{
-				if(drop.custom)
-				{
-					currentDrops.appendTag(drop.toNBT());
-				}
+				currentDrops.appendTag(drop.toNBT());
 			}
-			if(currentDrops.tagCount() > 0 || !entry.getValue().equals(drops.get(entry)))
+			if(!entry.getValue().equals(drops.get(entry)))
 			{
 				tagCompound.setString("name", name);
 				tagCompound.setTag("drops", currentDrops);

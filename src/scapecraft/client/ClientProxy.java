@@ -63,6 +63,7 @@ public class ClientProxy extends CommonProxy
 	{
 		super.setCacheDir(cacheDir);
 		dynamicResourcePack.setCacheDir(cacheDir);
+		System.out.println(dynamicResourcePack.getResourceDomains());
 	}
 
 	@Override

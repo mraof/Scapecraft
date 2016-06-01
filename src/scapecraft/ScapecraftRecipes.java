@@ -39,12 +39,12 @@ public class ScapecraftRecipes
 			}
 		}
 
-		SmeltingRecipe.addRecipe(12, 40, ScapecraftItems.bronzeIngot, ScapecraftBlocks.tinOre, ScapecraftBlocks.copperOre);
-		SmeltingRecipe.addRecipe(30, 60, Items.iron_ingot, Blocks.iron_ore);
-		SmeltingRecipe.addRecipe(30, 60, ScapecraftItems.steelIngot, Blocks.iron_ore, new ItemStack(Items.coal, 1, 0));
-		SmeltingRecipe.addRecipe(30, 60, ScapecraftItems.mithrilIngot, ScapecraftBlocks.mithrilOre, new ItemStack(Items.coal, 2, 0));
-		SmeltingRecipe.addRecipe(30, 60, ScapecraftItems.adamantIngot, ScapecraftBlocks.adamantOre, new ItemStack(Items.coal, 4, 0));
-		SmeltingRecipe.addRecipe(30, 60, ScapecraftItems.runeIngot, ScapecraftBlocks.runeOre, new ItemStack(Items.coal, 8, 0));
+		SmeltingRecipe.addRecipe(12, 20, 1, ScapecraftItems.bronzeIngot, ScapecraftBlocks.tinOre, ScapecraftBlocks.copperOre);
+		SmeltingRecipe.addRecipe(32, 35, 15, Items.iron_ingot, Blocks.iron_ore);
+		SmeltingRecipe.addRecipe(50, 50, 30, ScapecraftItems.steelIngot, Blocks.iron_ore, new ItemStack(Items.coal, 1, 0));
+		SmeltingRecipe.addRecipe(68, 65, 45, ScapecraftItems.mithrilIngot, ScapecraftBlocks.mithrilOre, new ItemStack(Items.coal, 2, 0));
+		SmeltingRecipe.addRecipe(88, 80, 60, ScapecraftItems.adamantIngot, ScapecraftBlocks.adamantOre, new ItemStack(Items.coal, 4, 0));
+		SmeltingRecipe.addRecipe(106, 95, 75, ScapecraftItems.runeIngot, ScapecraftBlocks.runeOre, new ItemStack(Items.coal, 8, 0));
 
 		GameRegistry.addRecipe(new ItemStack(ScapecraftBlocks.blueCobbleCompressed, 1), "XXX", "XXX", "XXX", 'X', ScapecraftBlocks.blueCobble);
 		GameRegistry.addRecipe(new ItemStack(ScapecraftItems.boltRack, 3), " X ", " Y ", 'X', ScapecraftBlocks.magicPlank, 'Y', Items.arrow);

@@ -40,12 +40,14 @@ public class EntityDrop extends Entity implements IEntityAdditionalSpawnData
     @Override
     protected void readEntityFromNBT(NBTTagCompound tagCompound)
     {
+        this.items = new ArrayList<EntityItem>();
         owner = tagCompound.getString("owner");
         NBTTagList itemList = tagCompound.getTagList("items", 10);
         for(int i = 0; i < itemList.tagCount(); i++)
         {
             EntityItem entityItem = new EntityItem(this.worldObj);
             entityItem.readEntityFromNBT(itemList.getCompoundTagAt(i));
+            this.addItem(entityItem);
         }
 
     }
@@ -101,7 +103,7 @@ public class EntityDrop extends Entity implements IEntityAdditionalSpawnData
     @Override
     public void onCollideWithPlayer(EntityPlayer entityIn)
     {
-        if(!this.worldObj.isRemote)
+        if(!this.worldObj.isRemote && entityIn.getCommandSenderName().equals(this.owner))
         {
             boolean update = false;
             for (EntityItem entityItem : items)

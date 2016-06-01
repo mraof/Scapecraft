@@ -3,6 +3,8 @@ package scapecraft.entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
+import java.util.HashMap;
+
 public class Drop
 {
 	public final ItemStack stack;
@@ -21,7 +23,10 @@ public class Drop
 		NBTTagCompound nbt = new NBTTagCompound();
 		nbt.setInteger("price", chance);
 		nbt.setBoolean("custom", custom);
-		nbt.setTag("stack", stack.writeToNBT(new NBTTagCompound()));
+		if(stack != null)
+		{
+			nbt.setTag("stack", stack.writeToNBT(new NBTTagCompound()));
+		}
 		return nbt;
 	}
 
@@ -38,6 +43,12 @@ public class Drop
 			   ", price=" + chance +
 			   ", custom=" + custom +
 			   '}';
+	}
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		return obj instanceof Drop && ((Drop) obj).custom == custom && ((Drop) obj).chance == chance && ItemStack.areItemStacksEqual(((Drop) obj).stack, stack);
 	}
 }
 

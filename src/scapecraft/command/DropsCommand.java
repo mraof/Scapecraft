@@ -125,7 +125,8 @@ public class DropsCommand extends CommandBase
         for (int i = 0, dropsSize = drops.size(); i < dropsSize; i++)
         {
             Drop drop = drops.get(i);
-            containerMobDrops.inventoryDrops.setInventorySlotContents(i, drop.stack.copy());
+            System.out.println(drops.get(i));
+            containerMobDrops.inventoryDrops.setInventorySlotContents(i, drop.stack == null ? null : drop.stack.copy());
             containerMobDrops.inventoryDrops.chances.set(i, drop.chance);
         }
         System.out.println(containerMobDrops);

@@ -3,10 +3,12 @@ package scapecraft.economy.market;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
+import javax.annotation.Nonnull;
+
 /**
  * Created by mraof on 2016 March 14 at 5:02 PM.
  */
-public class Listing
+public class Listing implements Comparable<Listing>
 {
     public final int price;
     public final ItemStack stack;
@@ -82,5 +84,36 @@ public class Listing
                ", lister=" + lister +
                ", selling=" + selling +
                '}';
+    }
+
+    @Override
+    public int compareTo(@Nonnull Listing o)
+    {
+        int itemNameCompare = o.stack.getUnlocalizedName().compareTo(this.stack.getUnlocalizedName());
+        if(itemNameCompare != 0)
+        {
+            return itemNameCompare;
+        }
+        if(o.stack.getMetadata() != this.stack.getMetadata())
+        {
+            return this.stack.getMetadata() - o.stack.getMetadata();
+        }
+        if(o.stack.stackSize != this.stack.stackSize)
+        {
+            return o.stack.stackSize - this.stack.stackSize;
+        }
+        if(o.price != this.price)
+        {
+            return this.price - o.price;
+        }
+        if(o.stock != this.stock)
+        {
+            return o.stock - this.stock;
+        }
+        if(o.lister instanceof PlayerLister && this.lister instanceof PlayerLister && o.lister != this.lister)
+        {
+            return ((PlayerLister) o.lister).uuid.compareTo(((PlayerLister) this.lister).uuid);
+        }
+        return 0;
     }
 }

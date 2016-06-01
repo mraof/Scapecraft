@@ -17,6 +17,8 @@ import scapecraft.tileentity.TileEntitySmeltingFurnace;
 import scapecraft.tileentity.TileEntitySmithingAnvil;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -53,7 +55,7 @@ public class GuiHandler implements IGuiHandler
 				return new ContainerMobDrops(player.inventory);
 			case SHOP:
 				int tabNumber = 0;
-				ArrayList<Listing> listings;
+				Collection<Listing> listings;
 				if(player.openContainer instanceof ContainerShop)
 				{
 					tabNumber = ((ContainerShop) player.openContainer).tabNumber;

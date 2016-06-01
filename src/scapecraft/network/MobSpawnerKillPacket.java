@@ -6,6 +6,7 @@ import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
@@ -62,9 +63,17 @@ public class MobSpawnerKillPacket implements IMessage
 				if (te instanceof TileEntityScapecraftMobSpawner)
 				{
 					Set<Integer> spawnedIds = new LinkedHashSet<Integer>(((TileEntityScapecraftMobSpawner) te).spawnedIds);
-					for (int entityId : spawnedIds)
+					for (Integer entityId : spawnedIds)
 					{
-						te.getWorld().getEntityByID(entityId).setDead();
+						Entity entity = te.getWorld().getEntityByID(entityId);
+						if(entity != null)
+						{
+							entity.setDead();
+						}
+						else
+						{
+							((TileEntityScapecraftMobSpawner) te).spawnedIds.remove(entityId);
+						}
 					}
 				}
 			}
