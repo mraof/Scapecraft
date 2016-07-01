@@ -16,19 +16,21 @@ public class SmeltingRecipe
     private static ArrayList<SmeltingRecipe> recipes = new ArrayList<SmeltingRecipe>();
     private int xp;
     private int time;
+    private int level;
 
     private ItemStack result;
     private ArrayList<ItemStack> ingredients = new ArrayList<ItemStack>();
 
-    public static void addRecipe(int xp, int time, Object result, Object... ingredients)
+    public static void addRecipe(int xp, int time, int level, Object result, Object... ingredients)
     {
-        recipes.add(new SmeltingRecipe(xp, time, result, ingredients));
+        recipes.add(new SmeltingRecipe(xp, time, level, result,  ingredients));
     }
 
-    public SmeltingRecipe(int xp, int time, Object result, Object... ingredients)
+    public SmeltingRecipe(int xp, int time, int level, Object result, Object... ingredients)
     {
         this.xp = xp;
         this.time = time;
+        this.level = level;
         if(result instanceof Block)
         {
             result = new ItemStack((Block) result);
@@ -116,4 +118,8 @@ public class SmeltingRecipe
         return null;
     }
 
+    public int getLevel()
+    {
+        return level;
+    }
 }

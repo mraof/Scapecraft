@@ -1,5 +1,8 @@
 package scapecraft.util;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -14,8 +17,9 @@ import java.util.*;
 public class Stats
 {
 	public static final HashMap<Stat, Stats> clientStats = new HashMap<Stat, Stats>();
-	private static final HashMap<UUID, HashMap<Stat, Stats>> serverStats = new HashMap<UUID, HashMap<Stat, Stats>>();
+	public static final HashMap<UUID, HashMap<Stat, Stats>> serverStats = new HashMap<UUID, HashMap<Stat, Stats>>();
 	public static final HashMap<UUID, HashMap<Stat, HashMap<Stat, Integer>>> combatSplit = new HashMap<UUID, HashMap<Stat, HashMap<Stat, Integer>>>();
+	public static HashBiMap<String, UUID> uuidNames = HashBiMap.create();
 	public static double multiplier = 1;
 	public final long xp;
 	public final int level;
@@ -67,6 +71,13 @@ public class Stats
 		{
 			MinecraftForge.EVENT_BUS.post(new LevelUpEvent(player, stat, getLevel(player, stat)));
 		}
+		uuidNames.put(player.getCommandSenderName(), player.getUniqueID());
+		//System.out.println(player.getDisplayName() + " gained " + amount + " " + stat + " xp,and is now level " + getLevel(player, stat) + " (" + getXp(player, stat) + "xp)");
+	}
+
+	public static void addXp(UUID uuid, Stat stat, long amount)
+	{
+		setXp(uuid, stat, getXp(uuid, stat) + amount);
 		//System.out.println(player.getDisplayName() + " gained " + amount + " " + stat + " xp,and is now level " + getLevel(player, stat) + " (" + getXp(player, stat) + "xp)");
 	}
 
@@ -92,8 +103,14 @@ public class Stats
 		}
 		else
 		{
+			uuidNames.put(player.getCommandSenderName(), player.getUniqueID());
 			return serverStats.get(player.getUniqueID()).get(stat).level;
 		}
+	}
+
+	public static int getLevel(UUID uuid, Stat stat)
+	{
+		return serverStats.get(uuid).get(stat).level;
 	}
 
 	public static long getXp(EntityPlayer player, Stat stat)
@@ -104,8 +121,14 @@ public class Stats
 		}
 		else
 		{
+			uuidNames.put(player.getCommandSenderName(), player.getUniqueID());
 			return serverStats.get(player.getUniqueID()).get(stat).xp;
 		}
+	}
+
+	public static long getXp(UUID uuid, Stat stat)
+	{
+		return serverStats.get(uuid).get(stat).xp;
 	}
 
 	public static long setXp(EntityPlayer player, Stat stat, long amount)
@@ -117,8 +140,15 @@ public class Stats
 		else
 		{
 			serverStats.get(player.getUniqueID()).put(stat, new Stats(amount));
+			uuidNames.put(player.getCommandSenderName(), player.getUniqueID());
 			Scapecraft.network.sendTo(new StatsPacket(player), (EntityPlayerMP) player);
 		}
+		return amount;
+	}
+
+	public static long setXp(UUID uuid, Stat stat, long amount)
+	{
+		serverStats.get(uuid).put(stat, new Stats(amount));
 		return amount;
 	}
 
@@ -157,11 +187,16 @@ public class Stats
 
 	public static void writeToNBT(NBTTagCompound nbt)
 	{
+		BiMap<UUID, String> nameUUIDs = uuidNames.inverse();
 		NBTTagList players = new NBTTagList();
 		for(UUID uuid : serverStats.keySet())
 		{
 			NBTTagCompound playerCompound = new NBTTagCompound();
 			playerCompound.setString("uuid", uuid.toString());
+			if(nameUUIDs.containsKey(uuid))
+			{
+				playerCompound.setString("name", nameUUIDs.get(uuid));
+			}
 			NBTTagCompound statCompound = new NBTTagCompound();
 			for (Stat stat : Stat.values())
 			{
@@ -197,6 +232,10 @@ public class Stats
 			NBTTagCompound playerCompound = players.getCompoundTagAt(i);
 			NBTTagCompound statCompound = playerCompound.getCompoundTag("stats");
 			UUID uuid = UUID.fromString(playerCompound.getString("uuid"));
+			if(playerCompound.hasKey("name"))
+			{
+				uuidNames.put(playerCompound.getString("name"), uuid);
+			}
 			HashMap<Stat, Stats> stats = new HashMap<Stat, Stats>();
 			for (Stat stat : Stat.values())
 			{
@@ -270,6 +309,11 @@ public class Stats
 	public static int getCombatSplit(EntityPlayer player, Stat type, Stat stat)
 	{
 		return combatSplit.get(player.getUniqueID()).get(type).get(stat);
+	}
+
+	public static UUID getUUID(String name)
+	{
+		return uuidNames.get(name);
 	}
 
 	@Override

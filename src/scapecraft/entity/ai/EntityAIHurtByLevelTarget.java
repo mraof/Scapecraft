@@ -25,12 +25,12 @@ public class EntityAIHurtByLevelTarget extends EntityAITarget
         @Override
         public int compare(Object o1, Object o2)
         {
-            return (((EntityScapecraft)o1).isHero() ? -1 : 0 ) + (((EntityScapecraft)o2).isHero() ? 1 : 0 );
+            return (((EntityScapecraft)o1).isHero() ? -2 : 0 ) + (((EntityScapecraft)o2).isHero() ? 2 : 0 ) + (((EntityScapecraft) o1).level > ((EntityScapecraft) o2).level ? -1 : 1);
         }
     };
     int lastRevengeTime = 0;
     public int bravery = 5;
-    Class<? extends EntityScapecraft>[] allies;
+    Class[] allies;
     private final IEntitySelector allySelector = new IEntitySelector() {
 
         @Override
@@ -47,7 +47,7 @@ public class EntityAIHurtByLevelTarget extends EntityAITarget
         }
     };
 
-    public EntityAIHurtByLevelTarget(EntityScapecraft entity, Class<? extends EntityScapecraft>... allies)
+    public EntityAIHurtByLevelTarget(EntityScapecraft entity, Class... allies)
     {
         super(entity, false);
         this.allies = allies;
@@ -60,6 +60,7 @@ public class EntityAIHurtByLevelTarget extends EntityAITarget
                 this.isSuitableTarget(this.taskOwner.getAITarget(), false);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void startExecuting()
     {
@@ -84,8 +85,15 @@ public class EntityAIHurtByLevelTarget extends EntityAITarget
             {
                 double distance = this.getTargetDistance();
                 list = this.taskOwner.worldObj.selectEntitiesWithinAABB(EntityScapecraft.class, AxisAlignedBB.getBoundingBox(this.taskOwner.posX, this.taskOwner.posY, this.taskOwner.posZ, this.taskOwner.posX + 1.0D, this.taskOwner.posY + 1.0D, this.taskOwner.posZ + 1.0D).expand(distance, 10.0D, distance), allySelector);
-                //noinspection unchecked
-                list.sort(heroSorter);
+                for(int i = 1; i < list.size(); i++)
+                {
+                    if(heroSorter.compare(list.get(0), list.get(i)) > 0)
+                    {
+                        Object obj = list.get(0);
+                        list.set(0, list.get(i));
+                        list.set(i, obj);
+                    }
+                }
                 for(allyNum = 0; allyNum < list.size() && levelDifference > bravery; allyNum++)
                 {
                     EntityScapecraft entity = ((EntityScapecraft) list.get(allyNum));

@@ -131,6 +131,7 @@ public class ScapecraftEventHandler
 			Item armor;
 			if((player.getCurrentArmor(i) != null && (armor = player.getCurrentArmor(i).getItem()) instanceof ItemArmor))
 			{
+				float lastProtection = protection;
 				if(armor instanceof ItemArmorScapecraft)
 				{
 					protection += ((ItemArmorScapecraft)armor).getDamageReduction();
@@ -139,7 +140,14 @@ public class ScapecraftEventHandler
 				{
 					protection += ((ItemArmor) armor).damageReduceAmount / 2;
 				}
-				player.getCurrentArmor(i).damageItem(1, player);
+				if(lastProtection != protection)
+				{
+					player.getCurrentArmor(i).damageItem(1, player);
+					if (player.getCurrentArmor(i).stackSize == 0)
+					{
+						player.setCurrentItemOrArmor(1 + i, null);
+					}
+				}
 			}
 		}
 		float defenseModifier = Stats.getLevel(player, Stat.DEFENSE) - protection;
@@ -245,7 +253,7 @@ public class ScapecraftEventHandler
 		}
 
 		dataFile = event.world.getSaveHandler().getMapFileFromName("ScapecraftDrops");
-		if(dataFile != null && dataFile.exists())
+		if(dataFile != null)
 		{
 			NBTTagCompound nbt = new NBTTagCompound();
 			Config.saveDrops(nbt);
@@ -344,7 +352,7 @@ public class ScapecraftEventHandler
 		if(event.entityPlayer.getHeldItem() != null)
 		{
 			Item item = event.entityPlayer.getHeldItem().getItem();
-			toolStat = (item instanceof ItemScapecraftTool ? ((ItemScapecraftTool) item).skill : item instanceof ItemAxe ? Stat.WOODCUTTING : Stat.MINING);
+			toolStat = ((item instanceof ItemScapecraftTool) ? ((ItemScapecraftTool) item).skill : ((item instanceof ItemAxe) ? Stat.WOODCUTTING : Stat.MINING));
 		}
 		if(Scapecraft.requireLevels && 
 				(event.entityPlayer.getHeldItem() != null && 
@@ -380,9 +388,11 @@ public class ScapecraftEventHandler
 		}
 		else
 		{
+			IChatComponent levelUpMessage = new ChatComponentText("You have leveled up to " + event.level + " in " + event.stat.toString().toLowerCase());
+			event.player.addChatMessage(levelUpMessage);
 			if (event.level == 100)
 			{
-				IChatComponent text = new ChatComponentText(event.player.getFormattedCommandSenderName() + " has achieved level 100 in " + event.stat.toString().toLowerCase());
+				IChatComponent text = new ChatComponentText(event.player.getCommandSenderName() + " has achieved level 100 in " + event.stat.toString().toLowerCase());
 				MinecraftServer.getServer().getConfigurationManager().sendChatMsg(text);
 			}
 			if (event.stat == Stat.CONSTITUTION)

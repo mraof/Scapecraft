@@ -97,7 +97,7 @@ public class ItemWeapon extends ItemSword implements QualityItem
 
 	public void onEntityHurt(LivingHurtEvent event)
 	{
-		event.entityLiving.hurtResistantTime *= this.attackTime;
+		event.entityLiving.hurtResistantTime = (int) (event.entityLiving.hurtResistantTime / 2 + event.entityLiving.hurtResistantTime / 2* this.attackTime);
 	}
 
 	@Override

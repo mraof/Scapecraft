@@ -66,7 +66,6 @@ public class ContainerSmelting extends ContainerScapecraft
             this.progress = result.progress;
             for (Object crafter : this.crafters)
             {
-                System.out.println(this.progress + " ");
                 ((ICrafting) crafter).sendProgressBarUpdate(this, 0, this.progress);
             }
         }

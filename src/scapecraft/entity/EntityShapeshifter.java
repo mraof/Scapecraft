@@ -267,13 +267,10 @@ public class EntityShapeshifter extends EntityScapecraft implements IEntityAddit
 	@Override
 	public void setCustomNameTag(String name)
 	{
+		super.setCustomNameTag(name);
 		if(this.copiedMob instanceof EntityLiving)
 		{
 			((EntityLiving) this.copiedMob).setCustomNameTag(name);
-		}
-		else
-		{
-			super.setCustomNameTag(name);
 		}
 	}
 
@@ -351,6 +348,15 @@ public class EntityShapeshifter extends EntityScapecraft implements IEntityAddit
 			this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(copiedMob.getEntityAttribute(SharedMonsterAttributes.maxHealth).getAttributeValue());
 			this.setHealth(copiedMob.getMaxHealth());
 			this.defense = entityScapecraft.getDefense();
+		}
+	}
+
+	@Override
+	public void setTexture(int textureNum)
+	{
+		if(copiedMob instanceof EntityScapecraft)
+		{
+			((EntityScapecraft) copiedMob).setTexture(textureNum);
 		}
 	}
 }

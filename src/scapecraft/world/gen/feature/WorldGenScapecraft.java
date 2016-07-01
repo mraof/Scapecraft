@@ -16,7 +16,7 @@ public abstract class WorldGenScapecraft extends WorldGenerator
 	public void setBlock(World world, int x, int y, int z, Block block, int metadata)
 	{
 		world.setBlock(x, y, z, block, metadata, 3);
-		System.out.println(genTracker);
+		//System.out.println(genTracker);
 		if(genTracker != null)
 		{
 			genTracker.addSpawnedBlock(block, x, y, z);
@@ -28,7 +28,7 @@ public abstract class WorldGenScapecraft extends WorldGenerator
 		if(world.getBlock(x, y, z) != dontReplace)
 		{
 			world.setBlock(x, y, z, block, metadata, 3);
-			System.out.println(genTracker);
+			//System.out.println(genTracker);
 			if (genTracker != null)
 			{
 				genTracker.addSpawnedBlock(block, x, y, z);

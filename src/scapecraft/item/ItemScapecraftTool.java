@@ -30,7 +30,7 @@ public class ItemScapecraftTool extends ItemTool implements QualityItem
 
 	public ItemScapecraftTool(float damageVsEntity, int level, Set<Block> effectiveBlocks)
 	{
-		super(0, ToolMaterial.GOLD, effectiveBlocks); //None of these arguments matter, but extending ItemTool is needed for enchantments
+		super(0, ToolMaterial.EMERALD, effectiveBlocks); //None of these arguments matter, but extending ItemTool is needed for enchantments
 		this.damageVsEntity = damageVsEntity;
 		this.level = level;
 		this.setMaxDurability((level * level / 2 + 50) * 2);

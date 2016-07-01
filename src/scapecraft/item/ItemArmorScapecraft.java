@@ -39,7 +39,7 @@ public class ItemArmorScapecraft extends ItemArmor implements QualityItem
 		this.armorName = armorName;
 		this.setUnlocalizedName(armorName);
 		this.setCreativeTab(Scapecraft.tabScapecraftArmor);
-		this.setMaxDurability((level / 5 + 1) * 125);
+		this.setMaxDurability(damageReduction > 0 ? (level / 5 + 1) * 125 : 0);
 		this.textureName = "scapecraft:textures/armor/" + armorName + ".png";
 	}
 
@@ -165,7 +165,11 @@ public class ItemArmorScapecraft extends ItemArmor implements QualityItem
 	{
 		super.addInformation(itemStack, player, lines, advancedTooltips);
 		lines.add(StatCollector.translateToLocal("weapon.minlevel") + " " + this.getMinLevel());
-		lines.add(StatCollector.translateToLocal("armor.healthboost") + " " + this.getHealthBoost());
+		if(this.getHealthBoost() > 0)
+		{
+			lines.add(StatCollector.translateToLocal("armor.healthboost") + " " + this.getHealthBoost());
+		}
+		lines.add(StatCollector.translateToLocalFormatted("armor.defense", this.getDamageReduction()));
 
 		if(itemStack.getTagCompound() != null)
 		{

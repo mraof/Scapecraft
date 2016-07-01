@@ -175,7 +175,7 @@ public class Scapecraft
 			cauldron = false;
 		}
 
-		File dataFile = event.getServer().worldServers[0].getSaveHandler().getMapFileFromName("ScapecraftData");
+		File dataFile = event.getServer().getEntityWorld().getSaveHandler().getMapFileFromName("ScapecraftData");
 		EconomyHandler.scEconomy = new ScapecraftEconomy();
 		if(dataFile != null && dataFile.exists())
 		{
@@ -205,7 +205,7 @@ public class Scapecraft
 		}
 		Config.loadDrops(nbt);
 
-		event.registerServerCommand(new TestingCommand());
+		event.registerServerCommand(new SpawnerCommand());
 		event.registerServerCommand(new StatCommand());
 		event.registerServerCommand(new RegionCommand());
 		event.registerServerCommand(new DropsCommand());
@@ -258,6 +258,7 @@ public class Scapecraft
 	{
 		System.out.println("Initiallizing economy");
 		EconomyHandler.initEconomy();
+		Compat.onServerStarted();
 		/*ArrayList<ItemStack> stacks = new ArrayList<ItemStack>();
 		for (Item item : GameData.getItemRegistry().typeSafeIterable())
 		{

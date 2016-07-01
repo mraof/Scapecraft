@@ -17,7 +17,7 @@ import java.util.*;
 public class ScapecraftEconomy implements Economy
 {
 	HashMap<UUID, Double> balances = new HashMap<UUID, Double>();
-	private ArrayList<Listing> listings = new ArrayList<Listing>();
+	private TreeSet<Listing> listings = new TreeSet<Listing>();
 
 	@Override
 	public double getBalance(UUID uuid)
@@ -126,7 +126,7 @@ public class ScapecraftEconomy implements Economy
 			}
 		}
 		System.out.println(balances);
-		listings = new ArrayList<Listing>();
+		listings = new TreeSet<Listing>();
 		NBTTagList listingList = tagCompound.getTagList("listings", 10);
 		for(int i = 0; i < listingList.tagCount(); i++)
 		{
@@ -136,7 +136,7 @@ public class ScapecraftEconomy implements Economy
 		}
 	}
 
-	public ArrayList<Listing> getGlobalMarket()
+	public TreeSet<Listing> getGlobalMarket()
 	{
 		for (Iterator<? extends Listing> iterator = listings.iterator(); iterator.hasNext(); )
 		{

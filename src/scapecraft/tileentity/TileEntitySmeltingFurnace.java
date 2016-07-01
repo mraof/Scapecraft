@@ -77,6 +77,10 @@ public class TileEntitySmeltingFurnace extends TileEntityInstanced
     {
         if(getResult(uuid).recipe != (getResult(uuid).recipe = SmeltingRecipe.getRecipe(inventories.get(uuid))))
         {
+            if(getResult(uuid).recipe != null && getResult(uuid).recipe.getLevel() > Stats.getLevel(worldObj.getPlayerEntityByUUID(uuid), Stat.SMITHING))
+            {
+                getResult(uuid).recipe = null;
+            }
             getResult(uuid).progress = 0;
         }
         this.markDirty();

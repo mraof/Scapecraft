@@ -18,6 +18,7 @@ import scapecraft.Scapecraft;
 import scapecraft.entity.EntityScapecraft;
 import scapecraft.entity.ScapecraftEntities;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ItemScapecraftSpawnEgg extends Item
@@ -48,6 +49,19 @@ public class ItemScapecraftSpawnEgg extends Item
 
 			entity.setLocationAndAngles(x + 0.5D, y + yOffset, z + 0.5D, 0F, 0F);
 			entity.onSpawnWithEgg(null);
+			if(itemStack.hasTagCompound() && itemStack.getTagCompound().hasKey("entityName"))
+			{
+				String name = itemStack.getTagCompound().getString("entityName");
+				int index;
+				ArrayList<String> args = new ArrayList<String>();
+				while((index = name.indexOf(' ')) != -1)
+				{
+					args.add(name.substring(0, index));
+					name = name.substring(index + 1);
+				}
+				args.add(name);
+				entity.onSpawnerSpawn(args);
+			}
 			world.spawnEntityInWorld(entity);
 			entity.playLivingSound();
 

@@ -2,7 +2,7 @@ package scapecraft.economy;
 
 import scapecraft.economy.market.Listing;
 
-import java.util.ArrayList;
+import java.util.TreeSet;
 import java.util.UUID;
 
 public class EconomyHandler
@@ -53,7 +53,7 @@ public class EconomyHandler
 		return economy.depositBank(bankname, amount);
 	}
 
-	public static ArrayList<Listing> getGlobalMarket()
+	public static TreeSet<Listing> getGlobalMarket()
 	{
 		return scEconomy.getGlobalMarket();
 	}

@@ -17,31 +17,29 @@ import net.minecraft.world.World;
 
 public class EntityMossGiant extends EntityScapecraft
 {
-	private float moveSpeed;
 
-	
 
 	public EntityMossGiant(World par1World)
 	{
 		super(par1World);
 
-		this.moveSpeed = 0.5F;
+		float moveSpeed = 0.5F;
 
 		this.setSize(this.width * 1.0F, this.height * 2.0F);
 
 		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityTormentedDemon.class, 0, true));
-		this.tasks.addTask(2, new EntityAIAttackOnCollide(this, EntityTormentedDemon.class, this.moveSpeed, false));
-		this.tasks.addTask(2, new EntityAIAttackOnCollide(this, EntityWolf.class, this.moveSpeed, false));
-		this.tasks.addTask(2, new EntityAIAttackOnCollide(this, EntityOcelot.class, this.moveSpeed, false));
-		this.tasks.addTask(2, new EntityAIAttackOnCollide(this, EntityHellhound.class, this.moveSpeed, false));
+		this.tasks.addTask(2, new EntityAIAttackOnCollide(this, EntityTormentedDemon.class, moveSpeed, false));
+		this.tasks.addTask(2, new EntityAIAttackOnCollide(this, EntityWolf.class, moveSpeed, false));
+		this.tasks.addTask(2, new EntityAIAttackOnCollide(this, EntityOcelot.class, moveSpeed, false));
+		this.tasks.addTask(2, new EntityAIAttackOnCollide(this, EntityHellhound.class, moveSpeed, false));
 
 		this.tasks.addTask(1, new EntityAISwimming(this));
-		this.tasks.addTask(5, new EntityAIWander(this, this.moveSpeed));
+		this.tasks.addTask(5, new EntityAIWander(this, moveSpeed));
 		this.tasks.addTask(6, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
 		this.tasks.addTask(6, new EntityAILookIdle(this));
 		this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
 		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, 0, true));
-		this.tasks.addTask(2, new EntityAIAttackOnCollide(this, EntityPlayer.class, this.moveSpeed, false));
+		this.tasks.addTask(2, new EntityAIAttackOnCollide(this, EntityPlayer.class, moveSpeed, false));
 
 	}
 
