@@ -18,19 +18,19 @@ public class KeyDoorRoomFeature extends RoomFeature
 		System.out.println("Direction is " + direction);
 		if(direction == 1)
 		{
-			DungeonRoom.setBlocks(world, x + room.roomSize, 1, z - 1, x + room.roomSize, 10, z + 1, Blocks.wool, color);
+			DungeonRoom.setBlocks(world, x + room.roomSize, 1, z - 1, x + room.roomSize, 10, z + 1, Blocks.WOOL, color);
 		}
 		if(direction == 2)
 		{
-			DungeonRoom.setBlocks(world, x - 1, 1, z + room.roomSize, x + 1, 10, z + room.roomSize, Blocks.wool, color);
+			DungeonRoom.setBlocks(world, x - 1, 1, z + room.roomSize, x + 1, 10, z + room.roomSize, Blocks.WOOL, color);
 		}
 		if(direction == 4)
 		{
-			DungeonRoom.setBlocks(world, x - room.roomSize, 1, z - 1, x - room.roomSize, 10, z + 1, Blocks.wool, color);
+			DungeonRoom.setBlocks(world, x - room.roomSize, 1, z - 1, x - room.roomSize, 10, z + 1, Blocks.WOOL, color);
 		}
 		if(direction == 8)
 		{
-			DungeonRoom.setBlocks(world, x - 1, 1, z - room.roomSize, x + 1, 10, z - room.roomSize, Blocks.wool, color);
+			DungeonRoom.setBlocks(world, x - 1, 1, z - room.roomSize, x + 1, 10, z - room.roomSize, Blocks.WOOL, color);
 		}
 	}
 }

@@ -1,10 +1,11 @@
 package scapecraft.event;
 
-import cpw.mods.fml.common.eventhandler.Cancelable;
-import cpw.mods.fml.common.eventhandler.Event;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
+import net.minecraftforge.fml.common.eventhandler.Event;
 import scapecraft.entity.EntityScapecraftItemFrame;
 
 /**
@@ -12,55 +13,81 @@ import scapecraft.entity.EntityScapecraftItemFrame;
  */
 public class ItemFrameEvent extends Event
 {
-    public final int x;
-    public final int y;
-    public final int z;
-    public final World world;
+    private final BlockPos pos;
+    private final World world;
 
-    public ItemFrameEvent(int x, int y, int z, World world)
+    public ItemFrameEvent(BlockPos pos, World world)
     {
-        this.x = x;
-        this.y = y;
-        this.z = z;
+        this.pos = pos;
         this.world = world;
+    }
+
+    public BlockPos getPos() {
+        return pos;
+    }
+
+    public World getWorld() {
+        return world;
     }
 
     @Cancelable
     public static class Place extends ItemFrameEvent
     {
-        public final EntityPlayer entityPlayer;
-        public Place(int x, int y, int z, World world, EntityPlayer entityPlayer)
+        private final EntityPlayer entityPlayer;
+        public Place(BlockPos pos, World world, EntityPlayer entityPlayer)
         {
-            super(x, y, z, world);
+            super(pos, world);
             this.entityPlayer = entityPlayer;
+        }
+
+
+
+        public EntityPlayer getEntityPlayer() {
+            return entityPlayer;
         }
     }
 
     @Cancelable
     public static class Attack extends ItemFrameEvent
     {
-        public final EntityScapecraftItemFrame entityScapecraftItemFrame;
-        public final DamageSource source;
+        private final EntityScapecraftItemFrame entityScapecraftItemFrame;
+        private final DamageSource source;
 
-        public Attack(int x, int y, int z, World world, EntityScapecraftItemFrame entityScapecraftItemFrame, DamageSource source)
+        public Attack(BlockPos pos, World world, EntityScapecraftItemFrame entityScapecraftItemFrame, DamageSource source)
         {
-            super(x, y, z, world);
+            super(pos, world);
             this.entityScapecraftItemFrame = entityScapecraftItemFrame;
             this.source = source;
+        }
+
+        public DamageSource getSource() {
+            return source;
+        }
+
+        public EntityScapecraftItemFrame getEntityScapecraftItemFrame() {
+            return entityScapecraftItemFrame;
         }
     }
 
     @Cancelable
     public static class Interact extends ItemFrameEvent
     {
-        public final EntityScapecraftItemFrame entityScapecraftItemFrame;
-        public final EntityPlayer entityPlayer;
+        private final EntityScapecraftItemFrame entityScapecraftItemFrame;
+        private final EntityPlayer entityPlayer;
 
-        public Interact(int x, int y, int z, World world, EntityScapecraftItemFrame entityScapecraftItemFrame, EntityPlayer player)
+        public Interact(BlockPos pos, World world, EntityScapecraftItemFrame entityScapecraftItemFrame, EntityPlayer player)
         {
-            super(x, y, z, world);
+            super(pos, world);
             this.entityScapecraftItemFrame = entityScapecraftItemFrame;
             this.entityPlayer = player;
+        }
+
+        public EntityPlayer getEntityPlayer() {
+            return entityPlayer;
+        }
+
+        public EntityScapecraftItemFrame getEntityScapecraftItemFrame() {
+            return entityScapecraftItemFrame;
         }
     }
 }

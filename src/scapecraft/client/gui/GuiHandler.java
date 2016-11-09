@@ -1,12 +1,13 @@
 package scapecraft.client.gui;
 
-import cpw.mods.fml.common.network.IGuiHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.network.IGuiHandler;
 import scapecraft.economy.EconomyHandler;
 import scapecraft.economy.market.Listing;
 import scapecraft.entity.Drop;
@@ -18,7 +19,6 @@ import scapecraft.tileentity.TileEntitySmithingAnvil;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,7 +36,7 @@ public class GuiHandler implements IGuiHandler
 	@Override
 	public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z)
 	{
-		TileEntity te = world.getTileEntity(x, y, z);
+		TileEntity te = world.getTileEntity(new BlockPos(x, y, z));
 		switch (GuiId.values()[id])
 		{
 			case SMELTING:
@@ -127,7 +127,7 @@ public class GuiHandler implements IGuiHandler
 			case SMITHING:
 				return new GuiSmithing(player.inventory, new InventoryScapecraft(3));
 			case SPAWNER:
-				TileEntityScapecraftMobSpawner te = (TileEntityScapecraftMobSpawner) world.getTileEntity(x, y, z);
+				TileEntityScapecraftMobSpawner te = (TileEntityScapecraftMobSpawner) world.getTileEntity(new BlockPos(x, y, z));
 				if(te != null)
 				{
 					return new GuiSpawner(Minecraft.getMinecraft(), te);

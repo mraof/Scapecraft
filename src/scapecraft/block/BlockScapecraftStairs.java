@@ -6,11 +6,9 @@ import scapecraft.Scapecraft;
 
 public class BlockScapecraftStairs extends BlockStairs
 {
-	public boolean beaconBase = false;
-
 	public BlockScapecraftStairs(Block block)
 	{
-		super(block, 0);
+		super(block.getDefaultState());
 		this.setCreativeTab(Scapecraft.tabScapecraftBlock);
 	}
 }

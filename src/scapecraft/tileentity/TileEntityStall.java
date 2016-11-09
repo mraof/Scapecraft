@@ -5,12 +5,12 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.text.TextComponentString;
 import scapecraft.economy.EconomyHandler;
 
 public class TileEntityStall extends TileEntity
 {
-	ItemStack itemStack = new ItemStack(Items.fish);
+	ItemStack itemStack = new ItemStack(Items.FISH);
 	int price = 20;
 	boolean infinite = true;
 
@@ -22,19 +22,20 @@ public class TileEntityStall extends TileEntity
 		itemStack = ItemStack.loadItemStackFromNBT(tagCompound.getCompoundTag("item"));
 		if(itemStack == null)
 		{
-			itemStack = new ItemStack(Items.fish);
+			itemStack = new ItemStack(Items.FISH);
 			price = 20;
 		}
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound tagCompound)
+	public NBTTagCompound writeToNBT(NBTTagCompound tagCompound)
 	{
 		super.writeToNBT(tagCompound);
 		tagCompound.setInteger("price", price);
 		NBTTagCompound itemNBT = new NBTTagCompound();
 		itemStack.writeToNBT(itemNBT);
 		tagCompound.setTag("item", itemNBT);
+		return itemNBT;
 	}
 
 	public boolean giveItem(EntityPlayer player)
@@ -43,12 +44,12 @@ public class TileEntityStall extends TileEntity
 		{
 			if(EconomyHandler.getBalance(player.getUniqueID()) < price)
 			{
-				player.addChatMessage(new ChatComponentText("Not enough money"));
+				player.addChatMessage(new TextComponentString("Not enough money"));
 				return false;
 			}
 			if(!player.inventory.addItemStackToInventory(itemStack))
 			{
-				player.addChatMessage(new ChatComponentText("Not enough inventory space"));
+				player.addChatMessage(new TextComponentString("Not enough inventory space"));
 				return false;
 			}
 

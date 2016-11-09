@@ -12,9 +12,9 @@ public class GuiNumberField extends GuiTextField
     int minNum = Integer.MIN_VALUE;
 
     int maxNum = Integer.MAX_VALUE;
-    public GuiNumberField(FontRenderer fontRenderer, int xPosition, int yPosition, int width, int height)
+    public GuiNumberField(int componentId, FontRenderer fontRenderer, int xPosition, int yPosition, int width, int height)
     {
-        super(fontRenderer, xPosition, yPosition, width, height);
+        super(componentId, fontRenderer, xPosition, yPosition, width, height);
     }
 
     public int keyTypedNumber(char character, int key)

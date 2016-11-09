@@ -1,22 +1,23 @@
 package scapecraft.entity;
 
 import com.mojang.authlib.GameProfile;
-import cpw.mods.fml.common.network.ByteBufUtils;
-import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.StatCollector;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
+import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -46,8 +47,7 @@ public class EntityShapeshifter extends EntityScapecraft implements IEntityAddit
 		}
 		this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
 		this.tasks.addTask(1, new EntityAISwimming(this));
-		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityLivingBase.class, 0, true, false, this));
-		this.tasks.addTask(2, new EntityAIAttackOnCollide(this, EntityLivingBase.class, 1.1D, false)); 
+		this.tasks.addTask(2, new EntityAIAttackMelee(this, 1.1D, false));
 		this.tasks.addTask(5, new EntityAIWander(this, 1D));
 		this.tasks.addTask(6, new EntityAILookIdle(this));
 		this.tasks.addTask(6, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
@@ -66,11 +66,6 @@ public class EntityShapeshifter extends EntityScapecraft implements IEntityAddit
 		}
 	}
 
-	@Override
-	public boolean isAIEnabled()
-	{
-		return true;
-	}
 
 	@Override
 	public void writeEntityToNBT(NBTTagCompound tagCompound)
@@ -131,7 +126,7 @@ public class EntityShapeshifter extends EntityScapecraft implements IEntityAddit
 		{
 			this.mobName = mobName;
 			this.addTargets(copiedMob.getClass());
-			this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(copiedMob.getEntityAttribute(SharedMonsterAttributes.maxHealth).getAttributeValue());
+			this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(copiedMob.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).getAttributeValue());
 		}
 		else
 		{
@@ -144,9 +139,9 @@ public class EntityShapeshifter extends EntityScapecraft implements IEntityAddit
 	protected void applyEntityAttributes()
 	{
 		super.applyEntityAttributes();
-		this.getEntityAttribute(SharedMonsterAttributes.followRange).setBaseValue(32D);
-		this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.4D);
-		this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(2D);
+		this.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(32D);
+		this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.4D);
+		this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(2D);
 	}
 
 	@Override
@@ -217,12 +212,12 @@ public class EntityShapeshifter extends EntityScapecraft implements IEntityAddit
 		ByteBufUtils.writeUTF8String(data, this.mobName);
 		NBTTagCompound tagCompound = new NBTTagCompound();
 		NBTTagList tagList = new NBTTagList();
-		for(int i = 0; i < copiedMob.getInventory().length; i++)
+		for(int i = 0; i < EntityEquipmentSlot.values().length; i++)
 		{
 			NBTTagCompound stackCompound = new NBTTagCompound();
-			if(copiedMob.getInventory()[i] != null)
+			if(copiedMob.getItemStackFromSlot(EntityEquipmentSlot.values()[i]) != null)
 			{
-				copiedMob.getInventory()[i].writeToNBT(stackCompound);
+				copiedMob.getItemStackFromSlot(EntityEquipmentSlot.values()[i]).writeToNBT(stackCompound);
 			}
 			tagList.appendTag(stackCompound);
 		}
@@ -230,7 +225,7 @@ public class EntityShapeshifter extends EntityScapecraft implements IEntityAddit
 		if(copiedMob instanceof EntityGenericBiped)
 		{
 			NBTTagCompound profileNBT = new NBTTagCompound();
-			NBTUtil.writeGameProfileToNBT(profileNBT, ((EntityGenericBiped)copiedMob).profile);
+			NBTUtil.writeGameProfile(profileNBT, ((EntityGenericBiped)copiedMob).profile);
 			tagCompound.setTag("Profile", profileNBT);
 		}
 		ByteBufUtils.writeTag(data, tagCompound);
@@ -243,9 +238,9 @@ public class EntityShapeshifter extends EntityScapecraft implements IEntityAddit
 		this.setMob(mobName);
 		NBTTagCompound tagCompound = ByteBufUtils.readTag(data);
 		NBTTagList tagList = tagCompound.getTagList("Equipment", 10);
-		for(int i = 0; i < copiedMob.getInventory().length; i++)
+		for(int i = 0; i < EntityEquipmentSlot.values().length; i++)
 		{
-			copiedMob.getInventory()[i] = ItemStack.loadItemStackFromNBT(tagList.getCompoundTagAt(i));
+			copiedMob.setItemStackToSlot(EntityEquipmentSlot.values()[i], ItemStack.loadItemStackFromNBT(tagList.getCompoundTagAt(i)));
 		}
 		if(copiedMob instanceof EntityGenericBiped)
 		{
@@ -255,13 +250,13 @@ public class EntityShapeshifter extends EntityScapecraft implements IEntityAddit
 	}
 
 	@Override
-	public String getCommandSenderName()
+	public String getName()
 	{
 		if(worldObj != null && worldObj.isRemote)
 		{
-			return copiedMob.getCommandSenderName();
+			return copiedMob.getName();
 		}
-		return StatCollector.translateToLocalFormatted("entity.Scapecraft.Shapeshifter.mob", copiedMob.getCommandSenderName());
+		return I18n.translateToLocalFormatted("entity.Scapecraft.Shapeshifter.mob", copiedMob.getName());
 	}
 
 	@Override
@@ -270,7 +265,7 @@ public class EntityShapeshifter extends EntityScapecraft implements IEntityAddit
 		super.setCustomNameTag(name);
 		if(this.copiedMob instanceof EntityLiving)
 		{
-			((EntityLiving) this.copiedMob).setCustomNameTag(name);
+			this.copiedMob.setCustomNameTag(name);
 		}
 	}
 
@@ -279,7 +274,7 @@ public class EntityShapeshifter extends EntityScapecraft implements IEntityAddit
 	{
 		if(this.copiedMob instanceof EntityLiving)
 		{
-			return ((EntityLiving) this.copiedMob).getCustomNameTag();
+			return this.copiedMob.getCustomNameTag();
 		}
 		else
 		{
@@ -288,15 +283,15 @@ public class EntityShapeshifter extends EntityScapecraft implements IEntityAddit
 	}
 
 	@Override
-	public boolean hasCustomNameTag()
+	public boolean hasCustomName()
 	{
 		if(this.copiedMob instanceof EntityLiving)
 		{
-			return ((EntityLiving) this.copiedMob).hasCustomNameTag();
+			return this.copiedMob.hasCustomName();
 		}
 		else
 		{
-			return super.hasCustomNameTag();
+			return super.hasCustomName();
 		}
 	}
 
@@ -305,7 +300,7 @@ public class EntityShapeshifter extends EntityScapecraft implements IEntityAddit
 	{
 		if(this.copiedMob instanceof EntityLiving)
 		{
-			return ((EntityLiving) this.copiedMob).getAlwaysRenderNameTag();
+			return this.copiedMob.getAlwaysRenderNameTag();
 		}
 		else
 		{
@@ -317,7 +312,7 @@ public class EntityShapeshifter extends EntityScapecraft implements IEntityAddit
 	{
 		ArrayList<String> names = new ArrayList<String>();
 		names.add("mraof");
-		for(String name : MinecraftServer.getServer().getAllUsernames())
+		for(String name : FMLCommonHandler.instance().getMinecraftServerInstance().getAllUsernames())
 		{
 			if(!names.contains(name))
 			{
@@ -345,7 +340,7 @@ public class EntityShapeshifter extends EntityScapecraft implements IEntityAddit
 		{
 			EntityScapecraft entityScapecraft = (EntityScapecraft) copiedMob;
 			entityScapecraft.setLevel(level);
-			this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(copiedMob.getEntityAttribute(SharedMonsterAttributes.maxHealth).getAttributeValue());
+			this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(copiedMob.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).getAttributeValue());
 			this.setHealth(copiedMob.getMaxHealth());
 			this.defense = entityScapecraft.getDefense();
 		}

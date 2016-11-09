@@ -2,9 +2,10 @@ package scapecraft.world.gen.dungeon;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Teleporter;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import scapecraft.Scapecraft;
 
 public class DungeonTeleporter extends Teleporter
@@ -18,16 +19,16 @@ public class DungeonTeleporter extends Teleporter
 
 	public static WorldServer getDungeonWorld()
 	{
-		return MinecraftServer.getServer().worldServerForDimension(Scapecraft.dungeonDimensionId);
+		return FMLCommonHandler.instance().getMinecraftServerInstance().worldServerForDimension(Scapecraft.dungeonDimensionId);
 	}
 
 	@Override
-	public void placeInPortal(Entity entity, double x, double y, double z, float f)
+	public void placeInPortal(Entity entity, float rotationYaw)
 	{
-		if(entity.worldObj.provider.dimensionId != Scapecraft.dungeonDimensionId)
+		if(entity.worldObj.provider.getDimension() != Scapecraft.dungeonDimensionId)
 		{
-			dungeonPortalX = x;
-			dungeonPortalZ = z;
+			dungeonPortalX = entity.posX;
+			dungeonPortalZ = entity.posZ;
 			Dungeon dungeon = new Dungeon((EntityPlayer) entity, 4);
 			Dungeon.dungeons.add(dungeon);
 			dungeon.begin();
@@ -35,7 +36,7 @@ public class DungeonTeleporter extends Teleporter
 		}
 		else
 		{
-			entity.setPosition(dungeonPortalX, MinecraftServer.getServer().getEntityWorld().getTopSolidOrLiquidBlock((int) dungeonPortalX, (int) dungeonPortalZ), dungeonPortalZ);
+			entity.setPosition(dungeonPortalX, FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld().getTopSolidOrLiquidBlock(new BlockPos((int) dungeonPortalX, 0, (int) dungeonPortalZ)).getY(), dungeonPortalZ);
 		}
 	}
 }

@@ -1,7 +1,7 @@
 package scapecraft.event;
 
-import cpw.mods.fml.common.eventhandler.Event;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraftforge.fml.common.eventhandler.Event;
 import scapecraft.util.Stat;
 
 /**

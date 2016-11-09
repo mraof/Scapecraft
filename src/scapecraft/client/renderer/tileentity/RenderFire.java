@@ -2,13 +2,13 @@ package scapecraft.client.renderer.tileentity;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.tileentity.TileEntity;
 import org.lwjgl.opengl.GL11;
 import scapecraft.client.Resources;
 import scapecraft.client.model.block.ModelFire;
+import scapecraft.tileentity.TileEntityFire;
 
 
-public class RenderFire extends TileEntitySpecialRenderer
+public class RenderFire extends TileEntitySpecialRenderer<TileEntityFire>
 {
 
 	//The model of your block
@@ -19,7 +19,7 @@ public class RenderFire extends TileEntitySpecialRenderer
 	}
 
 	@Override
-	public void renderTileEntityAt(TileEntity te, double x, double y, double z, float scale)
+	public void renderTileEntityAt(TileEntityFire te, double x, double y, double z, float partialTicks, int destroyStage)
 	{
 		GL11.glPushMatrix();
 		GL11.glTranslatef((float) x + 0.5F, (float) y + 2.7F, (float) z + 0.5F);

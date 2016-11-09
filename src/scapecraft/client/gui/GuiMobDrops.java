@@ -1,7 +1,6 @@
 package scapecraft.client.gui;
 
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.inventory.Slot;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
@@ -11,6 +10,7 @@ import scapecraft.inventory.ContainerMobDrops;
 import scapecraft.inventory.ContainerScapecraft;
 import scapecraft.network.DropsPacket;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -48,8 +48,7 @@ public class GuiMobDrops extends GuiContainerScapecraft
     }
 
     @Override
-    public void handleMouseInput()
-    {
+    public void handleMouseInput() throws IOException {
         super.handleMouseInput();
         int scroll = -Mouse.getEventDWheel() / 4;
         if(scroll != 0)
@@ -57,7 +56,7 @@ public class GuiMobDrops extends GuiContainerScapecraft
             yOffset = ((yOffset - scroll) < 0) ? (((yOffset - scroll) > (((container.inventorySlots.size() - 1 - ContainerScapecraft.PLAYER_INV_SIZE) * -26) + this.ySize)) ? (yOffset - scroll) : (((inventorySlots.inventorySlots.size() - 1 - ContainerScapecraft.PLAYER_INV_SIZE) * -26) + this.ySize)) : 0;
             for(int i = 0; i < container.inventorySlots.size() - ContainerScapecraft.PLAYER_INV_SIZE; i++)
             {
-                ((Slot)container.inventorySlots.get(i + ContainerScapecraft.PLAYER_INV_SIZE)).yDisplayPosition = yOffset + 26 * (i) + 5;
+                container.inventorySlots.get(i + ContainerScapecraft.PLAYER_INV_SIZE).yDisplayPosition = yOffset + 26 * (i) + 5;
             }
             for(int i = 0; i < chances.size(); i++)
             {
@@ -88,7 +87,7 @@ public class GuiMobDrops extends GuiContainerScapecraft
             {
                 if (chances.size() == i)
                 {
-                    chances.add(new GuiNumberField(this.fontRendererObj, guiLeft + 199, ((Slot) container.inventorySlots.get(i + ContainerScapecraft.PLAYER_INV_SIZE)).yDisplayPosition + guiTop, 58, 18));
+                    chances.add(new GuiNumberField(i, this.fontRendererObj, guiLeft + 199, container.inventorySlots.get(i + ContainerScapecraft.PLAYER_INV_SIZE).yDisplayPosition + guiTop, 58, 18));
                     chances.get(i).setValue(container.inventoryDrops.chances.get(i));
                 }
                 if (!container.inventoryDrops.chances.get(i).equals(chances.get(i).value))
@@ -104,8 +103,7 @@ public class GuiMobDrops extends GuiContainerScapecraft
     }
 
     @Override
-    protected void mouseClicked(int x, int y, int button)
-    {
+    protected void mouseClicked(int x, int y, int button) throws IOException {
         super.mouseClicked(x, y, button);
         for (GuiNumberField chance : chances)
         {
@@ -114,8 +112,7 @@ public class GuiMobDrops extends GuiContainerScapecraft
     }
 
     @Override
-    protected void keyTyped(char character, int key)
-    {
+    protected void keyTyped(char character, int key) throws IOException {
         super.keyTyped(character, key);
         for (int i = 0; i < chances.size(); i++)
         {

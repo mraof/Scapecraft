@@ -1,10 +1,11 @@
 package scapecraft.world;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.world.DimensionType;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.chunk.IChunkProvider;
+import net.minecraft.world.chunk.IChunkGenerator;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import scapecraft.world.gen.ChunkProviderDungeon;
 
 public class WorldProviderDungeon extends WorldProvider
@@ -12,7 +13,7 @@ public class WorldProviderDungeon extends WorldProvider
 	private ChunkProviderDungeon provider;
 
 	@Override
-	public IChunkProvider createChunkGenerator()
+	public IChunkGenerator createChunkGenerator()
 	{
 		if(provider == null)
 		{
@@ -20,19 +21,6 @@ public class WorldProviderDungeon extends WorldProvider
 		}
 
 		return provider;
-	}
-
-	@Override
-	public String getDimensionName()
-	{
-		return "Dungeon";
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public boolean getWorldHasVoidParticles()
-	{
-		return false;
 	}
 
 	@Override
@@ -55,8 +43,16 @@ public class WorldProviderDungeon extends WorldProvider
 	}
 
 	@Override
+	public DimensionType getDimensionType() {
+		return null;
+	}
+
+	@Override
 	protected void generateLightBrightnessTable()
 	{
-		this.lightBrightnessTable = new float[] {1F, 1F, 1F, 1F, 1F, 1F, 1F, 1F, 1F, 1F, 1F, 1F, 1F, 1F, 1F, 1F};
+		for(int i = 0; i < this.lightBrightnessTable.length; i++)
+		{
+			this.lightBrightnessTable[i] = 1F;
+		}
 	}
 }

@@ -1,15 +1,7 @@
 package scapecraft.block;
 
 import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.world.World;
-import scapecraft.tileentity.TileEntityBlockSpawner;
-import scapecraft.tileentity.TileEntityTreeSpawner;
 import scapecraft.util.Stat;
-import scapecraft.util.Stats;
 import scapecraft.world.gen.feature.WorldGenScapecraft;
 
 public class BlockTreeSpawner extends BlockBlockSpawner
@@ -28,19 +20,19 @@ public class BlockTreeSpawner extends BlockBlockSpawner
 		this.stat = Stat.WOODCUTTING;
 	}
 
-	@Override
-	public void onFullyGrown(World world, int x, int y, int z)
+/*	@Override
+	public void onFullyGrown(World world, BlockPos pos)
 	{
-		fixTileEntity(world, x, y, z);
-		TileEntityTreeSpawner tileEntity = (TileEntityTreeSpawner) world.getTileEntity(x, y, z);
-		int metadata = world.getBlockMetadata(x, y, z);
-		//world.setBlockToAir(x, y, z); //Why did I do this?
+		fixTileEntity(world, pos);
+		TileEntityTreeSpawner tileEntity = (TileEntityTreeSpawner) world.getTileEntity(pos);
+		int metadata = world.getBlockMetadata(pos);
+		//world.setBlockToAir(pos); //Why did I do this?
 		treeGen.genTracker = tileEntity;
-		treeGen.generate(world, world.rand, x, y, z);
+		treeGen.generate(world, world.rand, pos);
 		treeGen.genTracker = null;
 		NBTTagCompound tileEntityNBT = new NBTTagCompound();
 		tileEntity.writeToNBT(tileEntityNBT);
-		world.setBlock(x, y, z, this, metadata, 3);
+		world.setBlockState(pos, this, metadata, 3);
 		tileEntity.readFromNBT(tileEntityNBT);
 	}
 
@@ -82,5 +74,5 @@ public class BlockTreeSpawner extends BlockBlockSpawner
 			treeSpawner.readFromNBT(tagCompound);
 			world.setTileEntity(x, y, z, treeSpawner);
 		}
-	}
+	}*/
 }

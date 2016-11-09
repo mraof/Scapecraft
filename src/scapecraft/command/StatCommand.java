@@ -1,20 +1,21 @@
 package scapecraft.command;
 
 import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableSortedMap;
 import com.google.common.collect.Ordering;
-import com.ibm.icu.util.BytesTrie;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.PlayerNotFoundException;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.text.TextComponentString;
 import scapecraft.util.Stat;
 import scapecraft.util.Stats;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class StatCommand extends CommandBase
 {
@@ -37,7 +38,7 @@ public class StatCommand extends CommandBase
 	}
 
 	@Override
-	public void processCommand(ICommandSender sender, String[] args)
+	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
 	{
 		if(args.length < 2)
 		{
@@ -47,7 +48,7 @@ public class StatCommand extends CommandBase
 		UUID uuid;
 		try
 		{
-			player = getPlayer(sender, args[0]);
+			player = getPlayer(server, sender, args[0]);
 			uuid = player.getUniqueID();
 		}
 		catch (PlayerNotFoundException e)
@@ -77,7 +78,7 @@ public class StatCommand extends CommandBase
 
 					for (Map.Entry<Integer, String> entry : statValues.build().entrySet())
 					{
-						sender.addChatMessage(new ChatComponentText(entry.getValue()));
+						sender.addChatMessage(new TextComponentString(entry.getValue()));
 					}
 				}
 				else
@@ -94,7 +95,7 @@ public class StatCommand extends CommandBase
 						{
 							message += " " + statsEntry.getKey() + " " + statsEntry.getValue().level;
 						}
-						sender.addChatMessage(new ChatComponentText(message));
+						sender.addChatMessage(new TextComponentString(message));
 					}
 				}
 
@@ -106,7 +107,7 @@ public class StatCommand extends CommandBase
 				{
 					message += " " + statsEntry.getKey() + " " + statsEntry.getValue().level;
 				}
-				sender.addChatMessage(new ChatComponentText(message));
+				sender.addChatMessage(new TextComponentString(message));
 			}
 			return;
 		}
@@ -122,11 +123,11 @@ public class StatCommand extends CommandBase
 		{
 			if(player != null)
 			{
-				sender.addChatMessage(new ChatComponentText(player.getCommandSenderName() + " is level " + Stats.getLevel(player, Stat.valueOf(args[2].toUpperCase())) + " (" + Stats.getXp(player, Stat.valueOf(args[2].toUpperCase())) + "xp) for " + args[2]));
+				sender.addChatMessage(new TextComponentString(player.getName() + " is level " + Stats.getLevel(player, Stat.valueOf(args[2].toUpperCase())) + " (" + Stats.getXp(player, Stat.valueOf(args[2].toUpperCase())) + "xp) for " + args[2]));
 			}
 			else
 			{
-				sender.addChatMessage(new ChatComponentText(args[0] + " is level " + Stats.getLevel(uuid, Stat.valueOf(args[2].toUpperCase())) + " (" + Stats.getXp(uuid, Stat.valueOf(args[2].toUpperCase())) + "xp) for " + args[2]));
+				sender.addChatMessage(new TextComponentString(args[0] + " is level " + Stats.getLevel(uuid, Stat.valueOf(args[2].toUpperCase())) + " (" + Stats.getXp(uuid, Stat.valueOf(args[2].toUpperCase())) + "xp) for " + args[2]));
 			}
 		}
 		else if("set".equalsIgnoreCase(args[1]) && args.length >= 4)
@@ -135,12 +136,12 @@ public class StatCommand extends CommandBase
 			if (player != null)
 			{
 				Stats.setXp(player, stat, Long.parseLong(args[3]));
-				sender.addChatMessage(new ChatComponentText(player.getCommandSenderName() + " is level " + Stats.getLevel(player, Stat.valueOf(args[2].toUpperCase())) + " (" + Stats.getXp(player, Stat.valueOf(args[2].toUpperCase())) + "xp) for " + args[2]));
+				sender.addChatMessage(new TextComponentString(player.getName() + " is level " + Stats.getLevel(player, Stat.valueOf(args[2].toUpperCase())) + " (" + Stats.getXp(player, Stat.valueOf(args[2].toUpperCase())) + "xp) for " + args[2]));
 			}
 			else
 			{
 				Stats.setXp(uuid, stat, Long.parseLong(args[3]));
-				sender.addChatMessage(new ChatComponentText(args[0] + " is level " + Stats.getLevel(uuid, Stat.valueOf(args[2].toUpperCase())) + " (" + Stats.getXp(uuid, Stat.valueOf(args[2].toUpperCase())) + "xp) for " + args[2]));
+				sender.addChatMessage(new TextComponentString(args[0] + " is level " + Stats.getLevel(uuid, Stat.valueOf(args[2].toUpperCase())) + " (" + Stats.getXp(uuid, Stat.valueOf(args[2].toUpperCase())) + "xp) for " + args[2]));
 			}
 		}
 		else if("add".equalsIgnoreCase(args[1]) && args.length >= 4)
@@ -149,12 +150,12 @@ public class StatCommand extends CommandBase
 			if (player != null)
 			{
 				Stats.addXp(player, stat, Long.parseLong(args[3]));
-				sender.addChatMessage(new ChatComponentText(player.getCommandSenderName() + " is level " + Stats.getLevel(player, Stat.valueOf(args[2].toUpperCase())) + " (" + Stats.getXp(player, Stat.valueOf(args[2].toUpperCase())) + "xp) for " + args[2]));
+				sender.addChatMessage(new TextComponentString(player.getName() + " is level " + Stats.getLevel(player, Stat.valueOf(args[2].toUpperCase())) + " (" + Stats.getXp(player, Stat.valueOf(args[2].toUpperCase())) + "xp) for " + args[2]));
 			}
 			else
 			{
 				Stats.addXp(uuid, stat, Long.parseLong(args[3]));
-				sender.addChatMessage(new ChatComponentText(args[0] + " is level " + Stats.getLevel(uuid, Stat.valueOf(args[2].toUpperCase())) + " (" + Stats.getXp(uuid, Stat.valueOf(args[2].toUpperCase())) + "xp) for " + args[2]));
+				sender.addChatMessage(new TextComponentString(args[0] + " is level " + Stats.getLevel(uuid, Stat.valueOf(args[2].toUpperCase())) + " (" + Stats.getXp(uuid, Stat.valueOf(args[2].toUpperCase())) + "xp) for " + args[2]));
 			}
 		}
 		else if("check".equalsIgnoreCase(args[1]) && args.length >= 4)

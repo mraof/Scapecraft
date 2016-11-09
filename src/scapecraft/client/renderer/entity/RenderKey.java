@@ -1,24 +1,24 @@
 package scapecraft.client.renderer.entity;
 
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.entity.Entity;
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.util.ResourceLocation;
-import org.lwjgl.opengl.GL11;
+import scapecraft.entity.EntityKey;
 
-public class RenderKey extends Render
+public class RenderKey extends Render<EntityKey>
 {
-	public RenderKey()
+	public RenderKey(RenderManager manager)
 	{
+		super(manager);
 		this.shadowSize = 0.15F;
 		this.shadowOpaque = 0.1F;
 	}
 
 	@Override
-	public void doRender(Entity entity, double x, double y, double z, float f, float f1)
+	public void doRender(EntityKey entity, double x, double y, double z, float f, float f1)
 	{
 		//EntityKey key = (EntityKey) entity;
-		GL11.glPushMatrix();
+/*		GL11.glPushMatrix();
 		GL11.glTranslatef((float)x, (float)y, (float)z);
 		GL11.glRotatef(180.0F - this.renderManager.playerViewY, 0.0F, 1.0F, 0.0F);
 		GL11.glRotatef(-this.renderManager.playerViewX, 1.0F, 0.0F, 0.0F);
@@ -31,11 +31,11 @@ public class RenderKey extends Render
 		tessellator.addVertexWithUV(1.0D - 0.5D, 1.0D, 0.0D, 0.25, (double)0);
 		tessellator.addVertexWithUV(0.0D - 0.5D, 1.0D, 0.0D, (double)0, (double)0);
 		tessellator.draw();
-		GL11.glPopMatrix();
+		GL11.glPopMatrix();*/
 	}
 
 	@Override
-	protected ResourceLocation getEntityTexture(Entity entity)
+	protected ResourceLocation getEntityTexture(EntityKey entity)
 	{
 		return null;
 	}

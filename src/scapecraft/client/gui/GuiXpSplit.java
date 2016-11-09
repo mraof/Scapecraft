@@ -1,11 +1,13 @@
 package scapecraft.client.gui;
 
-import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import net.minecraft.client.Minecraft;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import scapecraft.Scapecraft;
 import scapecraft.network.XpSplitPacket;
 import scapecraft.util.Stat;
 import scapecraft.util.Stats;
+
+import java.io.IOException;
 
 /**
  * Created by mraof on 2016 March 02.
@@ -28,14 +30,14 @@ public class GuiXpSplit extends GuiStats
     {
         super.initGui();
         currentTab = 1;
-        attackField = new GuiNumberField(this.fontRendererObj, left + 44, top + 30, 34, 20);
-        strengthField = new GuiNumberField(this.fontRendererObj, left + 84, top + 30, 34, 20);
-        meleeDefenseField = new GuiNumberField(this.fontRendererObj, left + 124, top + 30, 34, 20);
+        attackField = new GuiNumberField(0, this.fontRendererObj, left + 44, top + 30, 34, 20);
+        strengthField = new GuiNumberField(1, this.fontRendererObj, left + 84, top + 30, 34, 20);
+        meleeDefenseField = new GuiNumberField(2, this.fontRendererObj, left + 124, top + 30, 34, 20);
 
-        rangedField = new GuiNumberField(this.fontRendererObj, left + 44, top + 85, 34, 20);
-        rangedDefenseField = new GuiNumberField(this.fontRendererObj, left + 84, top + 85, 34, 20);
-        magicField = new GuiNumberField(this.fontRendererObj, left + 44, top + 140, 34, 20);
-        magicDefenseField = new GuiNumberField(this.fontRendererObj, left + 84, top + 140, 34, 20);
+        rangedField = new GuiNumberField(3, this.fontRendererObj, left + 44, top + 85, 34, 20);
+        rangedDefenseField = new GuiNumberField(4, this.fontRendererObj, left + 84, top + 85, 34, 20);
+        magicField = new GuiNumberField(5, this.fontRendererObj, left + 44, top + 140, 34, 20);
+        magicDefenseField = new GuiNumberField(6, this.fontRendererObj, left + 84, top + 140, 34, 20);
         attackField.setMin(0);
         strengthField.setMin(0);
         meleeDefenseField.setMin(0);
@@ -99,8 +101,7 @@ public class GuiXpSplit extends GuiStats
         drawStatIcon(left + 94, top + 120, 7);
     }
     @Override
-    public void keyTyped(char character, int key)
-    {
+    public void keyTyped(char character, int key) throws IOException {
         super.keyTyped(character, key);
         meleeConstitution = 120;
         attackField.setMax(meleeConstitution);
@@ -124,8 +125,7 @@ public class GuiXpSplit extends GuiStats
     }
 
     @Override
-    protected void mouseClicked(int x, int y, int button)
-    {
+    protected void mouseClicked(int x, int y, int button) throws IOException {
         super.mouseClicked(x, y, button);
         attackField.mouseClicked(x, y, button);
         strengthField.mouseClicked(x, y, button);

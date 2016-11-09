@@ -4,7 +4,8 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.ICrafting;
+import net.minecraft.inventory.ClickType;
+import net.minecraft.inventory.IContainerListener;
 import net.minecraft.item.ItemStack;
 import scapecraft.Scapecraft;
 import scapecraft.client.gui.GuiHandler;
@@ -12,7 +13,6 @@ import scapecraft.economy.EconomyHandler;
 import scapecraft.economy.market.Listing;
 import scapecraft.entity.EntityDrop;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -135,7 +135,13 @@ public class ContainerShop extends ContainerScapecraft
         //System.out.println(inventorySlots);
     }
 
-    @Override
+    public void addListener(IContainerListener listener)
+    {
+        super.addListener(listener);
+        listener.sendAllWindowProperties(this, this.inventoryScapecraft);
+    }
+
+/*    @Override
     public void onCraftGuiOpened(ICrafting iCrafting)
     {
         super.onCraftGuiOpened(iCrafting);
@@ -149,7 +155,7 @@ public class ContainerShop extends ContainerScapecraft
         }
         iCrafting.sendProgressBarUpdate(this, -1, tabNumber - tabOffset);
         iCrafting.sendProgressBarUpdate(this, -2, tabs);
-    }
+    }*/
 
     @Override
     public void updateProgressBar(int index, int value)
@@ -184,11 +190,11 @@ public class ContainerShop extends ContainerScapecraft
     }
 
     @Override
-    public ItemStack slotClick(int slotId, int clickedButton, int mode, EntityPlayer player)
+    public ItemStack slotClick(int slotId, int clickedButton, ClickType type, EntityPlayer player)
     {
         if(slotId < PLAYER_INV_SIZE)
         {
-            return super.slotClick(slotId, clickedButton, mode, player);
+            return super.slotClick(slotId, clickedButton, type, player);
         }
         if(!player.worldObj.isRemote)
         {
@@ -219,9 +225,9 @@ public class ContainerShop extends ContainerScapecraft
                             {
                                 EntityDrop entityDrop = new EntityDrop(player.worldObj);
                                 EntityItem entityItem = new EntityItem(player.worldObj, player.posX, player.posY, player.posZ, stack);
-                                entityItem.delayBeforeCanPickup = 0;
+                                entityItem.setPickupDelay(0);
                                 entityDrop.addItem(entityItem);
-                                entityDrop.owner = player.getCommandSenderName();
+                                entityDrop.owner = player.getName();
                                 entityDrop.setPosition(player.posX, player.posY, player.posZ);
                                 player.worldObj.spawnEntityInWorld(entityDrop);
                             }

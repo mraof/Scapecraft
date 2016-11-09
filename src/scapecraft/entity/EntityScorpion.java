@@ -4,8 +4,10 @@ import net.minecraft.entity.EnumCreatureAttribute;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.potion.Potion;
+import net.minecraft.init.MobEffects;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
 import scapecraft.entity.ai.EntityAIAttackWithDistance;
 
@@ -36,25 +38,13 @@ public class EntityScorpion extends EntityScapecraft
 	protected void applyEntityAttributes()
 	{
 		super.applyEntityAttributes();
-		this.getEntityAttribute(SharedMonsterAttributes.followRange).setBaseValue(32.0D);
-		this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.50D);
-	}
-
-	@Override
-	public boolean isAIEnabled()
-	{
-		return true;
-	}
-	@Override
-	protected void entityInit()
-	{
-		super.entityInit();
-		this.dataWatcher.addObject(16, (byte) 0);
+		this.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(32.0D);
+		this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.50D);
 	}
 
 	/**
 	 * Returns the sound this mob makes while it's alive.
-	 protected String getLivingSound()
+	 protected SoundEvent getAmbientSound()
 	 {
 	 return "mob.villager.default";
 	 }
@@ -63,18 +53,20 @@ public class EntityScorpion extends EntityScapecraft
 	 * Returns the sound this mob makes when it is hurt.
 	 */
 	@Override
-	protected String getHurtSound()
+	protected SoundEvent getHurtSound()
 	{
-		return "mob.villager.defaulthurt";
+		//return "mob.villager.defaulthurt";
+		return SoundEvents.ENTITY_VILLAGER_HURT;
 	}
 
 	/**
 	 * Returns the sound this mob makes on death.
 	 */
 	@Override
-	protected String getDeathSound()
+	protected SoundEvent getDeathSound()
 	{
-		return "mob.villager.defaultdeath";
+		//return "mob.villager.defaultdeath";
+		return SoundEvents.ENTITY_VILLAGER_DEATH;
 	}
 
 	@Override
@@ -86,6 +78,6 @@ public class EntityScorpion extends EntityScapecraft
 	@Override
 	public boolean isPotionApplicable(PotionEffect par1PotionEffect)
 	{
-		return par1PotionEffect.getPotionID() != Potion.poison.id && super.isPotionApplicable(par1PotionEffect);
+		return par1PotionEffect.getPotion() != MobEffects.POISON && super.isPotionApplicable(par1PotionEffect);
 	}
 }

@@ -5,16 +5,16 @@ import com.mojang.authlib.GameProfile;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import scapecraft.item.ScapecraftItems;
 
 public class EntityGenericBiped extends EntityLiving
 {
-	private ItemStack[] equipment = new ItemStack[5];
 	private String[] prefixes = new String[] {"bronze", "iron", "steel", "black", "white", "mithril", "adamant", "rune", "dragon"};
 	public String name = "";
 	public GameProfile profile = null;
@@ -25,37 +25,7 @@ public class EntityGenericBiped extends EntityLiving
 	}
 
 	@Override
-	public ItemStack getHeldItem()
-	{
-		return this.equipment[0];
-	}
-
-	@Override
-	public ItemStack getEquipmentInSlot(int slot)
-	{
-		return this.equipment[slot];
-	}
-
-	@Override
-	public void setCurrentItemOrArmor(int slot, ItemStack itemStack)
-	{
-		this.equipment[slot] = itemStack;
-	}
-
-	@Override
-	public ItemStack[] getInventory()
-	{
-		return this.equipment;
-	}
-
-	@Override
-	public ItemStack func_130225_q(int slot)
-	{
-		return this.equipment[slot + 1];
-	}
-
-	@Override
-	public String getCommandSenderName()
+	public String getName()
 	{
 		return name;
 	}
@@ -64,12 +34,12 @@ public class EntityGenericBiped extends EntityLiving
 	{
 		if(!profile.isComplete() || !profile.getProperties().containsKey("textures"))
 		{
-			GameProfile cachedProfile = MinecraftServer.getServer().getPlayerProfileCache().getGameProfileForUsername(profile.getName());
+			GameProfile cachedProfile = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerProfileCache().getGameProfileForUsername(profile.getName());
 			if(cachedProfile != null)
 			{
 				if(Iterables.getFirst(cachedProfile.getProperties().get("textures"), (Object)null) == null)
 				{
-					cachedProfile = MinecraftServer.getServer().getMinecraftSessionService().fillProfileProperties(cachedProfile, true);
+					cachedProfile = FMLCommonHandler.instance().getMinecraftServerInstance().getMinecraftSessionService().fillProfileProperties(cachedProfile, true);
 				}
 				profile = cachedProfile;
 			}
@@ -81,23 +51,23 @@ public class EntityGenericBiped extends EntityLiving
 
 	public void addRandomEquipment()
 	{
-		if(!worldObj.isRemote && MinecraftServer.getServer().getConfigurationManager().getPlayerByUsername(this.name) != null)
+		if(!worldObj.isRemote && FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerByUsername(this.name) != null)
 		{
-			EntityPlayer player = MinecraftServer.getServer().getConfigurationManager().getPlayerByUsername(this.name);
-			for(int i = 0; i < 5; i++)
+			EntityPlayer player = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerByUsername(this.name);
+			for(EntityEquipmentSlot slot : EntityEquipmentSlot.values())
 			{
-				this.equipment[i] = player.getEquipmentInSlot(i);
+				this.setItemStackToSlot(slot, player.getItemStackFromSlot(slot));
 			}
-			this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(player.getEntityAttribute(SharedMonsterAttributes.maxHealth).getAttributeValue());
+			this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(player.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).getAttributeValue());
 		}
 		else
 		{
 			String prefix = prefixes[rand.nextInt(prefixes.length)];
-			this.equipment[0] = new ItemStack(ScapecraftItems.equipmentSets.get(prefix + "Sword"));
-			this.equipment[1] = new ItemStack(ScapecraftItems.equipmentSets.get(prefix + "Helmet"));
-			this.equipment[2] = new ItemStack(ScapecraftItems.equipmentSets.get(prefix + "Platebody"));
-			this.equipment[3] = new ItemStack(ScapecraftItems.equipmentSets.get(prefix + "Platelegs"));
-			this.equipment[4] = new ItemStack(ScapecraftItems.equipmentSets.get(prefix + "Boots"));
+			this.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(ScapecraftItems.equipmentSets.get(prefix + "Sword")));
+			this.setItemStackToSlot(EntityEquipmentSlot.HEAD, new ItemStack(ScapecraftItems.equipmentSets.get(prefix + "Helmet")));
+			this.setItemStackToSlot(EntityEquipmentSlot.CHEST, new ItemStack(ScapecraftItems.equipmentSets.get(prefix + "Platebody")));
+			this.setItemStackToSlot(EntityEquipmentSlot.LEGS, new ItemStack(ScapecraftItems.equipmentSets.get(prefix + "Platelegs")));
+			this.setItemStackToSlot(EntityEquipmentSlot.FEET, new ItemStack(ScapecraftItems.equipmentSets.get(prefix + "Boots")));
 		}
 	}
 
@@ -108,7 +78,7 @@ public class EntityGenericBiped extends EntityLiving
 	}
 
 	@Override
-	public boolean hasCustomNameTag()
+	public boolean hasCustomName()
 	{
 		return this.name.length() > 0;
 	}
@@ -116,7 +86,7 @@ public class EntityGenericBiped extends EntityLiving
 	@Override
 	public boolean getAlwaysRenderNameTag()
 	{
-		return hasCustomNameTag();
+		return hasCustomName();
 	}
 
 	@Override
@@ -124,7 +94,7 @@ public class EntityGenericBiped extends EntityLiving
 	{
 		super.writeEntityToNBT(tagCompound);
 		NBTTagCompound profileNBT = new NBTTagCompound();
-		NBTUtil.writeGameProfileToNBT(profileNBT, this.profile);
+		NBTUtil.writeGameProfile(profileNBT, this.profile);
 		tagCompound.setTag("Profile", profileNBT);
 		tagCompound.setString("name", this.name);
 	}

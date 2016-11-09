@@ -13,6 +13,8 @@ public class CommonProxy
 	public File cacheDir;
 	public HashMap<String, byte[]> textureData;
 
+	public void registerPreInit() {}
+
 	public void setCacheDir(File cacheDir)
 	{
 		this.cacheDir = cacheDir;

@@ -1,6 +1,8 @@
 package scapecraft.world.gen.feature;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import scapecraft.tileentity.GenTracker;
@@ -13,52 +15,44 @@ public abstract class WorldGenScapecraft extends WorldGenerator
 		super(doBlockNotify);
 	}
 
-	public void setBlock(World world, int x, int y, int z, Block block, int metadata)
+	public void setBlock(World world, BlockPos pos, IBlockState blockState)
 	{
-		world.setBlock(x, y, z, block, metadata, 3);
+		world.setBlockState(pos, blockState, 3);
 		//System.out.println(genTracker);
 		if(genTracker != null)
 		{
-			genTracker.addSpawnedBlock(block, x, y, z);
+			genTracker.addSpawnedBlock(blockState.getBlock(), pos);
 		}
 	}
 
-	public void setBlock(World world, int x, int y, int z, Block block, int metadata, Block dontReplace)
+	public void setBlock(World world, BlockPos pos, IBlockState blockState, Block dontReplace)
 	{
-		if(world.getBlock(x, y, z) != dontReplace)
+		if(world.getBlockState(pos).getBlock() != dontReplace)
 		{
-			world.setBlock(x, y, z, block, metadata, 3);
+			world.setBlockState(pos, blockState, 3);
 			//System.out.println(genTracker);
 			if (genTracker != null)
 			{
-				genTracker.addSpawnedBlock(block, x, y, z);
+				genTracker.addSpawnedBlock(blockState.getBlock(), pos);
 			}
 		}
 	}
 
-	public void setBlocks(World world, int xMin, int yMin, int zMin, int xMax, int yMax, int zMax, Block block)
+	public void setBlocks(World world, BlockPos min, BlockPos max, Block block)
 	{
-		this.setBlocks(world, xMin, yMin, zMin, xMax, yMax, zMax, block, 0, false);
+		this.setBlocks(world, min, max, block.getDefaultState(), false);
 	}
 
-	public void setBlocks(World world, int xMin, int yMin, int zMin, int xMax, int yMax, int zMax, Block block, int metadata)
+	public void setBlocks(World world, BlockPos min, BlockPos max, IBlockState blockState)
 	{
-		this.setBlocks(world, xMin, yMin, zMin, xMax, yMax, zMax, block, metadata, false);
+		this.setBlocks(world, min, max, blockState, false);
 	}
 
-	public void setBlocks(World world, int xMin, int yMin, int zMin, int xMax, int yMax, int zMax, Block block, int metadata, boolean replace)
+	public void setBlocks(World world, BlockPos min, BlockPos max, IBlockState blockState, boolean replace)
 	{
-		for(int x = xMin; x <= xMax; x++)
-		{
-			for (int z = zMin; z <= zMax; z++)
-			{
-				for (int y = yMin; y <= yMax; y++)
-				{
-					if (world.getBlock(x, y, z).isReplaceable(world, x, y, z))
-					{
-						setBlock(world, x, y, z, block, metadata);
-					}
-				}
+		for(BlockPos pos : BlockPos.getAllInBox(min, max)) {
+			if (world.getBlockState(pos).getBlock().isReplaceable(world, pos)) {
+				setBlock(world, pos, blockState);
 			}
 		}
 	}

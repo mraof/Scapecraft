@@ -3,17 +3,18 @@ package scapecraft.item;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTool;
-import net.minecraft.util.StatCollector;
+import net.minecraft.util.text.translation.I18n;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import scapecraft.Scapecraft;
 import scapecraft.util.Stat;
 import scapecraft.util.Stats;
@@ -30,10 +31,10 @@ public class ItemScapecraftTool extends ItemTool implements QualityItem
 
 	public ItemScapecraftTool(float damageVsEntity, int level, Set<Block> effectiveBlocks)
 	{
-		super(0, ToolMaterial.EMERALD, effectiveBlocks); //None of these arguments matter, but extending ItemTool is needed for enchantments
+		super(ToolMaterial.DIAMOND, effectiveBlocks); //None of these arguments matter, but extending ItemTool is needed for enchantments
 		this.damageVsEntity = damageVsEntity;
 		this.level = level;
-		this.setMaxDurability((level * level / 2 + 50) * 2);
+		this.setMaxDamage((level * level / 2 + 50) * 2);
 		this.efficiencyOnProperMaterial = 5 + (level / 10f) * (level / 20f);
 		this.setCreativeTab(Scapecraft.tabScapecraftTool);
 	}
@@ -41,13 +42,13 @@ public class ItemScapecraftTool extends ItemTool implements QualityItem
 	@Override
 	public int getMaxDamage(ItemStack stack)
 	{
-		int durability = this.getMaxDurability();
+		int durability = this.getMaxDamage();
 		if (stack.getTagCompound() != null && stack.getTagCompound().hasKey("level"))
 		{
-			durability = (this.getMaxDurability() + (2 * this.level * (stack.getTagCompound().getInteger("level") - this.level)));
-			if (durability < this.getMaxDurability() / 2)
+			durability = (this.getMaxDamage() + (2 * this.level * (stack.getTagCompound().getInteger("level") - this.level)));
+			if (durability < this.getMaxDamage() / 2)
 			{
-				durability = this.getMaxDurability() / 2;
+				durability = this.getMaxDamage() / 2;
 			}
 		}
 		return durability;
@@ -96,11 +97,14 @@ public class ItemScapecraftTool extends ItemTool implements QualityItem
 	 * Gets a map of item attribute modifiers, used by ItemSword to increase hit damage.
 	 */
 	@Override
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public Multimap getAttributeModifiers(ItemStack stack)
+	public Multimap<String, AttributeModifier> getItemAttributeModifiers(EntityEquipmentSlot equipmentSlot)
 	{
-		Multimap multimap = HashMultimap.create();
-		multimap.put(SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName(), new AttributeModifier(itemModifierUUID, "Tool modifier", (double)this.damageVsEntity, 0));
+		Multimap<String, AttributeModifier> multimap = HashMultimap.create();
+		if (equipmentSlot == EntityEquipmentSlot.MAINHAND)
+		{
+			multimap.put(SharedMonsterAttributes.ATTACK_DAMAGE.getAttributeUnlocalizedName(), new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Tool modifier", (double) this.damageVsEntity, 0));
+			multimap.put(SharedMonsterAttributes.ATTACK_SPEED.getAttributeUnlocalizedName(), new AttributeModifier(ATTACK_SPEED_MODIFIER, "Tool modifier", (double) this.attackSpeed, 0));
+		}
 		return multimap;
 	}
 
@@ -112,10 +116,10 @@ public class ItemScapecraftTool extends ItemTool implements QualityItem
 		super.addInformation(itemStack, player, lines, advancedTooltips);
 		if(Scapecraft.requireLevels)
 		{
-			lines.add(StatCollector.translateToLocal("tool.minlevel.combat") + " " + this.level);
+			lines.add(I18n.translateToLocal("tool.minlevel.combat") + " " + this.level);
 			if(ScapecraftItems.toolLevels.get(this) != null)
 			{
-				lines.add(StatCollector.translateToLocal("tool.minlevel." + toolClass) + " " + ScapecraftItems.toolLevels.get(this));
+				lines.add(I18n.translateToLocal("tool.minlevel." + toolClass) + " " + ScapecraftItems.toolLevels.get(this));
 			}
 
 			if(itemStack.getTagCompound() != null && itemStack.getTagCompound().hasKey("source"))

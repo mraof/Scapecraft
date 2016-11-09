@@ -1,11 +1,13 @@
 package scapecraft.command;
 
 import net.minecraft.command.CommandBase;
+import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.text.TextComponentString;
 import scapecraft.Scapecraft;
 import scapecraft.client.gui.GuiHandler;
 import scapecraft.entity.Drop;
@@ -41,7 +43,7 @@ public class DropsCommand extends CommandBase
     }
 
     @Override
-    public void processCommand(ICommandSender sender, String[] args)
+    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
     {
         EntityPlayerMP player = getCommandSenderAsPlayer(sender);
         Class<? extends Entity> mobClass = args.length > 0 ? ScapecraftEntities.entityNames.get(args[0].toLowerCase()) : null;
@@ -49,7 +51,7 @@ public class DropsCommand extends CommandBase
         int start = 0;
         if(mobClass == null)
         {
-            te = (TileEntityScapecraftMobSpawner) sender.getEntityWorld().getTileEntity(sender.getCommandSenderPosition().posX, sender.getCommandSenderPosition().posY - 1, sender.getCommandSenderPosition().posZ);
+            te = (TileEntityScapecraftMobSpawner) sender.getEntityWorld().getTileEntity(sender.getPosition().add(0, -1, 0));
         }
         else
         {
@@ -66,11 +68,11 @@ public class DropsCommand extends CommandBase
             {
                 if (te != null)
                 {
-                    sender.addChatMessage(new ChatComponentText(Arrays.toString(te.getMoneyDrops(null))));
+                    sender.addChatMessage(new TextComponentString(Arrays.toString(te.getMoneyDrops(null))));
                 }
                 else
                 {
-                    sender.addChatMessage(new ChatComponentText(Arrays.toString(ScapecraftEntities.getMoneyDrops(mobClass))));
+                    sender.addChatMessage(new TextComponentString(Arrays.toString(ScapecraftEntities.getMoneyDrops(mobClass))));
                 }
                 return;
             }
@@ -97,7 +99,7 @@ public class DropsCommand extends CommandBase
             }
             return;
         }
-        player.openGui(Scapecraft.instance, GuiHandler.GuiId.DROPS.ordinal(), sender.getEntityWorld(), sender.getCommandSenderPosition().posX, sender.getCommandSenderPosition().posY, sender.getCommandSenderPosition().posZ);
+        player.openGui(Scapecraft.instance, GuiHandler.GuiId.DROPS.ordinal(), sender.getEntityWorld(), sender.getPosition().getX(), sender.getPosition().getY(), sender.getPosition().getZ());
         ContainerMobDrops containerMobDrops = (ContainerMobDrops) player.openContainer;
         ArrayList<Drop> drops;
         if (args.length > start && "reset".equalsIgnoreCase(args[start]))

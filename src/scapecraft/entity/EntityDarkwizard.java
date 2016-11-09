@@ -1,10 +1,9 @@
 package scapecraft.entity;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.projectile.EntityLargeFireball;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
 import scapecraft.item.ScapecraftItems;
 
@@ -22,26 +21,28 @@ public class EntityDarkwizard extends EntityScapecraft
 	protected void applyEntityAttributes()
 	{
 		super.applyEntityAttributes();
-		this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(60.0D);
-		this.getEntityAttribute(SharedMonsterAttributes.followRange).setBaseValue(32.0D);
-		this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.350D);
-		this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(5.0D);
+		this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(60.0D);
+		this.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(32.0D);
+		this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.350D);
+		this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(5.0D);
 	}
 
 	@Override
-	protected String getHurtSound()
+	protected SoundEvent getHurtSound()
 	{
-		return "mob.villager.defaulthurt";
+		//return "mob.villager.defaulthurt";
+		return SoundEvents.ENTITY_VILLAGER_HURT;
 	}
 
 	@Override
-	protected String getDeathSound()
+	protected SoundEvent getDeathSound()
 	{
-		return "mob.villager.defaultdeath";
+		//return "mob.villager.defaultdeath";
+		return SoundEvents.ENTITY_VILLAGER_DEATH;
 	}
 
 	//TODO replace old attack
-	@Override
+	/*@Override
 	protected void attackEntity(Entity par1Entity, float par2)
 	{
 		if (attackTime <= 0 && par2 < 2.0F && par1Entity.boundingBox.maxY > boundingBox.minY && par1Entity.boundingBox.minY < boundingBox.maxY)
@@ -62,7 +63,7 @@ public class EntityDarkwizard extends EntityScapecraft
 				if (field_40152_d == 1)
 				{
 					attackTime = 60;
-					//func_40148_a(true); /* THIS METHOD MAY DIFFER. CHECK NEAR BOTTOM OF CLASS */
+					//func_40148_a(true);
 				}
 				else if (field_40152_d <= 4)
 				{
@@ -93,6 +94,7 @@ public class EntityDarkwizard extends EntityScapecraft
 			hasAttacked = true;
 		}
 	}
+		*/
 
 	@Override
 	public boolean isBurning()
@@ -102,7 +104,7 @@ public class EntityDarkwizard extends EntityScapecraft
 
 	private static final ItemStack defaultHeldItem;
 	@Override
-	public ItemStack getHeldItem()
+	public ItemStack getHeldItemMainhand()
 	{
 		return defaultHeldItem;
 	}

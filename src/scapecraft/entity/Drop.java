@@ -3,8 +3,6 @@ package scapecraft.entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
-import java.util.HashMap;
-
 public class Drop
 {
 	public final ItemStack stack;

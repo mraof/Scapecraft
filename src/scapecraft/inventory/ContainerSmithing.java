@@ -4,7 +4,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Items;
-import net.minecraft.inventory.ICrafting;
+import net.minecraft.inventory.ClickType;
+import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -21,9 +22,9 @@ import java.util.ArrayList;
  */
 public class ContainerSmithing extends ContainerScapecraft
 {
+    final int FIELD_PROGRESS = 0;
+    final int FIELD_TIME = 1;
     private final TileEntitySmithingAnvil te;
-    private int progress = 0;
-    private int time = 1;
     private SmithingRecipe recipe = null;
     private ArrayList<SmithingRecipe> recipes = null;
     private InventoryScapecraft recipeInventory;
@@ -44,7 +45,7 @@ public class ContainerSmithing extends ContainerScapecraft
         {
             oldLevel = level = Stats.getLevel(inventoryPlayer.player, Stat.SMITHING);
             TileEntitySmithingAnvil.Result result = te.getResult(inventoryPlayer.player.getUniqueID());
-            this.progress = result.progress;
+            this.inventoryScapecraft.setField(FIELD_PROGRESS, result.progress);
             this.recipes = result.recipes;
             if(this.recipes != null)
             {
@@ -68,8 +69,8 @@ public class ContainerSmithing extends ContainerScapecraft
             }
         }
         resultCount = 1;
-        previewSlots.add(new ItemStack(Items.iron_ingot));
-        previewSlots.add(new ItemStack(Items.stick));
+        previewSlots.add(new ItemStack(Items.IRON_INGOT));
+        previewSlots.add(new ItemStack(Items.STICK));
         previewSlots.add(null);
     }
 
@@ -78,20 +79,11 @@ public class ContainerSmithing extends ContainerScapecraft
         this(inventoryPlayer, inventoryScapecraft, null);
     }
 
-    @Override
-    public void onCraftGuiOpened(ICrafting iCrafting)
+    public void addListener(IContainerListener listener)
     {
-        super.onCraftGuiOpened(iCrafting);
-        TileEntitySmithingAnvil.Result result = te.getResult(inventoryPlayer.player.getUniqueID());
-        this.progress = result.progress;
-        this.recipes = result.recipes;
-        iCrafting.sendProgressBarUpdate(this, 0, this.progress);
-        if(result.getRecipe() != null)
-        {
-            this.time = result.getRecipe().getTime();
-            iCrafting.sendProgressBarUpdate(this, 1, this.time);
-            iCrafting.sendSlotContents(this, inventorySlots.size(), recipe.getResult());
-        }
+        super.addListener(listener);
+        listener.sendAllWindowProperties(this, this.inventoryScapecraft);
+        listener.sendSlotContents(this, inventorySlots.size(), recipe.getResult());
     }
 
     /**
@@ -120,23 +112,23 @@ public class ContainerSmithing extends ContainerScapecraft
                 }
                 recipeInventory.setInventorySlotContents(i, stack);
             }
-            for (Object crafter : this.crafters)
+            for (IContainerListener listener : this.listeners)
             {
-                if (crafter instanceof EntityPlayerMP)
+                if (listener instanceof EntityPlayerMP)
                 {
-                    ((EntityPlayerMP) crafter).isChangingQuantityOnly = false;
+                    ((EntityPlayerMP) listener).isChangingQuantityOnly = false;
                 }
             }
         }
 
         super.detectAndSendChanges();
 
-        if(this.progress != result.progress)
+        if(this.inventoryScapecraft.getField(FIELD_PROGRESS) != result.progress)
         {
-            this.progress = result.progress;
-            for (Object crafter : this.crafters)
+            this.inventoryScapecraft.setField(FIELD_PROGRESS, result.progress);
+            for (IContainerListener listener : this.listeners)
             {
-                ((ICrafting) crafter).sendProgressBarUpdate(this, 0, this.progress);
+                listener.sendProgressBarUpdate(this, 0, this.inventoryScapecraft.getField(FIELD_PROGRESS));
             }
         }
         if(result.getRecipe() != this.recipe)
@@ -144,33 +136,33 @@ public class ContainerSmithing extends ContainerScapecraft
             this.recipe = result.getRecipe();
             if(result.getRecipe() != null)
             {
-                this.time = result.getRecipe().getTime();
-                for (Object crafter : this.crafters)
+                this.inventoryScapecraft.setField(FIELD_TIME, result.getRecipe().getTime());
+                for (IContainerListener listener : this.listeners)
                 {
-                    if (crafter instanceof EntityPlayerMP)
+                    if (listener instanceof EntityPlayerMP)
                     {
-                        ((EntityPlayerMP) crafter).isChangingQuantityOnly = false;
+                        ((EntityPlayerMP) listener).isChangingQuantityOnly = false;
                     }
-                    ((ICrafting) crafter).sendProgressBarUpdate(this, 1, this.time);
-                    ((ICrafting) crafter).sendSlotContents(this, inventorySlots.size() + 2, recipe.getResult());
+                    listener.sendProgressBarUpdate(this, 1, this.inventoryScapecraft.getField(FIELD_TIME));
+                    listener.sendSlotContents(this, inventorySlots.size() + 2, recipe.getResult());
                 }
             }
             else
             {
-                for (Object crafter : this.crafters)
+                for (IContainerListener listener : this.listeners)
                 {
-                    if (crafter instanceof EntityPlayerMP)
+                    if (listener instanceof EntityPlayerMP)
                     {
-                        ((EntityPlayerMP) crafter).isChangingQuantityOnly = false;
+                        ((EntityPlayerMP) listener).isChangingQuantityOnly = false;
                     }
-                    ((ICrafting) crafter).sendSlotContents(this, inventorySlots.size() + 2, null);
+                    listener.sendSlotContents(this, inventorySlots.size() + 2, null);
                 }
             }
         }
     }
 
     @Override
-    public ItemStack slotClick(int slotId, int clickedButton, int mode, EntityPlayer player)
+    public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player)
     {
         if(slotId >= inventoryScapecraft.getSizeInventory() + PLAYER_INV_SIZE)
         {
@@ -183,7 +175,7 @@ public class ContainerSmithing extends ContainerScapecraft
         }
         else
         {
-            ItemStack stack = super.slotClick(slotId, clickedButton, mode, player);
+            ItemStack stack = super.slotClick(slotId, dragType, clickTypeIn, player);
             if (te != null)
             {
                 te.onInventoryChanged(this.inventoryPlayer.player.getUniqueID());
@@ -191,20 +183,6 @@ public class ContainerSmithing extends ContainerScapecraft
                 level = Stats.getLevel(this.inventoryPlayer.player, Stat.SMITHING);
             }
             return stack;
-        }
-    }
-
-    @Override
-    public void updateProgressBar(int id, int value)
-    {
-        switch (id)
-        {
-            case 0:
-                this.progress = value;
-                break;
-            case 1:
-                this.time = value;
-                break;
         }
     }
 
@@ -220,6 +198,6 @@ public class ContainerSmithing extends ContainerScapecraft
 
     public int getProgress()
     {
-        return 16 * progress / time;
+        return 16 * this.inventoryScapecraft.getField(FIELD_PROGRESS) / this.inventoryScapecraft.getField(FIELD_TIME);
     }
 }

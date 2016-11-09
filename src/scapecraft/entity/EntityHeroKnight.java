@@ -1,6 +1,5 @@
 package scapecraft.entity;
 
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.boss.EntityWither;
@@ -9,7 +8,10 @@ import net.minecraft.entity.monster.EntitySkeleton;
 import net.minecraft.entity.monster.EntitySpider;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.SoundEvents;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
 import scapecraft.item.ScapecraftItems;
 
@@ -19,9 +21,8 @@ public class EntityHeroKnight extends EntityScapecraft
 	{
 		super(par1World);
 		this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
-		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityLivingBase.class, 0, true, false, this));
 		this.tasks.addTask(1, new EntityAISwimming(this));
-		this.tasks.addTask(2, new EntityAIAttackOnCollide(this, EntityLivingBase.class, 1.1D, false));
+		this.tasks.addTask(2, new EntityAIAttackMelee(this, 1.1D, false));
 		this.tasks.addTask(5, new EntityAIWander(this, 1D));
 		this.tasks.addTask(6, new EntityAILookIdle(this));
 		this.tasks.addTask(6, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
@@ -32,44 +33,40 @@ public class EntityHeroKnight extends EntityScapecraft
 	protected void applyEntityAttributes()
 	{
 		super.applyEntityAttributes();
-		this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(100.0D);
-		this.getEntityAttribute(SharedMonsterAttributes.followRange).setBaseValue(32.0D);
-		this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.24D);
-		this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(18.0D);
+		this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(100.0D);
+		this.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(32.0D);
+		this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.24D);
+		this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(18.0D);
+	}
+
+
+	@Override
+	protected SoundEvent getHurtSound()
+	{
+		//return "mob.villager.defaulthurt";
+		return SoundEvents.ENTITY_VILLAGER_HURT;
 	}
 
 	@Override
-	public boolean isAIEnabled()
+	protected SoundEvent getDeathSound()
 	{
-		return true;
-	}
-
-	@Override
-	protected String getHurtSound()
-	{
-		return "mob.villager.defaulthurt";
-	}
-
-	@Override
-	protected String getDeathSound()
-	{
-		return "mob.villager.defaultdeath";
+		//return "mob.villager.defaultdeath";
+		return SoundEvents.ENTITY_VILLAGER_DEATH;
 	}
 
 	@Override
 	public void addArmor()
 	{
 
-			this.setCurrentItemOrArmor(4, new ItemStack(ScapecraftItems.equipmentSets.get("whiteHelmet")));
-			this.setCurrentItemOrArmor(1, new ItemStack(ScapecraftItems.equipmentSets.get("dragonBoots")));
-			this.setCurrentItemOrArmor(2, new ItemStack(ScapecraftItems.equipmentSets.get("whitePlatelegs")));
-			this.setCurrentItemOrArmor(3, new ItemStack(ScapecraftItems.equipmentSets.get("ironChainbody")));
-			this.equipmentDropChances[4] = 0.0F;
+			this.setItemStackToSlot(EntityEquipmentSlot.HEAD, new ItemStack(ScapecraftItems.equipmentSets.get("whiteHelmet")));
+			this.setItemStackToSlot(EntityEquipmentSlot.FEET, new ItemStack(ScapecraftItems.equipmentSets.get("dragonBoots")));
+			this.setItemStackToSlot(EntityEquipmentSlot.LEGS, new ItemStack(ScapecraftItems.equipmentSets.get("whitePlatelegs")));
+			this.setItemStackToSlot(EntityEquipmentSlot.CHEST, new ItemStack(ScapecraftItems.equipmentSets.get("ironChainbody")));
 	}
 
 	private static final ItemStack defaultHeldItem = new ItemStack(ScapecraftItems.equipmentSets.get("whiteSword"), 1);
 	@Override
-	public ItemStack getHeldItem()
+	public ItemStack getHeldItemMainhand()
 	{
 		return defaultHeldItem;
 	}

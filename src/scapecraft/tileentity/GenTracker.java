@@ -1,11 +1,12 @@
 package scapecraft.tileentity;
 
 import net.minecraft.block.Block;
+import net.minecraft.util.math.BlockPos;
 
 /**
  * Created by mraof on 2016 March 02.
  */
 public interface GenTracker
 {
-    void addSpawnedBlock(Block block, int x, int y, int z);
+    void addSpawnedBlock(Block block, BlockPos pos);
 }

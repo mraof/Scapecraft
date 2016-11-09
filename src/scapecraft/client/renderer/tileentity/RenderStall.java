@@ -2,13 +2,13 @@ package scapecraft.client.renderer.tileentity;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.tileentity.TileEntity;
 import org.lwjgl.opengl.GL11;
 import scapecraft.client.Resources;
 import scapecraft.client.model.block.ModelBlockStall;
+import scapecraft.tileentity.TileEntityStall;
 
 //TODO rewrite this and make it able to rotate
-public class RenderStall extends TileEntitySpecialRenderer
+public class RenderStall extends TileEntitySpecialRenderer<TileEntityStall>
 {
 
 	private final ModelBlockStall model;
@@ -19,7 +19,7 @@ public class RenderStall extends TileEntitySpecialRenderer
 	}
 
 	@Override
-	public void renderTileEntityAt(TileEntity te, double x, double y, double z, float scale)
+	public void renderTileEntityAt(TileEntityStall te, double x, double y, double z, float partialTicks, int destroyStage)
 	{
 		//The PushMatrix tells the renderer to "start" doing something.
 		GL11.glPushMatrix();

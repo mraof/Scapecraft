@@ -2,7 +2,7 @@ package scapecraft.inventory;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.ICrafting;
+import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import scapecraft.entity.Drop;
@@ -32,7 +32,7 @@ public class ContainerMobDrops extends ContainerScapecraft
     public ItemStack transferStackInSlot(EntityPlayer player, int slotNum)
     {
         ItemStack stack = null;
-        Slot slot = (Slot) inventorySlots.get(slotNum);
+        Slot slot = inventorySlots.get(slotNum);
         if(slot != null && slot.getHasStack())
         {
             if (slotNum < PLAYER_INV_SIZE)
@@ -61,7 +61,7 @@ public class ContainerMobDrops extends ContainerScapecraft
         chances.remove(index);
         for(int i = index + PLAYER_INV_SIZE; i < inventorySlots.size(); i++)
         {
-            Slot oldSlot = (Slot) inventorySlots.remove(i);
+            Slot oldSlot = inventorySlots.remove(i);
             Slot newSlot = new Slot(inventoryDrops, oldSlot.getSlotIndex() - 1, oldSlot.xDisplayPosition, oldSlot.yDisplayPosition - 26);
             newSlot.slotNumber = oldSlot.slotNumber - 1;
             //noinspection unchecked
@@ -69,15 +69,10 @@ public class ContainerMobDrops extends ContainerScapecraft
         }
     }
 
-    @Override
-    public void onCraftGuiOpened(ICrafting crafter)
+    public void addListener(IContainerListener listener)
     {
-        super.onCraftGuiOpened(crafter);
-        for (int i = 0; i < chances.size(); i++)
-        {
-            chances.set(i, inventoryDrops.chances.get(i));
-            crafter.sendProgressBarUpdate(this, i, chances.get(i));
-        }
+        super.addListener(listener);
+        listener.sendAllWindowProperties(this, this.inventoryScapecraft);
     }
 
     @Override
@@ -93,9 +88,9 @@ public class ContainerMobDrops extends ContainerScapecraft
             if(!chances.get(i).equals(inventoryDrops.chances.get(i)))
             {
                 chances.set(i, inventoryDrops.chances.get(i));
-                for (Object crafter : this.crafters)
+                for (IContainerListener listener : this.listeners)
                 {
-                    ((ICrafting) crafter).sendProgressBarUpdate(this, i, chances.get(i));
+                    listener.sendProgressBarUpdate(this, i, chances.get(i));
                 }
             }
         }
@@ -106,19 +101,6 @@ public class ContainerMobDrops extends ContainerScapecraft
     public Slot addSlotToContainer(Slot slot)
     {
         return super.addSlotToContainer(slot);
-    }
-
-    @Override
-    public void updateProgressBar(int id, int value)
-    {
-        if(chances.size() == id)
-        {
-            inventoryDrops.chances.add(value);
-        }
-        else
-        {
-            inventoryDrops.chances.set(id, value);
-        }
     }
 
     @Override

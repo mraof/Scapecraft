@@ -1,14 +1,13 @@
 package scapecraft.entity.ai;
 
-import net.minecraft.command.IEntitySelector;
-import net.minecraft.entity.Entity;
+import com.google.common.base.Predicate;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.ai.EntityAITarget;
 import net.minecraft.entity.ai.RandomPositionGenerator;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.Vec3d;
 import scapecraft.entity.EntityScapecraft;
 import scapecraft.util.Stats;
 
@@ -21,7 +20,7 @@ import java.util.List;
 public class EntityAILevelTarget extends EntityAITarget
 {
     private final EntityAINearestAttackableTarget.Sorter sorter;
-    private final IEntitySelector targetEntitySelector;
+    private final Predicate targetEntitySelector;
     private EntityLivingBase targetEntity;
     private Class<?extends EntityScapecraft>[] allies;
 
@@ -30,22 +29,15 @@ public class EntityAILevelTarget extends EntityAITarget
         super(entityScapecraft, p_i1665_4_, p_i1665_5_);
         this.sorter = new EntityAINearestAttackableTarget.Sorter(entityScapecraft);
         this.setMutexBits(1);
-        this.targetEntitySelector = new IEntitySelector()
-        {
-            @Override
-            public boolean isEntityApplicable(Entity p_82704_1_)
-            {
-                return entityScapecraft.isEntityApplicable(p_82704_1_) && EntityAILevelTarget.this.isSuitableTarget((EntityLivingBase) p_82704_1_, false);
-            }
-        };
         this.allies = allies;
+        targetEntitySelector = null;
     }
 
     @Override
     public boolean shouldExecute()
     {
         double distance = this.getTargetDistance();
-        List list = this.taskOwner.worldObj.selectEntitiesWithinAABB(EntityLivingBase.class, this.taskOwner.boundingBox.expand(distance, 4, distance), this.targetEntitySelector);
+        List list = this.taskOwner.worldObj.getEntitiesWithinAABB(EntityLivingBase.class, this.taskOwner.getEntityBoundingBox().expand(distance, 4, distance), this.targetEntitySelector);
         Collections.sort(list, sorter);
         if(list.isEmpty())
         {
@@ -79,7 +71,7 @@ public class EntityAILevelTarget extends EntityAITarget
             {
                 int allyNum;
                 double distance = this.getTargetDistance();
-                List list = this.taskOwner.worldObj.getEntitiesWithinAABB(EntityScapecraft.class, AxisAlignedBB.getBoundingBox(this.taskOwner.posX, this.taskOwner.posY, this.taskOwner.posZ, this.taskOwner.posX + 1.0D, this.taskOwner.posY + 1.0D, this.taskOwner.posZ + 1.0D).expand(distance, 10.0D, distance));
+                List list = this.taskOwner.worldObj.getEntitiesWithinAABB(EntityScapecraft.class, new AxisAlignedBB(this.taskOwner.posX, this.taskOwner.posY, this.taskOwner.posZ, this.taskOwner.posX + 1.0D, this.taskOwner.posY + 1.0D, this.taskOwner.posZ + 1.0D).expand(distance, 10.0D, distance));
                 for(allyNum = 0; allyNum < list.size() && levelDifference > bravery; allyNum++)
                 {
                     EntityScapecraft entity = ((EntityScapecraft) list.get(allyNum));
@@ -93,7 +85,7 @@ public class EntityAILevelTarget extends EntityAITarget
 
         if(levelDifference > bravery)
         {
-            Vec3 vec3 = RandomPositionGenerator.findRandomTargetBlockAwayFrom(this.taskOwner, (int) Math.sqrt(levelDifference) + 3, 4, this.targetEntity.getLookVec());
+            Vec3d vec3 = RandomPositionGenerator.findRandomTargetBlockAwayFrom(this.taskOwner, (int) Math.sqrt(levelDifference) + 3, 4, this.targetEntity.getLookVec());
             if(vec3 != null)
             {
                 this.taskOwner.getNavigator().tryMoveToXYZ(vec3.xCoord, vec3.yCoord, vec3.zCoord, 1 + Math.sqrt(levelDifference) / 10f);

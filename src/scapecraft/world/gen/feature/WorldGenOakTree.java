@@ -1,6 +1,7 @@
 package scapecraft.world.gen.feature;
 
 import net.minecraft.init.Blocks;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.WorldGenTrees;
 import scapecraft.block.ScapecraftBlocks;
@@ -17,19 +18,19 @@ public class WorldGenOakTree extends WorldGenScapecraft
 	}
 
 	@Override
-	public boolean generate(World world, Random rand, int x, int y, int z)
+	public boolean generate(World world, Random rand, BlockPos pos)
 	{
 		int height = rand.nextInt(2) + 4;
 		for(int yOffset = 0; yOffset <= height; yOffset++)
 		{
-			setBlock(world, x, y + yOffset, z, Blocks.log, 0, ScapecraftBlocks.oakTreeSpawn);
+			setBlock(world, pos.add(0, yOffset, 0), Blocks.LOG.getDefaultState(), ScapecraftBlocks.oakTreeSpawn);
 		}
-		setBlocks(world, x - 1, y + height + 1, z, x + 1, y + height + 1, z, Blocks.leaves);
-		setBlocks(world, x, y + height + 1, z - 1, x, y + height + 1, z + 1, Blocks.leaves);
-		setBlocks(world, x - 1, y + height, z - rand.nextInt(2), x + 1, y + height, z + rand.nextInt(2), Blocks.leaves);
-		setBlocks(world, x - rand.nextInt(2), y + height, z - 1, x + rand.nextInt(2), y + height, z + 1, Blocks.leaves);
-		setBlocks(world, x - 2, y + height - 2, z - 1 - rand.nextInt(2), x + 2, y + height - 1, z + 1 + rand.nextInt(2), Blocks.leaves);
-		setBlocks(world, x - 1 - rand.nextInt(2), y + height - 2, z - 2, x + 1 + rand.nextInt(2), y + height - 1, z + 2, Blocks.leaves);
+		setBlocks(world, pos.add(0 - 1, height + 1, 0), pos.add(1, height + 1, 0), Blocks.LEAVES);
+		setBlocks(world, pos.add(0, height + 1, 0 - 1), pos.add(0, height + 1, 1), Blocks.LEAVES);
+		setBlocks(world, pos.add(0 - 1, height, 0 - rand.nextInt(2)), pos.add(1, height, rand.nextInt(2)), Blocks.LEAVES);
+		setBlocks(world, pos.add(0 - rand.nextInt(2), height, 0 - 1), pos.add(rand.nextInt(2), height, 1), Blocks.LEAVES);
+		setBlocks(world, pos.add(0 - 2, height - 2, 0 - 1 - rand.nextInt(2)), pos.add(2, height - 1, 1 + rand.nextInt(2)), Blocks.LEAVES);
+		setBlocks(world, pos.add(0 - 1 - rand.nextInt(2), height - 2, 0 - 2), pos.add(1 + rand.nextInt(2), height - 1, 2), Blocks.LEAVES);
 		return true;
 	}
 }

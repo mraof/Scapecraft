@@ -1,31 +1,26 @@
 package scapecraft.block;
 
 import net.minecraft.block.material.Material;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.world.World;
-import scapecraft.entity.EntityVampire;
-import scapecraft.item.ScapecraftItems;
 
 public class BlockCoffin extends BlockScapecraft
 {
 	public BlockCoffin()
 	{
-		super(Material.wood);
-		this.setTextureName("scapecraft:coffin");
+		super(Material.WOOD);
 		this.setUnlocalizedName("coffin");
 	}
 
-	@Override
-	public boolean onBlockActivated(World worldIn, int x, int y, int z, EntityPlayer player, int side, float subX, float subY, float subZ)
+/*	@Override
+	public boolean onBlockActivated(World worldIn, BlockPos pos, EntityPlayer player, int side, float subX, float subY, float subZ)
 	{
-		if(!worldIn.isRemote && player.getHeldItem() != null && player.getHeldItem().getItem() == ScapecraftItems.garlic)
+		if(!worldIn.isRemote && player.getHeldItem(EnumHand.MAIN_HAND) != null && player.getHeldItem(EnumHand.MAIN_HAND).getItem() == ScapecraftItems.garlic)
 		{
 			EntityVampire entity = new EntityVampire(worldIn);
 			entity.setLocationAndAngles(x, y + 1, z, 0F, 0F);
 			worldIn.spawnEntityInWorld(entity);
-			player.getHeldItem().stackSize--;
+			player.getHeldItem(EnumHand.MAIN_HAND).stackSize--;
 			return true;
 		}
 		return false;
-	}
+	}*/
 }

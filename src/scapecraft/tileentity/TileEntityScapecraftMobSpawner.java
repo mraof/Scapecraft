@@ -1,15 +1,15 @@
 package scapecraft.tileentity;
 
-import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ChatComponentText;
-import scapecraft.Scapecraft;
+import net.minecraft.util.ITickable;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import scapecraft.entity.Drop;
 import scapecraft.entity.EntityScapecraft;
 import scapecraft.entity.MobSpawner;
@@ -21,7 +21,7 @@ import java.util.concurrent.DelayQueue;
 import java.util.concurrent.Delayed;
 import java.util.concurrent.TimeUnit;
 
-public class TileEntityScapecraftMobSpawner extends TileEntity implements MobSpawner
+public class TileEntityScapecraftMobSpawner extends TileEntity implements MobSpawner, ITickable
 {
 	public String entityName = "";
 	public int spawnInterval = 1200;
@@ -35,7 +35,7 @@ public class TileEntityScapecraftMobSpawner extends TileEntity implements MobSpa
 	public int[] moneyDrops = null;
 
 	@Override
-	public void writeToNBT(NBTTagCompound tagCompound)
+	public NBTTagCompound writeToNBT(NBTTagCompound tagCompound)
 	{
 		super.writeToNBT(tagCompound);
 		tagCompound.setString("entityName", entityName);
@@ -56,6 +56,7 @@ public class TileEntityScapecraftMobSpawner extends TileEntity implements MobSpa
 		{
 			tagCompound.setIntArray("moneyDrops", moneyDrops);
 		}
+		return tagCompound;
 	}
 
 	@Override
@@ -87,7 +88,7 @@ public class TileEntityScapecraftMobSpawner extends TileEntity implements MobSpa
 	}
 
 	@Override
-	public void updateEntity()
+	public void update()
 	{
 		if(this.worldObj != null && !this.worldObj.isRemote && this.worldObj.getTotalWorldTime() % 20L == 0L)
 		{
@@ -101,10 +102,11 @@ public class TileEntityScapecraftMobSpawner extends TileEntity implements MobSpa
 			}
 			if(spawnedIds.size() < this.maxSpawn)
 			{
-				if(this.worldObj.getBlockMetadata(this.xCoord, this.yCoord, this.zCoord) == 1)
+				//Send redstone signal when max spawned
+/*				if(this.worldObj.getBlockMetadata(this.pos) == 1)
 				{
-					this.worldObj.setBlockMetadataWithNotify(this.xCoord, this.yCoord, this.zCoord, 0, 3);
-				}
+					this.worldObj.setBlockMetadataWithNotify(this.pos, 0, 3);
+				}*/
 				if(this.spawnInterval > 0 && this.worldObj.getTotalWorldTime() % spawnInterval == 0L)
 				{
 					Iterator<Integer> it = spawnedIds.iterator();
@@ -114,10 +116,10 @@ public class TileEntityScapecraftMobSpawner extends TileEntity implements MobSpa
 						if(entity == null || entity.isDead)
 						{
 							it.remove();
-							if(spawnedIds.size() < maxSpawn && this.worldObj.getBlockMetadata(this.xCoord, this.yCoord, this.zCoord) == 1)
+/*							if(spawnedIds.size() < maxSpawn && this.worldObj.getBlockMetadata(this.pos) == 1)
 							{
-								this.worldObj.setBlockMetadataWithNotify(this.xCoord, this.yCoord, this.zCoord, 0, 3);
-							}
+								this.worldObj.setBlockMetadataWithNotify(this.pos, 0, 3);
+							}*/
 						}
 					}
 
@@ -138,12 +140,12 @@ public class TileEntityScapecraftMobSpawner extends TileEntity implements MobSpa
 					EntityScapecraft entity = ScapecraftEntities.spawnScapecraftEntity(args.get(0), this.worldObj);
 					if(entity == null)
 					{
-						String message = String.format("Mob Spawner at %d, %d, %d spawned null entity \"%s\"\n", this.xCoord, this.yCoord, this.zCoord, entityName);
-						for(Object player : FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().playerEntityList)
+						String message = String.format("Mob Spawner at %s spawned null entity \"%s\"\n", this.pos, entityName);
+						for(Object player : FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerList())
 						{
 							if(player instanceof EntityPlayerMP && ((EntityPlayerMP) player).capabilities.isCreativeMode)
 							{
-								((EntityPlayerMP) player).addChatMessage(new ChatComponentText(message));
+								((EntityPlayerMP) player).addChatMessage(new TextComponentString(message));
 							}
 						}
 						return;
@@ -167,14 +169,14 @@ public class TileEntityScapecraftMobSpawner extends TileEntity implements MobSpa
 					}
 					double angle = random.nextDouble() * 2 * Math.PI;
 					double r = radius * random.nextDouble();
-					int x = (int) (this.xCoord + (Math.sin(angle) * r));
-					int y = this.yCoord + 1;
-					int z = (int) (this.zCoord + (Math.cos(angle) * r));
-					while( y < this.yCoord + radius && this.worldObj.getBlock(x, y, z).isOpaqueCube())
+					int x = (int) (this.pos.getX() + (Math.sin(angle) * r));
+					int y = this.pos.getY() + 1;
+					int z = (int) (this.pos.getZ() + (Math.cos(angle) * r));
+					while( y < this.pos.getY() + radius && this.worldObj.getBlockState(new BlockPos(x, y, z)).isOpaqueCube())
 					{
 						y++;
 					}
-					while(!this.worldObj.getBlock(x, y - 1, z).isOpaqueCube() && y > this.yCoord - radius)
+					while(!this.worldObj.getBlockState(new BlockPos(x, y - 1, z)).isOpaqueCube() && y > this.pos.getY() - radius)
 					{
 						y--;
 					}
@@ -205,7 +207,7 @@ public class TileEntityScapecraftMobSpawner extends TileEntity implements MobSpa
 		}
 		if(averageLevel >= 1)
 		{
-			killTimes.add(new KillTime(MinecraftServer.getServer().getEntityWorld().getTotalWorldTime() + (this.maxSpawn / 2 * this.spawnInterval), (int) averageLevel));
+			killTimes.add(new KillTime(FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld().getTotalWorldTime() + (this.maxSpawn / 2 * this.spawnInterval), (int) averageLevel));
 		}
 		Iterator<Integer> it = this.spawnedIds.iterator();
 		while(it.hasNext())
@@ -213,10 +215,10 @@ public class TileEntityScapecraftMobSpawner extends TileEntity implements MobSpa
 			if(it.next() == entity.getEntityId())
 			{
 				it.remove();
-				if(this.worldObj.getBlockMetadata(this.xCoord, this.yCoord, this.zCoord) == 1)
+/*				if(this.worldObj.getBlockMetadata(this.pos) == 1)
 				{
-					this.worldObj.setBlockMetadataWithNotify(this.xCoord, this.yCoord, this.zCoord, 0, 3);
-				}
+					this.worldObj.setBlockMetadataWithNotify(this.pos, 0, 3);
+				}*/
 				return;
 			}
 		}
@@ -252,13 +254,11 @@ public class TileEntityScapecraftMobSpawner extends TileEntity implements MobSpa
 		this.spawnedIds.add(entity.getEntityId());
 		entity.mobSpawner = this;
 		entity.fromSpawner = true;
-		entity.mobSpawnerX = this.xCoord;
-		entity.mobSpawnerY = this.yCoord;
-		entity.mobSpawnerZ = this.zCoord;
-		if(spawnedIds.size() >= maxSpawn)
+		entity.mobSpawnerPos = this.pos;
+/*		if(spawnedIds.size() >= maxSpawn)
 		{
-			this.worldObj.setBlockMetadataWithNotify(this.xCoord, this.yCoord, this.zCoord, 1, 3);
-		}
+			this.worldObj.setBlockMetadataWithNotify(this.pos, 1, 3);
+		}*/
 	}
 
 	@SuppressWarnings("NullableProblems")
@@ -284,7 +284,7 @@ public class TileEntityScapecraftMobSpawner extends TileEntity implements MobSpa
 		@Override
 		public long getDelay(TimeUnit unit)
 		{
-			return this.time - MinecraftServer.getServer().getEntityWorld().getTotalWorldTime();
+			return this.time - FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld().getTotalWorldTime();
 		}
 
 		@Override

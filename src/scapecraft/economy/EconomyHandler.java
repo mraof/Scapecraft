@@ -14,7 +14,6 @@ public class EconomyHandler
 	{
 		try
 		{
-			//Class.forName("net.milkbowl.vault.economy.Economy", false, null);
 			economy = new VaultEconomy();
 		}
 		catch(Throwable e)

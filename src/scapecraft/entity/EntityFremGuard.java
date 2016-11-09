@@ -1,7 +1,10 @@
 package scapecraft.entity;
 
 import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.init.SoundEvents;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
 import scapecraft.item.ScapecraftItems;
 
@@ -16,36 +19,31 @@ public class EntityFremGuard extends EntityScapecraft
 	protected void applyEntityAttributes()
 	{
 		super.applyEntityAttributes();
-		this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(9001.0D);
-		this.getEntityAttribute(SharedMonsterAttributes.followRange).setBaseValue(32.0D);
-		this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.0D);
-		this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(0.0D);
-		this.getEntityAttribute(SharedMonsterAttributes.knockbackResistance).setBaseValue(1.0D);
+		this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(9001.0D);
+		this.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(32.0D);
+		this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.0D);
+		this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(0.0D);
+		this.getEntityAttribute(SharedMonsterAttributes.KNOCKBACK_RESISTANCE).setBaseValue(1.0D);
 	}
 
 	@Override
-	public boolean isAIEnabled()
+	protected SoundEvent getHurtSound()
 	{
-		return true;
+		//return "mob.villager.defaulthurt";
+		return SoundEvents.ENTITY_VILLAGER_HURT;
 	}
 
 	@Override
-	protected String getHurtSound()
+	protected SoundEvent getDeathSound()
 	{
-		return "mob.villager.defaulthurt";
-	}
-
-	@Override
-	protected String getDeathSound()
-	{
-		return "mob.villager.defaultdeath";
+		//return "mob.villager.defaultdeath";
+		return SoundEvents.ENTITY_VILLAGER_DEATH;
 	}
 
 	@Override
 	public void addArmor()
 	{
-			this.setCurrentItemOrArmor(3, new ItemStack(ScapecraftItems.equipmentSets.get("runePlatebody")));
-			this.setCurrentItemOrArmor(2, new ItemStack(ScapecraftItems.equipmentSets.get("runePlatelegs")));
-			this.equipmentDropChances[4] = 0.0F;
+			this.setItemStackToSlot(EntityEquipmentSlot.CHEST, new ItemStack(ScapecraftItems.equipmentSets.get("runePlatebody")));
+			this.setItemStackToSlot(EntityEquipmentSlot.LEGS, new ItemStack(ScapecraftItems.equipmentSets.get("runePlatelegs")));
 	}
 }

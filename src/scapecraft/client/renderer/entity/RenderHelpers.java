@@ -18,7 +18,7 @@ public class RenderHelpers
     {
             float f1 = 0.0266666688F;
             int playerLevel = Stats.getCombatLevel(Minecraft.getMinecraft().thePlayer);
-            String label = entity.getFormattedCommandSenderName().getFormattedText() + " " + level;
+            String label = entity.getDisplayName().getFormattedText() + " " + level;
             int color = playerLevel - level > 20 ? 0x00FF00 : playerLevel - level < -20 ? 0xFF0000 : ((playerLevel - level + 20) * 0xFF / 40) << 8 | ((level - playerLevel + 20) * 0xFF / 40) << 16;
 
             FontRenderer fontrenderer = render.getFontRendererFromRenderManager();

@@ -1,9 +1,12 @@
 package scapecraft.command;
 
 import net.minecraft.command.CommandBase;
+import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.EnumHand;
 import scapecraft.economy.EconomyHandler;
 import scapecraft.economy.market.Listing;
 import scapecraft.economy.market.PlayerLister;
@@ -30,16 +33,16 @@ public class SellCommand extends CommandBase
     }
 
     @Override
-    public void processCommand(ICommandSender sender, String[] args)
+    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
     {
         if(args.length == 1)
         {
             int price = Integer.parseInt(args[0]);
             EntityPlayerMP player = getCommandSenderAsPlayer(sender);
             UUID uuid = player.getUniqueID();
-            if(player.getHeldItem() != null && price >= 0)
+            if(player.getHeldItem(EnumHand.MAIN_HAND) != null && price >= 0)
             {
-                ItemStack stack = player.getHeldItem();
+                ItemStack stack = player.getHeldItem(EnumHand.MAIN_HAND);
                 TreeSet<Listing> listings = EconomyHandler.scEconomy.getGlobalMarket();
                 for(Listing listing : listings)
                 {
@@ -51,7 +54,7 @@ public class SellCommand extends CommandBase
                     }
                 }
                 Listing listing = new Listing(price, stack.copy(), true);
-                listing.lister = new PlayerLister(uuid, player.getCommandSenderName());
+                listing.lister = new PlayerLister(uuid, player.getName());
                 listing.stock = 1;
                 listings.add(listing);
                 player.inventory.decrStackSize(player.inventory.currentItem, stack.stackSize);

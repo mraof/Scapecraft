@@ -2,6 +2,7 @@ package scapecraft.world.gen.dungeon;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import scapecraft.entity.Drop;
 import scapecraft.entity.EntityScapecraft;
@@ -46,20 +47,20 @@ public class DungeonRoom implements MobSpawner
 		{
 			for(int zPos = z - roomSize; zPos <= z + roomSize; zPos++)
 			{
-				world.setBlock(xPos, y - 1, zPos, dungeon.dungeonBlock);
+				world.setBlockState(new BlockPos(xPos, y - 1, zPos), dungeon.dungeonBlock.getDefaultState());
 				int yPos = y;
 				if(Math.abs(zPos - z) == roomSize || Math.abs(xPos - x) == roomSize)
 				{
 					for(; yPos < y + 10; yPos++)
 					{
-						world.setBlock(xPos, yPos, zPos, dungeon.dungeonBlock);
+						world.setBlockState(new BlockPos(xPos, yPos, zPos), dungeon.dungeonBlock.getDefaultState());
 					}
 				}
 				else
 				{
 					for(; yPos < y + 10; yPos++)
 					{
-						world.setBlockToAir(xPos, yPos, zPos);
+						world.setBlockToAir(new BlockPos(xPos, yPos, zPos));
 					}
 				}
 			}
@@ -103,7 +104,7 @@ public class DungeonRoom implements MobSpawner
 			{
 				for(int z = zMin; z <= zMax; z++)
 				{
-					world.setBlock(x, y, z, block, metadata, 3);
+					world.setBlockState(new BlockPos(x, y, z), block.getDefaultState(), 3);
 				}
 			}
 		}
@@ -117,7 +118,7 @@ public class DungeonRoom implements MobSpawner
 			{
 				for(int z = zMin; z <= zMax; z++)
 				{
-					world.setBlockToAir(x, y, z);
+					world.setBlockToAir(new BlockPos(x, y, z));
 				}
 			}
 		}
@@ -127,7 +128,7 @@ public class DungeonRoom implements MobSpawner
 	public void onSpawnedDeath(Entity entity)
 	{
 		roomMobs.remove(entity);
-		System.out.println(entity.getCommandSenderName() + " in room " + roomX + ", " + roomZ + " has been killed");
+		System.out.println(entity.getName() + " in room " + roomX + ", " + roomZ + " has been killed");
 	}
 
 	@Override

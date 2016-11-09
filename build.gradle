@@ -1,6 +1,6 @@
 buildscript {
     repositories {
-        mavenCentral()
+        jcenter()
         maven {
             name = "forge"
             url = "http://files.minecraftforge.net/maven"
@@ -10,8 +10,13 @@ buildscript {
             url = "https://oss.sonatype.org/content/repositories/snapshots/"
         }
     }
+    gradle.projectsEvaluated {
+        tasks.withType(JavaCompile) {
+            options.compilerArgs << "-Xmaxerrs" << "10000"
+        }
+    }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
     }
 }
 
@@ -36,16 +41,16 @@ repositories {
 
 defaultTasks "runClient"
 
-apply plugin: 'forge'
+apply plugin: 'net.minecraftforge.gradle.forge'
 
 version = System.getenv('BUILD_NUMBER') ?: "test"
 group = "scapecraft"
 archivesBaseName = "Scapecraft"
 
 minecraft {
-    version = "1.7.10-10.13.4.1558-1.7.10"
+    version = "1.10.2-12.18.0.2008"
     runDir = "eclipse"
-    mappings = "stable_12"
+    mappings = "snapshot_20160518"
 
     replace "@VERSION@", project.version
     replaceIn "Scapecraft.java"
@@ -54,7 +59,6 @@ minecraft {
 compileJava {
     dependencies {
         compile 'us.dynmap:DynmapCoreAPI:2.3-SNAPSHOT'
-        compile group: "com.forgeessentials", name: "forgeessentials", version: "1.4.4-SNAPSHOT", classifier: "dev", changing: true
     }
 }
 
@@ -105,16 +109,5 @@ runClient {
         if(project.hasProperty('password')) {
             args "--password", project.password
         }
-    }
-}
-
-//Use lwjgl 2.9.3 instead of 2.9.1
-extractUserDev{
-    File devJson = new File(getOut().toString() + '/dev.json')
-    if(devJson.exists())
-    {
-        String contents = new File(getOut().toString() + '/dev.json').getText('UTF-8')
-        contents=contents.replaceAll('2.9.1', '2.9.3')
-        devJson.write(contents, 'UTF-8')
     }
 }

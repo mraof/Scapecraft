@@ -6,8 +6,8 @@ import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntityMobSpawner;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 import scapecraft.Scapecraft;
 import scapecraft.client.gui.GuiHandler;
@@ -54,11 +54,11 @@ public class EntityShopshifter extends EntityShapeshifter
 	}
 
 	@Override
-	public boolean interact(EntityPlayer player)
+	public boolean processInteract(EntityPlayer player, EnumHand hand, ItemStack stack)
 	{
-		if(!worldObj.isRemote)
+		if(!worldObj.isRemote && hand == EnumHand.OFF_HAND)
 		{
-			player.openGui(Scapecraft.instance, GuiHandler.GuiId.SHOP.ordinal(), worldObj, mobSpawnerX, mobSpawnerY, mobSpawnerZ);
+			player.openGui(Scapecraft.instance, GuiHandler.GuiId.SHOP.ordinal(), worldObj, mobSpawnerPos.getX(), mobSpawnerPos.getY(), mobSpawnerPos.getZ());
 		}
 		return true;
 	}
@@ -73,7 +73,7 @@ public class EntityShopshifter extends EntityShapeshifter
 			if(drops.size() > 0)
 			{
 				Drop drop = drops.get(rand.nextInt(drops.size()));
-				this.copiedMob.setCurrentItemOrArmor(0, drop.stack.copy());
+				this.copiedMob.setHeldItem(EnumHand.MAIN_HAND, drop.stack.copy());
 			}
 		}
 	}
@@ -84,7 +84,7 @@ public class EntityShopshifter extends EntityShapeshifter
 		super.onSpawnerSpawn(args);
 		if(mobSpawner instanceof TileEntityScapecraftMobSpawner)
 		{
-			this.setHomeArea(this.mobSpawnerX, this.mobSpawnerY, this.mobSpawnerZ, ((TileEntityScapecraftMobSpawner) mobSpawner).radius);
+			this.setHomePosAndDistance(this.mobSpawnerPos, ((TileEntityScapecraftMobSpawner) mobSpawner).radius);
 		}
 	}
 
@@ -101,7 +101,7 @@ public class EntityShopshifter extends EntityShapeshifter
 
 		if(mobSpawner instanceof TileEntityScapecraftMobSpawner)
 		{
-			this.setHomeArea(this.mobSpawnerX, this.mobSpawnerY, this.mobSpawnerZ, ((TileEntityScapecraftMobSpawner) mobSpawner).radius);
+			this.setHomePosAndDistance(this.mobSpawnerPos, ((TileEntityScapecraftMobSpawner) mobSpawner).radius);
 		}
 	}
 

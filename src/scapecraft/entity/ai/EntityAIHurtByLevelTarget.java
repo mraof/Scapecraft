@@ -1,18 +1,9 @@
 package scapecraft.entity.ai;
 
-import net.minecraft.command.IEntitySelector;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAITarget;
-import net.minecraft.entity.ai.RandomPositionGenerator;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.Vec3;
 import scapecraft.entity.EntityScapecraft;
-import scapecraft.util.Stats;
 
 import java.util.Comparator;
-import java.util.List;
 
 /**
  * Created by mraof on 2016 January 04.
@@ -31,7 +22,7 @@ public class EntityAIHurtByLevelTarget extends EntityAITarget
     int lastRevengeTime = 0;
     public int bravery = 5;
     Class[] allies;
-    private final IEntitySelector allySelector = new IEntitySelector() {
+/*    private final IEntitySelector allySelector = new IEntitySelector() {
 
         @Override
         public boolean isEntityApplicable(Entity p_82704_1_)
@@ -45,7 +36,7 @@ public class EntityAIHurtByLevelTarget extends EntityAITarget
             }
             return false;
         }
-    };
+    };*/
 
     public EntityAIHurtByLevelTarget(EntityScapecraft entity, Class... allies)
     {
@@ -64,7 +55,7 @@ public class EntityAIHurtByLevelTarget extends EntityAITarget
     @Override
     public void startExecuting()
     {
-        EntityLivingBase target = this.taskOwner.getAITarget();
+/*        EntityLivingBase target = this.taskOwner.getAITarget();
         int ownerLevel = ((EntityScapecraft)this.taskOwner).getLevel();
         int targetLevel = 0;
         this.lastRevengeTime = this.taskOwner.getRevengeTimer();
@@ -121,6 +112,6 @@ public class EntityAIHurtByLevelTarget extends EntityAITarget
                 }
             }
             super.startExecuting();
-        }
+        }*/
     }
 }

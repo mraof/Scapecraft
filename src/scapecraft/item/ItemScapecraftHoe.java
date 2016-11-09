@@ -1,10 +1,10 @@
 package scapecraft.item;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemHoe;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import scapecraft.Scapecraft;
 
 import java.util.List;
@@ -16,22 +16,22 @@ public class ItemScapecraftHoe extends ItemHoe implements QualityItem
 	{
 		super(ToolMaterial.GOLD);
 		this.setCreativeTab(Scapecraft.tabScapecraftTool);
-		this.setMaxDurability((level * level / 2 + 50) * 2);
+		this.setMaxDamage((level * level / 2 + 50) * 2);
 		this.level = level;
 		this.setUnlocalizedName(name);
-		this.setTextureName("scapecraft:" + name);
+		this.setRegistryName(name);
 	}
 
 	@Override
 	public int getMaxDamage(ItemStack stack)
 	{
-		int durability = this.getMaxDurability();
+		int durability = this.getMaxDamage();
 		if (stack.getTagCompound() != null && stack.getTagCompound().hasKey("level"))
 		{
-			durability = (this.getMaxDurability() + (2 * this.level * (stack.getTagCompound().getInteger("level") - this.level)));
-			if (durability < this.getMaxDurability())
+			durability = (this.getMaxDamage() + (2 * this.level * (stack.getTagCompound().getInteger("level") - this.level)));
+			if (durability < this.getMaxDamage())
 			{
-				durability = this.getMaxDurability();
+				durability = this.getMaxDamage();
 			}
 		}
 		return durability;

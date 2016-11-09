@@ -5,6 +5,8 @@ import net.minecraft.entity.ai.EntityAILookIdle;
 import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.SoundEvents;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
 
 public class EntityCook extends EntityScapecraft
@@ -22,28 +24,24 @@ public class EntityCook extends EntityScapecraft
 	protected void applyEntityAttributes()
 	{
 		super.applyEntityAttributes();
-		this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(9001.0D);
-		this.getEntityAttribute(SharedMonsterAttributes.followRange).setBaseValue(32.0D);
-		this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.0D);
-		this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(0.0D);
-		this.getEntityAttribute(SharedMonsterAttributes.knockbackResistance).setBaseValue(1.0D);
+		this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(9001.0D);
+		this.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(32.0D);
+		this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.0D);
+		this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(0.0D);
+		this.getEntityAttribute(SharedMonsterAttributes.KNOCKBACK_RESISTANCE).setBaseValue(1.0D);
 	}
 
 	@Override
-	public boolean isAIEnabled()
+	protected SoundEvent getHurtSound()
 	{
-		return true;
+		//return "mob.villager.defaulthurt";
+		return SoundEvents.ENTITY_VILLAGER_HURT;
 	}
 
 	@Override
-	protected String getHurtSound()
+	protected SoundEvent getDeathSound()
 	{
-		return "mob.villager.defaulthurt";
-	}
-
-	@Override
-	protected String getDeathSound()
-	{
-		return "mob.villager.defaultdeath";
+		//return "mob.villager.defaultdeath";
+		return SoundEvents.ENTITY_VILLAGER_DEATH;
 	}
 }

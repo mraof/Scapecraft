@@ -4,9 +4,7 @@ package scapecraft.client.model;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.util.MathHelper;
-import scapecraft.entity.EntityHellhound;
+import net.minecraft.util.math.MathHelper;
 
 public class ModelHellhound extends ModelBase
 {
@@ -168,54 +166,6 @@ public class ModelHellhound extends ModelBase
 		model.rotateAngleY = y;
 		model.rotateAngleZ = z;
 	}
-
-	public void setLivingAnimations(EntityLiving par1EntityLiving, float par2, float par3, float par4)
-	{
-		EntityHellhound entitywolf = (EntityHellhound)par1EntityLiving;
-
-		if (entitywolf.isAngry())
-		{
-			this.Tail.rotateAngleY = 0.0F;
-		}
-		else
-		{
-			this.Tail.rotateAngleY = MathHelper.cos(par2 * 0.6662F) * 1.4F * par3;
-		}
-
-		if (entitywolf.isSitting())
-		{
-			this.Mane.setRotationPoint(-1.0F, 16.0F, -3.0F);
-			this.Mane.rotateAngleX = ((float)Math.PI * 2F / 5F);
-			this.Mane.rotateAngleY = 0.0F;
-			this.Body.setRotationPoint(0.0F, 18.0F, 0.0F);
-			this.Body.rotateAngleX = ((float)Math.PI / 4F);
-			this.Tail.setRotationPoint(-1.0F, 21.0F, 6.0F);
-
-		}
-		else
-		{
-			this.Body.setRotationPoint(0.0F, 14.0F, 2.0F);
-			this.Body.rotateAngleX = ((float)Math.PI / 2F);
-			this.Mane.setRotationPoint(-1.0F, 14.0F, -3.0F);
-			this.Mane.rotateAngleX = this.Body.rotateAngleX;
-			this.Tail.setRotationPoint(-1.0F, 12.0F, 8.0F);
-			this.Leg1.setRotationPoint(-2.5F, 16.0F, 7.0F);
-			this.Leg2.setRotationPoint(0.5F, 16.0F, 7.0F);
-			this.Leg3.setRotationPoint(-2.5F, 16.0F, -4.0F);
-			this.Leg4.setRotationPoint(0.5F, 16.0F, -4.0F);
-			this.Leg1.rotateAngleX = MathHelper.cos(par2 * 0.6662F) * 1.4F * par3;
-			this.Leg2.rotateAngleX = MathHelper.cos(par2 * 0.6662F + (float)Math.PI) * 1.4F * par3;
-			this.Leg3.rotateAngleX = MathHelper.cos(par2 * 0.6662F + (float)Math.PI) * 1.4F * par3;
-			this.Leg4.rotateAngleX = MathHelper.cos(par2 * 0.6662F) * 1.4F * par3;
-		}
-
-		this.WolfHead.rotateAngleZ = entitywolf.getInterestedAngle(par4) + entitywolf.getShakeAngle(par4, 0.0F);
-		this.Mane.rotateAngleZ = entitywolf.getShakeAngle(par4, -0.08F);
-		this.Body.rotateAngleZ = entitywolf.getShakeAngle(par4, -0.16F);
-		this.Tail.rotateAngleZ = entitywolf.getShakeAngle(par4, -0.2F);
-	}
-
-
 
 	@Override
 	public void setRotationAngles(float f, float f1, float f2, float f3, float f4, float f5, Entity ent)

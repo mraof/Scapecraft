@@ -1,13 +1,9 @@
 package scapecraft.item;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.IIcon;
 import scapecraft.Scapecraft;
 
 import java.util.ArrayList;
@@ -15,19 +11,20 @@ import java.util.List;
 
 /**
  * Created by mraof on 2016 March 02 at 11:35 PM.
+ * One item with a texture and name based on it's metadata
+ * Meant to be used for things such as sticks and quest items
  */
 public class ItemMulti extends Item
 {
     private final String baseName;
     protected ArrayList<ItemStack> subItems = new ArrayList<ItemStack>();
     protected ArrayList<String> names = new ArrayList<String>();
-    @SideOnly(Side.CLIENT)
-    private IIcon[] icons;
 
     public ItemMulti(String baseName)
     {
         this.baseName = baseName;
         this.setUnlocalizedName(baseName);
+        this.setRegistryName(baseName);
         setCreativeTab(Scapecraft.tabScapecraftMisc);
     }
 
@@ -56,25 +53,8 @@ public class ItemMulti extends Item
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public IIcon getIconFromDamage(int metadata)
-    {
-        return icons[metadata % icons.length];
-    }
-
-    @Override
     public String getUnlocalizedName(ItemStack stack)
     {
         return getUnlocalizedName() + "." + names.get(stack.getMetadata() % names.size());
-    }
-
-    @Override
-    public void registerIcons(IIconRegister register)
-    {
-        icons = new IIcon[names.size()];
-        for(int i = 0; i < names.size(); i++)
-        {
-            icons[i] = register.registerIcon("scapecraft:" + baseName + "/" + names.get(i));
-        }
     }
 }

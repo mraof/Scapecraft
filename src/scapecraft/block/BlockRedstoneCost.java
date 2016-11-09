@@ -1,12 +1,7 @@
 package scapecraft.block;
 
 import net.minecraft.block.material.Material;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
-
-import java.util.Random;
 
 public class BlockRedstoneCost extends BlockScapecraft
 {
@@ -14,11 +9,11 @@ public class BlockRedstoneCost extends BlockScapecraft
 
 	public BlockRedstoneCost(ItemStack cost)
 	{
-		super(Material.rock);
+		super(Material.ROCK);
 		this.cost = cost;
 	}
 
-	@Override
+/*	@Override
 	public boolean canProvidePower()
 	{
 		return true;
@@ -64,5 +59,5 @@ public class BlockRedstoneCost extends BlockScapecraft
 		}
 
 		return false;
-	}
+	}*/
 }

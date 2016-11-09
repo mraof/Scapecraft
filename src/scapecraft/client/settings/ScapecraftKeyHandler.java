@@ -1,12 +1,12 @@
 package scapecraft.client.settings;
 
-import cpw.mods.fml.client.registry.ClientRegistry;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.InputEvent;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.InputEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 import scapecraft.client.gui.GuiStatList;
 import scapecraft.client.gui.GuiStats;
@@ -29,7 +29,7 @@ public class ScapecraftKeyHandler
     @SubscribeEvent
     public void onTick(InputEvent.KeyInputEvent event)
     {
-        if(statsKey.getIsKeyPressed())
+        if(statsKey.isPressed())
         {
             System.out.println(statsKey.getKeyDescription() + " pressed");
             FMLCommonHandler.instance().showGuiScreen(GuiStats.currentTab == 0 ? new GuiStatList() : new GuiXpSplit());

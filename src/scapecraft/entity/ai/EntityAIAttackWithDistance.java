@@ -2,9 +2,9 @@ package scapecraft.entity.ai;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIBase;
-import net.minecraft.pathfinding.PathEntity;
+import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathPoint;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.EnumHand;
 import scapecraft.entity.EntityScapecraft;
 
 /**
@@ -13,7 +13,7 @@ import scapecraft.entity.EntityScapecraft;
 public class EntityAIAttackWithDistance extends EntityAIBase
 {
     private EntityScapecraft attacker;
-    private PathEntity entityPathEntity;
+    private Path entityPath;
     private int retargetTime;
     private int attackTick;
     int failedPathFindingPenalty;
@@ -50,9 +50,9 @@ public class EntityAIAttackWithDistance extends EntityAIBase
         {
             if (-- this.retargetTime <= 0)
             {
-                this.entityPathEntity = this.attacker.getNavigator().getPathToEntityLiving(entitylivingbase);
+                this.entityPath = this.attacker.getNavigator().getPathToEntityLiving(entitylivingbase);
                 this.retargetTime = 4 + this.attacker.getRNG().nextInt(7);
-                return this.entityPathEntity != null;
+                return this.entityPath != null;
             }
             else
             {
@@ -65,7 +65,7 @@ public class EntityAIAttackWithDistance extends EntityAIBase
     public boolean continueExecuting()
     {
         EntityLivingBase entitylivingbase = this.attacker.getAttackTarget();
-        return (entitylivingbase != null) && (entitylivingbase.isEntityAlive() && (this.attacker.isWithinHomeDistance(MathHelper.floor_double(entitylivingbase.posX), MathHelper.floor_double(entitylivingbase.posY), MathHelper.floor_double(entitylivingbase.posZ))));
+        return (entitylivingbase != null) && (entitylivingbase.isEntityAlive() && (this.attacker.isWithinHomeDistanceFromPosition(entitylivingbase.getPosition())));
     }
 
     /**
@@ -74,7 +74,7 @@ public class EntityAIAttackWithDistance extends EntityAIBase
     @Override
     public void startExecuting()
     {
-        this.attacker.getNavigator().setPath(this.entityPathEntity, this.speed);
+        this.attacker.getNavigator().setPath(this.entityPath, this.speed);
         this.retargetTime = 0;
     }
 
@@ -90,17 +90,17 @@ public class EntityAIAttackWithDistance extends EntityAIBase
         EntityLivingBase entitylivingbase = this.attacker.getAttackTarget();
         this.attacker.getLookHelper().setLookPositionWithEntity(entitylivingbase, 30.0F, 30.0F);
         double posY;
-        if ((entitylivingbase.boundingBox.minY > attacker.boundingBox.minY) && ((entitylivingbase.boundingBox.minY - this.attacker.height) < this.attacker.boundingBox.minY))
+        if ((entitylivingbase.getEntityBoundingBox().minY > attacker.getEntityBoundingBox().minY) && ((entitylivingbase.getEntityBoundingBox().minY - this.attacker.height) < this.attacker.getEntityBoundingBox().minY))
         {
-            posY = (entitylivingbase.boundingBox.minY > this.attacker.boundingBox.maxY) ? (entitylivingbase.boundingBox.minY - this.attacker.height) : this.attacker.boundingBox.minY;
+            posY = (entitylivingbase.getEntityBoundingBox().minY > this.attacker.getEntityBoundingBox().maxY) ? (entitylivingbase.getEntityBoundingBox().minY - this.attacker.height) : this.attacker.getEntityBoundingBox().minY;
         }
-        else if (entitylivingbase.boundingBox.minY > this.attacker.boundingBox.maxY)
+        else if (entitylivingbase.getEntityBoundingBox().minY > this.attacker.getEntityBoundingBox().maxY)
         {
-            posY = (entitylivingbase.boundingBox.minY - this.attacker.height);
+            posY = (entitylivingbase.getEntityBoundingBox().minY - this.attacker.height);
         }
         else
         {
-            posY = entitylivingbase.boundingBox.minY;
+            posY = entitylivingbase.getEntityBoundingBox().minY;
         }
         double d0 = this.attacker.getDistanceSq(entitylivingbase.posX, posY, entitylivingbase.posZ);
         double d1 = (attacker.width / 2 + distance + entitylivingbase.width / 2);
@@ -110,7 +110,7 @@ public class EntityAIAttackWithDistance extends EntityAIBase
         if (this.retargetTime <= 0 && (this.x == 0.0D && this.y == 0.0D && this.z == 0.0D || entitylivingbase.getDistanceSq(this.x, this.y, this.z) >= 1.0D || this.attacker.getRNG().nextFloat() < 0.05F))
         {
             this.x = entitylivingbase.posX;
-            this.y = entitylivingbase.boundingBox.minY;
+            this.y = entitylivingbase.getEntityBoundingBox().minY;
             this.z = entitylivingbase.posZ;
             this.retargetTime = failedPathFindingPenalty + 4 + this.attacker.getRNG().nextInt(7);
 
@@ -152,9 +152,9 @@ public class EntityAIAttackWithDistance extends EntityAIBase
         {
             this.attackTick = 20;
 
-            if (this.attacker.getHeldItem() != null)
+            if (this.attacker.getHeldItemMainhand() != null)
             {
-                this.attacker.swingItem();
+                this.attacker.swingArm(EnumHand.MAIN_HAND);
             }
 
             this.attacker.attackEntityAsMob(entitylivingbase);

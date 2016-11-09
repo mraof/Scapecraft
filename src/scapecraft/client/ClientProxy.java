@@ -1,23 +1,22 @@
 package scapecraft.client;
 
-import cpw.mods.fml.client.registry.ClientRegistry;
-import cpw.mods.fml.client.registry.RenderingRegistry;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.relauncher.ReflectionHelper;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelSpider;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.ClientCommandHandler;
-import net.minecraftforge.client.MinecraftForgeClient;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.client.registry.IRenderFactory;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GLContext;
 import scapecraft.CommonProxy;
 import scapecraft.client.gui.GuiHealth;
@@ -25,24 +24,17 @@ import scapecraft.client.model.*;
 import scapecraft.client.model.armor.ModelDragonHelm;
 import scapecraft.client.model.armor.ModelFullHelm;
 import scapecraft.client.model.armor.ModelPlateskirt;
-import scapecraft.client.model.weapon.*;
 import scapecraft.client.renderer.entity.*;
-import scapecraft.client.renderer.item.RenderItemObj;
-import scapecraft.client.renderer.item.RenderItemSpawnEgg;
-import scapecraft.client.renderer.item.RenderItemWeapon;
-import scapecraft.client.renderer.tileentity.RenderAnvil;
 import scapecraft.client.renderer.tileentity.RenderFire;
 import scapecraft.client.renderer.tileentity.RenderPortal;
 import scapecraft.client.renderer.tileentity.RenderStall;
 import scapecraft.client.settings.ScapecraftKeyHandler;
 import scapecraft.command.FileGuiCommand;
-import scapecraft.command.WeaponModelCommand;
 import scapecraft.entity.*;
 import scapecraft.item.ItemArmorScapecraft;
 import scapecraft.item.ScapecraftItems;
 import scapecraft.tileentity.TileEntityFire;
 import scapecraft.tileentity.TileEntityScapecraftPortal;
-import scapecraft.tileentity.TileEntitySmithingAnvil;
 import scapecraft.tileentity.TileEntityStall;
 
 import java.io.File;
@@ -67,92 +59,114 @@ public class ClientProxy extends CommonProxy
 	}
 
 	@Override
+	public void registerPreInit()
+	{
+		RenderFactoryBiped standardBipedFactory = new RenderFactoryBiped();
+		RenderingRegistry.registerEntityRenderingHandler(EntityBandit.class, new RenderFactoryBiped().setScale(1.5F));
+		RenderingRegistry.registerEntityRenderingHandler(EntityBarbarian.class, standardBipedFactory);
+		RenderingRegistry.registerEntityRenderingHandler(EntityBlackGuard.class, standardBipedFactory);
+		RenderingRegistry.registerEntityRenderingHandler(EntityBlackKnight.class, standardBipedFactory);
+		RenderingRegistry.registerEntityRenderingHandler(EntityCook.class, standardBipedFactory);
+		RenderingRegistry.registerEntityRenderingHandler(EntityDarkwizard.class, standardBipedFactory);
+		RenderingRegistry.registerEntityRenderingHandler(EntityDoctor.class, standardBipedFactory);
+		RenderingRegistry.registerEntityRenderingHandler(EntityEliteBlackKnight.class, standardBipedFactory);
+		RenderingRegistry.registerEntityRenderingHandler(EntityFarmer.class, standardBipedFactory);
+		RenderingRegistry.registerEntityRenderingHandler(EntityFremGuard.class, standardBipedFactory);
+		RenderingRegistry.registerEntityRenderingHandler(EntityGuard.class, standardBipedFactory);
+		RenderingRegistry.registerEntityRenderingHandler(EntityHeroKnight.class, standardBipedFactory);
+		RenderingRegistry.registerEntityRenderingHandler(EntityHighMage.class, standardBipedFactory);
+		RenderingRegistry.registerEntityRenderingHandler(EntityKing.class, standardBipedFactory);
+		RenderingRegistry.registerEntityRenderingHandler(EntityKingsGuard.class, standardBipedFactory);
+		RenderingRegistry.registerEntityRenderingHandler(EntityKos1.class, standardBipedFactory);
+		RenderingRegistry.registerEntityRenderingHandler(EntityKos2.class, standardBipedFactory);
+		RenderingRegistry.registerEntityRenderingHandler(EntityKos3.class, standardBipedFactory);
+		RenderingRegistry.registerEntityRenderingHandler(EntityKos4.class, standardBipedFactory);
+		RenderingRegistry.registerEntityRenderingHandler(EntityMan.class, standardBipedFactory);
+		RenderingRegistry.registerEntityRenderingHandler(EntityMorgan.class, standardBipedFactory);
+		RenderingRegistry.registerEntityRenderingHandler(EntityMugger.class, standardBipedFactory);
+		RenderingRegistry.registerEntityRenderingHandler(EntityShopKeeper.class, standardBipedFactory);
+		RenderingRegistry.registerEntityRenderingHandler(EntityThief.class, standardBipedFactory);
+		RenderingRegistry.registerEntityRenderingHandler(EntityVampire.class, standardBipedFactory);
+		RenderingRegistry.registerEntityRenderingHandler(EntityVarze.class, standardBipedFactory);
+		RenderingRegistry.registerEntityRenderingHandler(EntityWhiteKnight.class, standardBipedFactory);
+		RenderingRegistry.registerEntityRenderingHandler(EntityWizard.class, standardBipedFactory);
+		RenderingRegistry.registerEntityRenderingHandler(EntityAbbyDemon.class, new RenderFactoryScapecraft(new ModelAbbyDemon()));
+		RenderingRegistry.registerEntityRenderingHandler(EntityAhrim.class, new RenderFactoryScapecraft(new ModelAhrim()));
+		RenderingRegistry.registerEntityRenderingHandler(EntityAkrisae.class, new RenderFactoryScapecraft(new ModelAkrisae()));
+		RenderingRegistry.registerEntityRenderingHandler(EntityBlackDemon.class, new RenderFactoryScapecraft(new ModelBlackDemon()).setScale(2.1F));
+		RenderingRegistry.registerEntityRenderingHandler(EntityBlackDragon.class, new RenderFactoryScapecraft(new ModelGreenDragon()).setScale(2.0F));
+		RenderingRegistry.registerEntityRenderingHandler(EntityCaveCrawler.class, new RenderFactoryScapecraft(new ModelCaveCrawler()).setScale(1.4F));
+		RenderingRegistry.registerEntityRenderingHandler(EntityDharok.class, new RenderFactoryScapecraft(new ModelDharok()));
+		RenderingRegistry.registerEntityRenderingHandler(EntityDwarf.class, new RenderFactoryScapecraft(new ModelDwarf()));
+		RenderingRegistry.registerEntityRenderingHandler(EntityFireGiant.class, new RenderFactoryScapecraft(new ModelFireGiant()).setScale(1.4F));
+		RenderingRegistry.registerEntityRenderingHandler(EntityGeneralGraardor.class, new RenderFactoryScapecraft(new ModelGeneralGraardor()).setScale(2.0F));
+		RenderingRegistry.registerEntityRenderingHandler(EntityGiantSpider.class, new RenderFactoryScapecraft(new ModelSpider()).setShadowSize(1F));
+		RenderingRegistry.registerEntityRenderingHandler(EntityGhost.class, new RenderFactoryScapecraft(new ModelGhost()));
+		RenderingRegistry.registerEntityRenderingHandler(EntityGoblin.class, new RenderFactoryScapecraft(new ModelGoblin()).setScale(0.7F));
+		RenderingRegistry.registerEntityRenderingHandler(EntityGreenDragon.class, new RenderFactoryScapecraft(new ModelGreenDragon()).setScale(2.0F));
+		RenderingRegistry.registerEntityRenderingHandler(EntityGuthan.class, new RenderFactoryScapecraft(new ModelGuthan()));
+		RenderingRegistry.registerEntityRenderingHandler(EntityHellhound.class, new RenderFactoryScapecraft(new ModelHellhound()).setScale(1.5F));
+		RenderingRegistry.registerEntityRenderingHandler(EntityHillGiant.class, new RenderFactoryScapecraft(new ModelHillGiant()));
+		RenderingRegistry.registerEntityRenderingHandler(EntityIceGiant.class, new RenderFactoryScapecraft(new ModelIceGiant()));
+		RenderingRegistry.registerEntityRenderingHandler(EntityIronDragon.class, new RenderFactoryScapecraft(new ModelGreenDragon()).setScale(2.0F));
+		RenderingRegistry.registerEntityRenderingHandler(EntityKK.class, new RenderFactoryScapecraft(new ModelKK()).setScale(3.5F).setOffset(0F, .7F, 0F));
+		RenderingRegistry.registerEntityRenderingHandler(EntityKKspawn.class, new RenderFactoryScapecraft(new ModelKKspawn()).setOffset(0F, .7F, 0F));
+		RenderingRegistry.registerEntityRenderingHandler(EntityKQ.class, new RenderFactoryScapecraft(new ModelKQ()).setScale(3.0F));
+		RenderingRegistry.registerEntityRenderingHandler(EntityKQ2.class, new RenderFactoryScapecraft(new ModelKQ2()).setScale(0.5F));
+		RenderingRegistry.registerEntityRenderingHandler(EntityKaril.class, new RenderFactoryScapecraft(new ModelKaril()));
+		RenderingRegistry.registerEntityRenderingHandler(EntityLavaBlock.class, new RenderFactoryScapecraft(new ModelLavaBlock()).setScale(.2F));
+		RenderingRegistry.registerEntityRenderingHandler(EntityLesserDemonUgly.class, new RenderFactoryScapecraft(new ModelLesserDemonUgly()).setScale(1.5F));
+		RenderingRegistry.registerEntityRenderingHandler(EntityLesserDemon.class, new RenderFactoryScapecraft(new ModelLesserDemon2()).setScale(1.5F));
+		RenderingRegistry.registerEntityRenderingHandler(EntityMossGiant.class, new RenderFactoryScapecraft(new ModelMossGiant()).setScale(1.4F));
+		RenderingRegistry.registerEntityRenderingHandler(EntityRat.class, new RenderFactoryScapecraft(new ModelRat()));
+		RenderingRegistry.registerEntityRenderingHandler(EntityRatSmall.class, new RenderFactoryScapecraft(new ModelRat()).setScale(0.3F));
+		RenderingRegistry.registerEntityRenderingHandler(EntityScorpion.class, new RenderFactoryScapecraft(new ModelScorpion()));
+		RenderingRegistry.registerEntityRenderingHandler(EntitySergeantGrimspike.class, new RenderFactoryScapecraft(new ModelSergeantGrimSpike()).setScale(0.8F));
+		RenderingRegistry.registerEntityRenderingHandler(EntitySergeantSteelwill.class, new RenderFactoryScapecraft(new ModelSergeantSteelWill()).setScale(0.8F));
+		RenderingRegistry.registerEntityRenderingHandler(EntitySergeantStrongstack.class, new RenderFactoryScapecraft(new ModelSergeantStrongStack()).setScale(0.8F));
+		RenderingRegistry.registerEntityRenderingHandler(EntityTormentedDemon.class, new RenderFactoryScapecraft(new ModelTD()).setScale(2.0F));
+		RenderingRegistry.registerEntityRenderingHandler(EntityTorag.class, new RenderFactoryScapecraft(new ModelTorag()));
+		RenderingRegistry.registerEntityRenderingHandler(EntityVerac.class, new RenderFactoryScapecraft(new ModelVerac()));
+		RenderingRegistry.registerEntityRenderingHandler(EntityZilyana.class, new RenderFactoryScapecraft(new ModelZilyana()));
+		RenderingRegistry.registerEntityRenderingHandler(EntityZaklnGritch.class, new RenderFactoryScapecraft(new ModelZaklnGritch()));
+		RenderingRegistry.registerEntityRenderingHandler(EntityTstanonKarlak.class, new RenderFactoryScapecraft(new ModelTstanonKarlak()));
+		RenderingRegistry.registerEntityRenderingHandler(EntityKrilTsutsaroth.class, new RenderFactoryScapecraft(new ModelKrilTsutsaroth()));
+		RenderingRegistry.registerEntityRenderingHandler(EntityBalfrugKreeyath.class, new RenderFactoryScapecraft(new ModelBalfrugKreeyath()));
+		RenderingRegistry.registerEntityRenderingHandler(EntityKreearra.class, new RenderFactoryScapecraft(new ModelKreearra()));
+		RenderingRegistry.registerEntityRenderingHandler(EntityShapeshifter.class, new IRenderFactory<EntityShapeshifter>() {
+			@Override
+			public Render<? super EntityShapeshifter> createRenderFor(RenderManager renderManager) {
+				return new RenderShapeshifter(renderManager);
+			}
+		});
+		RenderingRegistry.registerEntityRenderingHandler(EntityGenericBiped.class, new IRenderFactory<EntityGenericBiped>() {
+			@Override
+			public Render<? super EntityGenericBiped> createRenderFor(RenderManager manager) {
+				return new RenderGenericBiped(manager);
+			}
+		});
+		RenderingRegistry.registerEntityRenderingHandler(EntityKey.class, new IRenderFactory<EntityKey>() {
+			@Override
+			public Render<? super EntityKey> createRenderFor(RenderManager manager) {
+				return new RenderKey(manager);
+			}
+		});
+		RenderingRegistry.registerEntityRenderingHandler(EntityDrop.class, new IRenderFactory<EntityDrop>() {
+			@Override
+			public Render<? super EntityDrop> createRenderFor(RenderManager manager) {
+				return new RenderEntityDrop(manager);
+			}
+		});
+	}
+
+	@Override
 	public void registerRenderers()
 	{
-		ClientCommandHandler.instance.registerCommand(new WeaponModelCommand());
 		ClientCommandHandler.instance.registerCommand(new FileGuiCommand());
-		FMLCommonHandler.instance().bus().register(new ScapecraftKeyHandler());
+		MinecraftForge.EVENT_BUS.register(new ScapecraftKeyHandler());
 
-		RenderBipedScapecraft standardBiped = new RenderBipedScapecraft();
-		RenderingRegistry.registerEntityRenderingHandler(EntityBandit.class, new RenderBipedScapecraft().setScale(1.5F));
-		RenderingRegistry.registerEntityRenderingHandler(EntityBarbarian.class, standardBiped);
-		RenderingRegistry.registerEntityRenderingHandler(EntityBlackGuard.class, standardBiped);
-		RenderingRegistry.registerEntityRenderingHandler(EntityBlackKnight.class, standardBiped);
-		RenderingRegistry.registerEntityRenderingHandler(EntityCook.class, standardBiped);
-		RenderingRegistry.registerEntityRenderingHandler(EntityDarkwizard.class, standardBiped);
-		RenderingRegistry.registerEntityRenderingHandler(EntityDoctor.class, standardBiped);
-		RenderingRegistry.registerEntityRenderingHandler(EntityEliteBlackKnight.class, standardBiped);
-		RenderingRegistry.registerEntityRenderingHandler(EntityFarmer.class, standardBiped);
-		RenderingRegistry.registerEntityRenderingHandler(EntityFremGuard.class, standardBiped);
-		RenderingRegistry.registerEntityRenderingHandler(EntityGuard.class, standardBiped);
-		RenderingRegistry.registerEntityRenderingHandler(EntityHeroKnight.class, standardBiped);
-		RenderingRegistry.registerEntityRenderingHandler(EntityHighMage.class, standardBiped);
-		RenderingRegistry.registerEntityRenderingHandler(EntityKing.class, standardBiped);
-		RenderingRegistry.registerEntityRenderingHandler(EntityKingsGuard.class, standardBiped);
-		RenderingRegistry.registerEntityRenderingHandler(EntityKos1.class, standardBiped);
-		RenderingRegistry.registerEntityRenderingHandler(EntityKos2.class, standardBiped);
-		RenderingRegistry.registerEntityRenderingHandler(EntityKos3.class, standardBiped);
-		RenderingRegistry.registerEntityRenderingHandler(EntityKos4.class, standardBiped);
-		RenderingRegistry.registerEntityRenderingHandler(EntityMan.class, standardBiped);
-		RenderingRegistry.registerEntityRenderingHandler(EntityMorgan.class, standardBiped);
-		RenderingRegistry.registerEntityRenderingHandler(EntityMugger.class, standardBiped);
-		RenderingRegistry.registerEntityRenderingHandler(EntityShopKeeper.class, standardBiped);
-		RenderingRegistry.registerEntityRenderingHandler(EntityThief.class, standardBiped);
-		RenderingRegistry.registerEntityRenderingHandler(EntityVampire.class, standardBiped);
-		RenderingRegistry.registerEntityRenderingHandler(EntityVarze.class, standardBiped);
-		RenderingRegistry.registerEntityRenderingHandler(EntityWhiteKnight.class, standardBiped);
-		RenderingRegistry.registerEntityRenderingHandler(EntityWizard.class, standardBiped);
-		RenderingRegistry.registerEntityRenderingHandler(EntityAbbyDemon.class, new RenderEntityScapecraft(new ModelAbbyDemon(), 0.5F));
-		RenderingRegistry.registerEntityRenderingHandler(EntityAhrim.class, new RenderEntityScapecraft(new ModelAhrim(), 0.5F));
-		RenderingRegistry.registerEntityRenderingHandler(EntityAkrisae.class, new RenderEntityScapecraft(new ModelAkrisae(), 0.5F));
-		RenderingRegistry.registerEntityRenderingHandler(EntityBlackDemon.class, new RenderEntityScapecraft(new ModelBlackDemon(), 0.5F).setScale(2.1F));
-		RenderingRegistry.registerEntityRenderingHandler(EntityBlackDragon.class, new RenderEntityScapecraft(new ModelGreenDragon(), 0.5F).setScale(2.0F));
-		RenderingRegistry.registerEntityRenderingHandler(EntityCaveCrawler.class, new RenderEntityScapecraft(new ModelCaveCrawler(), 0.5F).setScale(1.4F));
-		RenderingRegistry.registerEntityRenderingHandler(EntityDharok.class, new RenderEntityScapecraft(new ModelDharok(), 0.5F));
-		RenderingRegistry.registerEntityRenderingHandler(EntityDwarf.class, new RenderEntityScapecraft(new ModelDwarf(), 0.5F));
-		RenderingRegistry.registerEntityRenderingHandler(EntityFireGiant.class, new RenderEntityScapecraft(new ModelFireGiant(), 0.5F).setScale(1.4F));
-		RenderingRegistry.registerEntityRenderingHandler(EntityGeneralGraardor.class, new RenderEntityScapecraft(new ModelGeneralGraardor(), 0.5F).setScale(2.0F));
-		RenderingRegistry.registerEntityRenderingHandler(EntityGiantSpider.class, new RenderEntityScapecraft(new ModelSpider(), 1F));
-		RenderingRegistry.registerEntityRenderingHandler(EntityGhost.class, new RenderEntityScapecraft(new ModelGhost(), 0.5F));
-		RenderingRegistry.registerEntityRenderingHandler(EntityGoblin.class, new RenderEntityScapecraft(new ModelGoblin(), 0.5F).setScale(0.7F));
-		RenderingRegistry.registerEntityRenderingHandler(EntityGreenDragon.class, new RenderEntityScapecraft(new ModelGreenDragon(), 0.5F).setScale(2.0F));
-		RenderingRegistry.registerEntityRenderingHandler(EntityGuthan.class, new RenderEntityScapecraft(new ModelGuthan(), 0.5F));
-		RenderingRegistry.registerEntityRenderingHandler(EntityHellhound.class, new RenderEntityScapecraft(new ModelHellhound(), 0.5F).setScale(1.5F));
-		RenderingRegistry.registerEntityRenderingHandler(EntityHillGiant.class, new RenderEntityScapecraft(new ModelHillGiant(), 0.5F));
-		RenderingRegistry.registerEntityRenderingHandler(EntityIceGiant.class, new RenderEntityScapecraft(new ModelIceGiant(), 0.5F));
-		RenderingRegistry.registerEntityRenderingHandler(EntityIronDragon.class, new RenderEntityScapecraft(new ModelGreenDragon(), 0.5F).setScale(2.0F));
-		RenderingRegistry.registerEntityRenderingHandler(EntityKK.class, new RenderEntityScapecraft(new ModelKK(), 0.5F).setScale(3.5F).setOffset(0F, .7F, 0F));
-		RenderingRegistry.registerEntityRenderingHandler(EntityKKspawn.class, new RenderEntityScapecraft(new ModelKKspawn(), 0.5F).setOffset(0F, .7F, 0F));
-		RenderingRegistry.registerEntityRenderingHandler(EntityKQ.class, new RenderEntityScapecraft(new ModelKQ(), 0.5F).setScale(3.0F));
-		RenderingRegistry.registerEntityRenderingHandler(EntityKQ2.class, new RenderEntityScapecraft(new ModelKQ2(), 0.5F).setScale(0.5F));
-		RenderingRegistry.registerEntityRenderingHandler(EntityKaril.class, new RenderEntityScapecraft(new ModelKaril(), 0.5F));
-		RenderingRegistry.registerEntityRenderingHandler(EntityLavaBlock.class, new RenderEntityScapecraft(new ModelLavaBlock(), 0.5F).setScale(.2F));
-		RenderingRegistry.registerEntityRenderingHandler(EntityLesserDemonUgly.class, new RenderEntityScapecraft(new ModelLesserDemonUgly(), 0.5F).setScale(1.5F));
-		RenderingRegistry.registerEntityRenderingHandler(EntityLesserDemon.class, new RenderEntityScapecraft(new ModelLesserDemon2(), 0.5F).setScale(1.5F));
-		RenderingRegistry.registerEntityRenderingHandler(EntityLootChest.class, new RenderEntityScapecraft(new ModelLootChest(), 0.5F));
-		RenderingRegistry.registerEntityRenderingHandler(EntityMossGiant.class, new RenderEntityScapecraft(new ModelMossGiant(), 0.5F).setScale(1.4F));
-		RenderingRegistry.registerEntityRenderingHandler(EntityRat.class, new RenderEntityScapecraft(new ModelRat(), 0.5F));
-		RenderingRegistry.registerEntityRenderingHandler(EntityRatSmall.class, new RenderEntityScapecraft(new ModelRat(), 0.5F).setScale(0.3F));
-		RenderingRegistry.registerEntityRenderingHandler(EntityScorpion.class, new RenderEntityScapecraft(new ModelScorpion(), 0.5F));
-		RenderingRegistry.registerEntityRenderingHandler(EntitySergeantGrimspike.class, new RenderEntityScapecraft(new ModelSergeantGrimSpike(), 0.5F).setScale(0.8F));
-		RenderingRegistry.registerEntityRenderingHandler(EntitySergeantSteelwill.class, new RenderEntityScapecraft(new ModelSergeantSteelWill(), 0.5F).setScale(0.8F));
-		RenderingRegistry.registerEntityRenderingHandler(EntitySergeantStrongstack.class, new RenderEntityScapecraft(new ModelSergeantStrongStack(), 0.5F).setScale(0.8F));
-		RenderingRegistry.registerEntityRenderingHandler(EntityTormentedDemon.class, new RenderEntityScapecraft(new ModelTD(), 0.5F).setScale(2.0F));
-		RenderingRegistry.registerEntityRenderingHandler(EntityTorag.class, new RenderEntityScapecraft(new ModelTorag(), 0.5F));
-		RenderingRegistry.registerEntityRenderingHandler(EntityVerac.class, new RenderEntityScapecraft(new ModelVerac(), 0.5F));
-		RenderingRegistry.registerEntityRenderingHandler(EntityZilyana.class, new RenderEntityScapecraft(new ModelZilyana(), 0.5F));
-		RenderingRegistry.registerEntityRenderingHandler(EntityZaklnGritch.class, new RenderEntityScapecraft(new ModelZaklnGritch(), 0.5F));
-		RenderingRegistry.registerEntityRenderingHandler(EntityTstanonKarlak.class, new RenderEntityScapecraft(new ModelTstanonKarlak(), 0.5F));
-		RenderingRegistry.registerEntityRenderingHandler(EntityKrilTsutsaroth.class, new RenderEntityScapecraft(new ModelKrilTsutsaroth(), 0.5F));
-		RenderingRegistry.registerEntityRenderingHandler(EntityBalfrugKreeyath.class, new RenderEntityScapecraft(new ModelBalfrugKreeyath(), 0.5F));
-		RenderingRegistry.registerEntityRenderingHandler(EntityKreearra.class, new RenderEntityScapecraft(new ModelKreearra(), 0.5F));
-		RenderingRegistry.registerEntityRenderingHandler(EntityBlueDragon.class, new RenderEntityScapecraft(new ModelBlueDragon(), 0.5F));
-		RenderingRegistry.registerEntityRenderingHandler(EntityShapeshifter.class, new RenderShapeshifter());
-		RenderingRegistry.registerEntityRenderingHandler(EntityGenericBiped.class, new RenderGenericBiped());
-		RenderingRegistry.registerEntityRenderingHandler(EntityKey.class, new RenderKey());
-		RenderingRegistry.registerEntityRenderingHandler(EntityDrop.class, new RenderEntityDrop());
 
-		MinecraftForgeClient.registerItemRenderer(ScapecraftItems.scapecraftSpawnEgg, new RenderItemSpawnEgg());
+/*		MinecraftForgeClient.registerItemRenderer(ScapecraftItems.scapecraftSpawnEgg, new RenderItemSpawnEgg());
 		MinecraftForgeClient.registerItemRenderer(ScapecraftItems.equipmentSets.get("bronzeHammer"), new RenderItemObj("Warhammer", "BronzeWarhammer"));
 		MinecraftForgeClient.registerItemRenderer(ScapecraftItems.equipmentSets.get("ironHammer"), new RenderItemObj("Warhammer", "IronWarhammer"));
 		MinecraftForgeClient.registerItemRenderer(ScapecraftItems.equipmentSets.get("steelHammer"), new RenderItemObj("Warhammer", "SteelWarhammer"));
@@ -162,7 +176,7 @@ public class ClientProxy extends CommonProxy
 		MinecraftForgeClient.registerItemRenderer(ScapecraftItems.equipmentSets.get("adamantHammer"), new RenderItemObj("Warhammer", "AdamantWarhammer"));
 		MinecraftForgeClient.registerItemRenderer(ScapecraftItems.equipmentSets.get("runeHammer"), new RenderItemObj("Warhammer", "RuneWarhammer"));
 		MinecraftForgeClient.registerItemRenderer(ScapecraftItems.equipmentSets.get("dragonHammer"), new RenderItemObj("Warhammer", "DragonWarhammer"));
-		MinecraftForgeClient.registerItemRenderer(ScapecraftItems.equipmentSets.get("dragonDagger"), new RenderItemWeapon(new ModelDD(), Resources.TEXTURE_DD, 1F, 220F).setOffset(0F, 0F, 0F));
+		MinecraftForgeClient.registerItemRenderer(ScapecraftItems.equipmentSets.get("dragonDagger"), new RenderItemWeapon(new ModelDD(), Resources.TEXTURE_DD, 1F, 220F).setOffset(0F, 0F, 0F));*/
 		/*MinecraftForgeClient.registerItemRenderer(ScapecraftItems.ags, new RenderItemObj("ArmadylGodsword", "ArmadylGodsword"));
 		MinecraftForgeClient.registerItemRenderer(ScapecraftItems.bgs, new RenderItemWeapon(new ModelBGS(), Resources.TEXTURE_BGS, 0.55F, 220F).setOffset(0.9F, 0.5F, -0.1F));
 		MinecraftForgeClient.registerItemRenderer(ScapecraftItems.sgs, new RenderItemWeapon(new ModelSGS(), Resources.TEXTURE_SGS, 0.55F, 220F).setOffset(0.9F, 0.5F, -0.1F));
@@ -181,14 +195,13 @@ public class ClientProxy extends CommonProxy
 		MinecraftForgeClient.registerItemRenderer(ScapecraftItems.akrisaeMace, new RenderItemWeapon(new ModelAkrisaeMace(), Resources.TEXTURE_AKRISAE, 1.3F, 220F).setOffset(0F, 0F, 0F));
 		MinecraftForgeClient.registerItemRenderer(ScapecraftItems.blackHalberd, new RenderItemWeapon(new ModelHalberd(), Resources.TEXTURE_BLACKHALBERD, 1F, 220F).setOffset(0F, 0F, 0F));
 		MinecraftForgeClient.registerItemRenderer(ScapecraftItems.dragon2hSword, new RenderItemWeapon(new Modeld2h(), Resources.TEXTURE_D2H, 0.5F, 220F).setOffset(1.3F, 0.9F, -0.1F));*/
-		MinecraftForgeClient.registerItemRenderer(ScapecraftItems.pitchFork, new RenderItemWeapon(new ModelPitchFork(), Resources.TEXTURE_PITCHFORK, 1F, 220F).setOffset(0F, 0F, 0F));
+/*		MinecraftForgeClient.registerItemRenderer(ScapecraftItems.pitchFork, new RenderItemWeapon(new ModelPitchFork(), Resources.TEXTURE_PITCHFORK, 1F, 220F).setOffset(0F, 0F, 0F));
 		MinecraftForgeClient.registerItemRenderer(ScapecraftItems.dryRapier, new RenderItemWeapon(new ModelDryrapier(), Resources.TEXTURE_DRYRAPIER, 1F, 220F).setOffset(0F, 0F, 0F));
 		MinecraftForgeClient.registerItemRenderer(ScapecraftItems.dryMace, new RenderItemWeapon(new ModelDrymace(), Resources.TEXTURE_DRYMACE, 1F, 220F).setOffset(0F, 0F, 0F));
-		MinecraftForgeClient.registerItemRenderer(ScapecraftItems.dryLong, new RenderItemWeapon(new ModelDrylong(), Resources.TEXTURE_DRYLONG, 0.3F, 220F).setOffset(2F, 1F, 0F).setRotation(150F, 90F, 0F));
+		MinecraftForgeClient.registerItemRenderer(ScapecraftItems.dryLong, new RenderItemWeapon(new ModelDrylong(), Resources.TEXTURE_DRYLONG, 0.3F, 220F).setOffset(2F, 1F, 0F).setRotation(150F, 90F, 0F));*/
 
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityStall.class, new RenderStall());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityFire.class, new RenderFire());
-		ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySmithingAnvil.class, new RenderAnvil());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityScapecraftPortal.class, new RenderPortal());
 
 		setArmorModel(ScapecraftItems.equipmentSets.get("bronzeFullHelm"), new ModelFullHelm(), "scapecraft:textures/armor/bronzeFullHelm.png");
@@ -277,28 +290,31 @@ public class ClientProxy extends CommonProxy
 	public void registerMobRenderer(NBTTagCompound tag)
 	{
 		String name = tag.getString("name");
-		Class<? extends Entity> entityClass = ScapecraftEntities.entityNames.get(name.toLowerCase());
+		Class<? extends EntityScapecraft> entityClass = (Class<? extends EntityScapecraft>) ScapecraftEntities.entityNames.get(name.toLowerCase());
 		if(tag.hasKey("model"))
 		{
-			Render render = null;
+			IRenderFactory<EntityScapecraft> renderFactory = null;
+			RenderManager manager = Minecraft.getMinecraft().getRenderManager();
 			String modelName = tag.getString("model");
 			if ("Biped".equals(modelName))
 			{
-				render = new RenderBipedScapecraft();
+				renderFactory = new RenderFactoryBiped();
 			}
 			else
 			{
 				try
 				{
-					render = new RenderEntityScapecraft((ModelBase) Class.forName("scapecraft.client.model.Model" + modelName).newInstance(), 0.5f);
+					renderFactory = new RenderFactoryScapecraft((ModelBase) Class.forName("scapecraft.client.model.Model" + modelName).newInstance());
 				} catch (Exception e)
 				{
 					e.printStackTrace();
 				}
 			}
-			RenderManager.instance.entityRenderMap.put(entityClass, render);
-			assert render != null;
-			render.setRenderManager(RenderManager.instance);
+			if(renderFactory != null)
+			{
+				RenderingRegistry.registerEntityRenderingHandler(entityClass, renderFactory);
+				manager.entityRenderMap.put(entityClass, renderFactory.createRenderFor(manager));
+			}
 		}
 
 		ScapecraftEntities.addTextures(name);

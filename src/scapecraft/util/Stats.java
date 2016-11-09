@@ -2,7 +2,8 @@ package scapecraft.util;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import cpw.mods.fml.common.FMLCommonHandler;
+import net.minecraft.client.entity.AbstractClientPlayer;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -71,7 +72,7 @@ public class Stats
 		{
 			MinecraftForge.EVENT_BUS.post(new LevelUpEvent(player, stat, getLevel(player, stat)));
 		}
-		uuidNames.put(player.getCommandSenderName(), player.getUniqueID());
+		uuidNames.put(player.getName(), player.getUniqueID());
 		//System.out.println(player.getDisplayName() + " gained " + amount + " " + stat + " xp,and is now level " + getLevel(player, stat) + " (" + getXp(player, stat) + "xp)");
 	}
 
@@ -103,7 +104,7 @@ public class Stats
 		}
 		else
 		{
-			uuidNames.put(player.getCommandSenderName(), player.getUniqueID());
+			uuidNames.put(player.getName(), player.getUniqueID());
 			return serverStats.get(player.getUniqueID()).get(stat).level;
 		}
 	}
@@ -121,7 +122,7 @@ public class Stats
 		}
 		else
 		{
-			uuidNames.put(player.getCommandSenderName(), player.getUniqueID());
+			uuidNames.put(player.getName(), player.getUniqueID());
 			return serverStats.get(player.getUniqueID()).get(stat).xp;
 		}
 	}
@@ -133,14 +134,15 @@ public class Stats
 
 	public static long setXp(EntityPlayer player, Stat stat, long amount)
 	{
-		if(player.worldObj.isRemote)
+		System.out.println(player);
+		if(player instanceof AbstractClientPlayer)
 		{
 			clientStats.put(stat, new Stats(amount));
 		}
 		else
 		{
 			serverStats.get(player.getUniqueID()).put(stat, new Stats(amount));
-			uuidNames.put(player.getCommandSenderName(), player.getUniqueID());
+			uuidNames.put(player.getName(), player.getUniqueID());
 			Scapecraft.network.sendTo(new StatsPacket(player), (EntityPlayerMP) player);
 		}
 		return amount;

@@ -5,7 +5,6 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -17,6 +16,8 @@ import scapecraft.entity.ScapecraftEntities;
 import scapecraft.network.MobSpawnerKillPacket;
 import scapecraft.network.TileEntityUpdatePacket;
 import scapecraft.tileentity.TileEntityScapecraftMobSpawner;
+
+import java.io.IOException;
 
 public class GuiSpawner extends GuiScreen
 {
@@ -51,24 +52,24 @@ public class GuiSpawner extends GuiScreen
 	public void initGui()
 	{
 		int yOffset = (this.height / 2) - (guiHeight / 2);
-		this.entityNameTextField = new GuiTextField(this.fontRendererObj, this.width / 2 - 120, yOffset + 6, 265, 20);
+		this.entityNameTextField = new GuiTextField(0, this.fontRendererObj, this.width / 2 - 120, yOffset + 6, 265, 20);
 		this.entityNameTextField.setFocused(true);
 		this.entityNameTextField.setMaxStringLength(120);
 		this.entityNameTextField.setText(this.te.entityName);
 
-		this.spawnIntervalNumberField = new GuiNumberField(this.fontRendererObj, this.width / 2 - 40, yOffset + 30, 40, 20);
+		this.spawnIntervalNumberField = new GuiNumberField(1, this.fontRendererObj, this.width / 2 - 40, yOffset + 30, 40, 20);
 		this.spawnIntervalNumberField.setValue(this.te.spawnInterval / 20);
 		this.spawnIntervalNumberField.setMin(1);
 
-		this.maxSpawnNumberField = new GuiNumberField(this.fontRendererObj, this.width / 2 + 80, yOffset + 30, 40, 20);
+		this.maxSpawnNumberField = new GuiNumberField(2, this.fontRendererObj, this.width / 2 + 80, yOffset + 30, 40, 20);
 		this.maxSpawnNumberField.setValue(this.te.maxSpawn);
 		this.maxSpawnNumberField.setMin(1);
 
-		this.textureNumberField = new GuiNumberField(this.fontRendererObj, this.width / 2 + 80, yOffset + 50, 40, 20);
+		this.textureNumberField = new GuiNumberField(3, this.fontRendererObj, this.width / 2 + 80, yOffset + 50, 40, 20);
 		this.textureNumberField.setValue(this.te.texture);
 		this.textureNumberField.setMin(-1);
 
-		this.radiusNumberField = new GuiNumberField(this.fontRendererObj, this.width / 2 - 40, yOffset + 50, 40, 20);
+		this.radiusNumberField = new GuiNumberField(4, this.fontRendererObj, this.width / 2 - 40, yOffset + 50, 40, 20);
 		this.radiusNumberField.setValue(this.te.radius);
 		this.radiusNumberField.setMin(0);
 
@@ -135,7 +136,7 @@ public class GuiSpawner extends GuiScreen
 			GL11.glTranslatef((this.width / 2 - (guiWidth / 2)) + xOffset, yOffset, 50);
 			GL11.glScalef(scaleFactor, -scaleFactor, scaleFactor);
 			GL11.glRotatef(rotation, 0, 1, 0);
-			RenderManager.instance.renderEntityWithPosYaw(entity, 0.0D, 0.0D, 0.0D, 0F, 0F);
+			Minecraft.getMinecraft().getRenderManager().doRenderEntity(entity, 0.0D, 0.0D, 0.0D, 0F, 0F, false);
 			GL11.glPopMatrix();
 			GL11.glEnable(GL12.GL_RESCALE_NORMAL);
 			OpenGlHelper.setActiveTexture(OpenGlHelper.lightmapTexUnit);
@@ -144,8 +145,9 @@ public class GuiSpawner extends GuiScreen
 		}
 		super.drawScreen(x, y, f1);
 	}
+
 	@Override
-	protected void keyTyped(char character, int key)
+	protected void keyTyped(char character, int key) throws IOException
 	{
 		super.keyTyped(character, key);
 		if(this.entityNameTextField.textboxKeyTyped(character, key))
@@ -189,7 +191,7 @@ public class GuiSpawner extends GuiScreen
 	}
 
 	@Override
-	protected void mouseClicked(int x, int y, int button)
+	protected void mouseClicked(int x, int y, int button) throws IOException
 	{
 		super.mouseClicked(x, y, button);
 		this.entityNameTextField.mouseClicked(x, y, button);

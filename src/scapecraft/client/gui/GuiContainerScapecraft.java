@@ -24,7 +24,7 @@ public abstract class GuiContainerScapecraft extends GuiContainer
         {
             GL11.glPushMatrix();
             GL11.glTranslatef(this.guiLeft, this.guiTop, 0);
-            this.mc.getTextureManager().bindTexture(TextureMap.locationItemsTexture);
+            this.mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
             GL11.glEnable(GL11.GL_BLEND);
             GL11.glEnable(GL11.GL_DEPTH_TEST);
             GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.3F);
@@ -33,7 +33,7 @@ public abstract class GuiContainerScapecraft extends GuiContainer
             {
                 if (containerScapecraft.previewSlots.get(i) != null)
                 {
-                    itemRender.renderIcon(containerScapecraft.getSlot(startSlot + i).xDisplayPosition, inventorySlots.getSlot(startSlot + i).yDisplayPosition, containerScapecraft.previewSlots.get(i).getIconIndex(), 16, 16);
+                    itemRender.renderItemIntoGUI(containerScapecraft.previewSlots.get(i), containerScapecraft.getSlot(startSlot + i).xDisplayPosition, inventorySlots.getSlot(startSlot + i).yDisplayPosition);
                 }
             }
             GL11.glDisable(GL11.GL_BLEND);

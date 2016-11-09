@@ -51,7 +51,7 @@ public abstract class TileEntityInstanced extends TileEntity
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound compound)
+    public NBTTagCompound writeToNBT(NBTTagCompound compound)
     {
         super.writeToNBT(compound);
         NBTTagList inventoryTagList = new NBTTagList();
@@ -78,5 +78,6 @@ public abstract class TileEntityInstanced extends TileEntity
             }
         }
         compound.setTag("inventories", inventoryTagList);
+        return compound;
     }
 }

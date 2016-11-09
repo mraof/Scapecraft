@@ -1,22 +1,18 @@
 package scapecraft.block;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLeaves;
-import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.block.BlockPlanks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.IIcon;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
 import scapecraft.Scapecraft;
 
-import java.util.Random;
+import java.util.List;
 
 public class BlockScapecraftLeaves extends BlockLeaves
 {
-	protected IIcon[] icons = new IIcon[2];
 	protected Block sapling;
 	protected Item fruit = null;
 	
@@ -34,56 +30,30 @@ public class BlockScapecraftLeaves extends BlockLeaves
 	}
 
 	@Override
-	public IIcon getIcon(int side, int meta)
-	{
-		return this.icons[1]; //TODO transparent leaves
+	public BlockPlanks.EnumType getWoodType(int meta) {
+		return BlockPlanks.EnumType.BIRCH;
 	}
 
+	/**
+	 * Performs the shear function on this object.
+	 * This is called for both client, and server.
+	 * The object should perform all actions related to being sheared,
+	 * except for dropping of the items, and removal of the block.
+	 * As those are handled by ItemShears itself.
+	 * <p>
+	 * Returns a list of items that resulted from the shearing process.
+	 * <p>
+	 * For entities, they should trust there internal location information
+	 * over the values passed into this function.
+	 *
+	 * @param item    The itemstack that is being used, Possible to be null
+	 * @param world   The current world
+	 * @param pos     If this is a block, the block's position in world.
+	 * @param fortune The fortune level of the shears being used
+	 * @return A ArrayList containing all items from this shearing. Possible to be null.
+	 */
 	@Override
-	public String[] func_150125_e()
-	{
-		return new String[] {"leaves"};
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerIcons(IIconRegister iconRegister)
-	{
-		System.out.println(this.getTextureName());
-		icons[0] = iconRegister.registerIcon(this.getTextureName());
-		icons[1] = iconRegister.registerIcon(this.getTextureName() + "Opaque");
-	}
-
-	@Override
-        protected void func_150124_c(World world, int x, int y, int z, int metadata, int chance)
-	{
-		if(world.rand.nextInt(chance) == 0 && fruit != null)
-		{
-			this.dropBlockAsItem(world, x, y, z, new ItemStack(fruit));
-		}
-	}
-
-	@Override
-	public Item getItemDropped(int meta, Random random, int fortune)
-	{
-		return Item.getItemFromBlock(sapling);
-	}
-
-	@Override
-	public int getBlockColor()
-	{
-		return 0xFFFFFF;
-	}
-
-	@Override
-	public int getRenderColor(int meta)
-	{
-		return 0xFFFFFF;
-	}
-
-	@Override
-	public int colorMultiplier(IBlockAccess worldIn, int x, int y, int z)
-	{
-		return 0xFFFFFF;
+	public List<ItemStack> onSheared(ItemStack item, IBlockAccess world, BlockPos pos, int fortune) {
+		return null;
 	}
 }

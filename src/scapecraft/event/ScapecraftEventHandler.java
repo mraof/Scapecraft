@@ -1,34 +1,36 @@
 package scapecraft.event;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerChangedDimensionEvent;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.MobEffects;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemAxe;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerChangedDimensionEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import scapecraft.Scapecraft;
-import scapecraft.block.BlockBlockSpawner;
 import scapecraft.block.ScapecraftBlocks;
 import scapecraft.client.ClientProxy;
 import scapecraft.economy.EconomyHandler;
@@ -58,78 +60,69 @@ public class ScapecraftEventHandler
 	@SubscribeEvent
 	public void onHurt(LivingHurtEvent event)
 	{
-		if(event.source.getEntity() instanceof EntityPlayer)
+		float amount = event.getAmount();
+		if(event.getSource().getEntity() instanceof EntityPlayer)
 		{
-			EntityPlayer player = (EntityPlayer) event.source.getEntity();
-			for(int i = 0; i <= 3; i++)
+			EntityPlayer player = (EntityPlayer) event.getSource().getEntity();
+			for(ItemStack armor : player.getArmorInventoryList())
 			{
-				if(player.getCurrentArmor(i) != null && player.getCurrentArmor(i).getItem() instanceof ItemArmorScapecraft)
+				if(armor != null && armor.getItem() instanceof ItemArmorScapecraft)
 				{
-					((ItemArmorScapecraft) player.getCurrentArmor(i).getItem()).onWearerAttack(event);
+					((ItemArmorScapecraft) armor.getItem()).onWearerAttack(event);
 				}
 			}
-			if(!event.source.isProjectile()) //Melee attack
+			if(!event.getSource().isProjectile()) //Melee attack
 			{
-				if (player.fallDistance > 0.0F && !player.onGround && !player.isOnLadder() && !player.isInWater() && !player.isPotionActive(Potion.blindness) && player.ridingEntity == null)
+				if (player.fallDistance > 0.0F && !player.onGround && !player.isOnLadder() && !player.isInWater() && !player.isPotionActive(MobEffects.BLINDNESS) && player.getRidingEntity() == null)
 				{
-					event.ammount /= 1.5; // Cancel critical hits
+					amount /= 1.5; // Cancel critical hits
 				}
-				if(event.ammount > 1.1)
+				if(amount > 1.1)
 				{
-					event.ammount--; //remove damage from punch
+					amount--; //remove damage from punch
 				}
 				float strengthBuff = Stats.getLevel(player, Stat.STRENGTH) / 2f;
 				int levelDifference = 10;
 				double speedMultiplier = 1;
-				if (player.getHeldItem() != null && player.getHeldItem().getItem() instanceof ItemWeapon)
+				ItemStack heldStack = player.getHeldItem(EnumHand.MAIN_HAND);
+				if (heldStack != null && heldStack.getItem() instanceof ItemWeapon)
 				{
-					ItemWeapon weapon = (ItemWeapon) player.getHeldItem().getItem();
-					weapon.onEntityHurt(event);
+					ItemWeapon weapon = (ItemWeapon) heldStack.getItem();
+					amount = weapon.onEntityHurt(player, amount);
 					speedMultiplier = weapon.getAttackTime() / 2 + 0.5;
 					levelDifference = Stats.getLevel(player, Stat.ATTACK) - weapon.getMinLevel();
 				}
 				strengthBuff *= speedMultiplier;
-				event.ammount += strengthBuff;
-				float minDamage = event.ammount * 0.8f; //Default average is the normal damage
-				float maxDamage = event.ammount * 1.2f; //Default average is the normal damage
+				amount += strengthBuff;
+				float minDamage = amount * 0.8f; //Default average is the normal damage
+				float maxDamage = amount * 1.2f; //Default average is the normal damage
 				if (levelDifference < 10)
 				{
 					minDamage *= 1 - ((10 - levelDifference) / 40);
 				} else
 				{
-					maxDamage *= 1 + (levelDifference - 10) / (event.ammount / speedMultiplier) / 2;
+					maxDamage *= 1 + (levelDifference - 10) / (amount / speedMultiplier) / 2;
 				}
-				event.ammount = minDamage + player.getRNG().nextFloat() * (maxDamage - minDamage);
+				amount = minDamage + player.getRNG().nextFloat() * (maxDamage - minDamage);
 			}
 		}
-		if(event.ammount > 0 && !event.source.isUnblockable() && event.entityLiving instanceof EntityPlayer && !Scapecraft.cauldron)
+		if(amount > 0 && !event.getSource().isUnblockable() && event.getEntityLiving() instanceof EntityPlayer && !Scapecraft.cauldron)
 		{
-			EntityPlayer player = (EntityPlayer) event.entityLiving;
-			event.source.setDamageBypassesArmor();
-			event.ammount = applyPlayerDefense(player, event.ammount);
-			//System.out.println(event.ammount);
+			EntityPlayer player = (EntityPlayer) event.getEntityLiving();
+			event.getSource().setDamageBypassesArmor();
+			amount = applyPlayerDefense(player, amount);
+			//System.out.println(amount);
 		}
-	}
-
-	@SubscribeEvent
-	public void onLivingAttack(LivingAttackEvent event)
-	{
-		if(Scapecraft.cauldron && event.entityLiving instanceof EntityPlayer && !event.source.isUnblockable())
-		{
-			event.setCanceled(true);
-			event.source.setDamageBypassesArmor();
-			System.out.println("Unblockable: " + event.source.isUnblockable());
-			event.entityLiving.attackEntityFrom(event.source, 10 / .6f);
-		}
+		event.setAmount(amount);
 	}
 
 	public float applyPlayerDefense(EntityPlayer player, float amount)
 	{
 		float protection = 0;
-		for(int i = 0; i < 4; i++)
+		for(ItemStack stack : player.getArmorInventoryList())
 		{
 			Item armor;
-			if((player.getCurrentArmor(i) != null && (armor = player.getCurrentArmor(i).getItem()) instanceof ItemArmor))
+			if((stack != null && (armor = stack.getItem()) instanceof ItemArmor))
 			{
 				float lastProtection = protection;
 				if(armor instanceof ItemArmorScapecraft)
@@ -142,10 +135,10 @@ public class ScapecraftEventHandler
 				}
 				if(lastProtection != protection)
 				{
-					player.getCurrentArmor(i).damageItem(1, player);
-					if (player.getCurrentArmor(i).stackSize == 0)
+					stack.damageItem(1, player);
+					if (stack.stackSize == 0)
 					{
-						player.setCurrentItemOrArmor(1 + i, null);
+						player.setItemStackToSlot(((ItemArmor) armor).getEquipmentSlot(), null);
 					}
 				}
 			}
@@ -162,17 +155,17 @@ public class ScapecraftEventHandler
 	@SubscribeEvent
 	public void onLivingUpdateEvent(LivingUpdateEvent event)
 	{
-		if(event.entity instanceof EntityPlayer && !event.entity.worldObj.isRemote)
+		if(event.getEntity() instanceof EntityPlayer && !event.getEntity().worldObj.isRemote)
 		{
-			EntityPlayer player = (EntityPlayer) event.entity;
+			EntityPlayer player = (EntityPlayer) event.getEntity();
 
 			if(Stats.getLevel(player, Stat.AGILITY) > 20)
 			{
-				player.addPotionEffect(new PotionEffect(Potion.jump.id, 50, 1));
+				player.addPotionEffect(new PotionEffect(MobEffects.JUMP_BOOST, 50, 1));
 			}
 			else if(Stats.getLevel(player, Stat.AGILITY) > 10)
 			{
-				player.addPotionEffect(new PotionEffect(Potion.jump.id, 50, 0));
+				player.addPotionEffect(new PotionEffect(MobEffects.JUMP_BOOST, 50, 0));
 			}
 			if(Stats.getLevel(player, Stat.AGILITY) > 25)
 			{
@@ -184,7 +177,7 @@ public class ScapecraftEventHandler
 			}
 
 			boolean invChanged = false;
-			if(inventories.get(player.getCommandSenderName()) == null)
+			if(inventories.get(player.getName()) == null)
 			{
 				invChanged = true;
 			}
@@ -192,7 +185,7 @@ public class ScapecraftEventHandler
 			{
 				for(int i = 0; i <= 3; i++)
 				{
-					if (inventories.get(player.getCommandSenderName())[i] != (player.getCurrentArmor(i) != null ? player.getCurrentArmor(i).getItem() : null))
+					if (inventories.get(player.getName())[i] != (player.inventory.armorInventory[i] != null ? player.inventory.armorInventory[i].getItem() : null))
 					{
 						invChanged = true;
 					}
@@ -212,26 +205,27 @@ public class ScapecraftEventHandler
 		   {
 		   ((XpDropper) event.entityLiving).giveXp();
 		   } */
-		if(event.source.getEntity() instanceof EntityPlayer)
+		if(event.getSource().getEntity() instanceof EntityPlayer)
 		{
-			EntityPlayer player = (EntityPlayer) event.source.getEntity();
+			EntityPlayer player = (EntityPlayer) event.getSource().getEntity();
 			if(player.capabilities.isCreativeMode)
 			{
 				return;
 			}
-			Stats.addXp(player, Stat.ATTACK, CombatXpHelper.getAmount(event.entityLiving));
+			Stats.addXp(player, Stat.ATTACK, CombatXpHelper.getAmount(event.getEntityLiving()));
 		}
 	}
 
 	@SubscribeEvent
 	public void onWorldSave(WorldEvent.Save event)
 	{
-		if(event.world.provider.dimensionId != 0)
+		World world = event.getWorld();
+		if(world.provider.getDimension() != 0)
 		{
 			return;
 		}
 
-		File dataFile = event.world.getSaveHandler().getMapFileFromName("ScapecraftData");
+		File dataFile = world.getSaveHandler().getMapFileFromName("ScapecraftData");
 		if(dataFile != null)
 		{
 			NBTTagCompound nbt = new NBTTagCompound();
@@ -252,7 +246,7 @@ public class ScapecraftEventHandler
 			}
 		}
 
-		dataFile = event.world.getSaveHandler().getMapFileFromName("ScapecraftDrops");
+		dataFile = world.getSaveHandler().getMapFileFromName("ScapecraftDrops");
 		if(dataFile != null)
 		{
 			NBTTagCompound nbt = new NBTTagCompound();
@@ -267,7 +261,7 @@ public class ScapecraftEventHandler
 	}
 
 	@SubscribeEvent
-	public void onPlayerSpawn(cpw.mods.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent event)
+	public void onPlayerSpawn(net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent event)
 	{
 		//System.out.println("Respawned");
 		Scapecraft.network.sendTo(new StatsPacket(event.player), (EntityPlayerMP) event.player);
@@ -288,12 +282,12 @@ public class ScapecraftEventHandler
 	@SubscribeEvent
 	public void onHealthRender(RenderGameOverlayEvent.Pre event)
 	{
-		if((event.type == RenderGameOverlayEvent.ElementType.HEALTH))
+		if((event.getType() == RenderGameOverlayEvent.ElementType.HEALTH))
 		{
 			event.setCanceled(true);
-			ClientProxy.guiHealth.drawHealthBar(event.resolution);
+			ClientProxy.guiHealth.drawHealthBar(event.getResolution());
 		}
-		if(event.type == RenderGameOverlayEvent.ElementType.ARMOR)
+		if(event.getType() == RenderGameOverlayEvent.ElementType.ARMOR)
 		{
 			event.setCanceled(true);
 		}
@@ -317,14 +311,14 @@ public class ScapecraftEventHandler
 		Item[] newInv = new Item[4];
 		for(int i = 0; i < 4; i++)
 		{
-			newInv[i] = player.getCurrentArmor(i) != null ? player.getCurrentArmor(i).getItem() : null;
+			newInv[i] = player.inventory.armorInventory[i] != null ? player.inventory.armorInventory[i].getItem() : null;
 			if(newInv[i] != null && newInv[i] instanceof ItemArmorScapecraft)
 			{
 				if(Scapecraft.requireLevels && !player.capabilities.isCreativeMode && ((ItemArmorScapecraft) newInv[i]).getMinLevel() > Stats.getLevel(player, Stat.DEFENSE))
 				{
 					if(!player.worldObj.isRemote)
 					{
-						player.entityDropItem(player.getCurrentArmor(i), 0F).setOwner(player.getCommandSenderName());
+						player.entityDropItem(player.inventory.armorInventory[i], 0F).setOwner(player.getName());
 					}
 					newInv[i] = null;
 					player.inventory.armorInventory[i] = null;
@@ -333,8 +327,8 @@ public class ScapecraftEventHandler
 				maxHealth += ((ItemArmorScapecraft) newInv[i]).getHealthBoost(); 
 			}
 		}
-		inventories.put(player.getCommandSenderName(), newInv);
-		player.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(maxHealth);
+		inventories.put(player.getName(), newInv);
+		player.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(maxHealth);
 		if(player.getHealth() > maxHealth)
 		{
 			player.setHealth((float) maxHealth);
@@ -346,27 +340,30 @@ public class ScapecraftEventHandler
 	@SubscribeEvent
 	public void onPlayerBreakBlock(PlayerEvent.BreakSpeed event)
 	{
-		Block block = event.block instanceof BlockBlockSpawner ? ((BlockBlockSpawner) event.block).fullBlock : event.block;
-		Stat blockStat = (block.getMaterial() == Material.wood ? Stat.WOODCUTTING : Stat.MINING);
+		//TODO make this work right for block spawners
+		IBlockState state = event.getState();
+		Block block = state.getBlock();
+		Stat blockStat = (state.getMaterial() == Material.WOOD ? Stat.WOODCUTTING : Stat.MINING);
 		Stat toolStat = Stat.MINING;
-		if(event.entityPlayer.getHeldItem() != null)
+		ItemStack heldStack = event.getEntityPlayer().getHeldItem(EnumHand.MAIN_HAND);
+		if(heldStack != null)
 		{
-			Item item = event.entityPlayer.getHeldItem().getItem();
+			Item item = heldStack.getItem();
 			toolStat = ((item instanceof ItemScapecraftTool) ? ((ItemScapecraftTool) item).skill : ((item instanceof ItemAxe) ? Stat.WOODCUTTING : Stat.MINING));
 		}
 		if(Scapecraft.requireLevels && 
-				(event.entityPlayer.getHeldItem() != null && 
-				ScapecraftItems.toolLevels.containsKey(event.entityLiving.getHeldItem().getItem()) &&
-				ScapecraftItems.toolLevels.get(event.entityPlayer.getHeldItem().getItem()) > Stats.getLevel(event.entityPlayer, toolStat)) ||
-				ScapecraftBlocks.blockLevels.get(block) != null && 
-				Stats.getLevel(event.entityPlayer, blockStat) < ScapecraftBlocks.blockLevels.get(block))
+				(heldStack != null &&
+				ScapecraftItems.toolLevels.containsKey(heldStack.getItem()) &&
+				ScapecraftItems.toolLevels.get(heldStack.getItem()) > Stats.getLevel(event.getEntityPlayer(), toolStat)) ||
+				ScapecraftBlocks.blockLevels.get(block) != null &&
+				Stats.getLevel(event.getEntityPlayer(), blockStat) < ScapecraftBlocks.blockLevels.get(block))
 		{
-			event.newSpeed = -1F;
+			event.setNewSpeed(-1);
 		}
 	}
 
 	@SubscribeEvent
-	public void onPlayerLogin(cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent event)
+	public void onPlayerLogin(net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent event)
 	{
 		//System.out.println("Logged in");
 		Stats.initStats(event.player);
@@ -388,12 +385,12 @@ public class ScapecraftEventHandler
 		}
 		else
 		{
-			IChatComponent levelUpMessage = new ChatComponentText("You have leveled up to " + event.level + " in " + event.stat.toString().toLowerCase());
+			ITextComponent levelUpMessage = new TextComponentString("You have leveled up to " + event.level + " in " + event.stat.toString().toLowerCase());
 			event.player.addChatMessage(levelUpMessage);
 			if (event.level == 100)
 			{
-				IChatComponent text = new ChatComponentText(event.player.getCommandSenderName() + " has achieved level 100 in " + event.stat.toString().toLowerCase());
-				MinecraftServer.getServer().getConfigurationManager().sendChatMsg(text);
+				ITextComponent text = new TextComponentString(event.player.getName() + " has achieved level 100 in " + event.stat.toString().toLowerCase());
+				FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().sendChatMsg(text);
 			}
 			if (event.stat == Stat.CONSTITUTION)
 			{

@@ -20,7 +20,7 @@ public class Dungeon
 	public int startZ;
 	public DungeonRoom[][] rooms;
 	Random rand = new Random();
-	public Block dungeonBlock = Blocks.stonebrick;
+	public Block dungeonBlock = Blocks.STONEBRICK;
 	public Dungeon(EntityPlayer player, int size)
 	{
 		minX = 0;

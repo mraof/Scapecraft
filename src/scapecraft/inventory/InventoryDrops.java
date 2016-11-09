@@ -46,6 +46,29 @@ public class InventoryDrops extends InventoryScapecraft
     }
 
     @Override
+    public int getField(int id) {
+        return this.chances.get(id);
+    }
+
+    @Override
+    public void setField(int id, int value)
+    {
+        if(id == this.chances.size())
+        {
+            this.chances.add(id);
+        }
+        else
+        {
+            this.chances.set(id, value);
+        }
+    }
+
+    @Override
+    public int getFieldCount() {
+        return this.fields.length;
+    }
+
+    @Override
     public String toString()
     {
         return "InventoryDrops{" +

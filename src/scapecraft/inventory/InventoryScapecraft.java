@@ -3,7 +3,10 @@ package scapecraft.inventory;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
 
+import javax.annotation.Nullable;
 import java.util.Arrays;
 
 /**
@@ -12,6 +15,7 @@ import java.util.Arrays;
 public class InventoryScapecraft implements IInventory
 {
     ItemStack[] inventory;
+    int[] fields = new int[0];
 
     protected String name = "Scapecraft";
 
@@ -53,9 +57,9 @@ public class InventoryScapecraft implements IInventory
         return result;
     }
 
+    @Nullable
     @Override
-    public ItemStack getStackInSlotOnClosing(int index)
-    {
+    public ItemStack removeStackFromSlot(int index) {
         return null;
     }
 
@@ -68,18 +72,6 @@ public class InventoryScapecraft implements IInventory
     public void setInventoryName(String name)
     {
         this.name = name;
-    }
-
-    @Override
-    public String getInventoryName()
-    {
-        return name;
-    }
-
-    @Override
-    public boolean isCustomInventoryName()
-    {
-        return true;
     }
 
     @Override
@@ -101,14 +93,12 @@ public class InventoryScapecraft implements IInventory
     }
 
     @Override
-    public void openChest()
-    {
+    public void openInventory(EntityPlayer player) {
 
     }
 
     @Override
-    public void closeChest()
-    {
+    public void closeInventory(EntityPlayer player) {
 
     }
 
@@ -119,11 +109,56 @@ public class InventoryScapecraft implements IInventory
     }
 
     @Override
+    public int getField(int id) {
+        return this.fields[id];
+    }
+
+    @Override
+    public void setField(int id, int value)
+    {
+        this.fields[id] = value;
+    }
+
+    @Override
+    public int getFieldCount() {
+        return this.fields.length;
+    }
+
+    @Override
+    public void clear() {
+
+    }
+
+    @Override
     public String toString()
     {
         return "InventoryScapecraft{" +
                "inventory=" + Arrays.toString(inventory) +
                ", name='" + name + '\'' +
                '}';
+    }
+
+    /**
+     * Get the name of this object. For players this returns their username
+     */
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Returns true if this thing is named
+     */
+    @Override
+    public boolean hasCustomName() {
+        return false;
+    }
+
+    /**
+     * Get the formatted ChatComponent that will be used for the sender's username in chat
+     */
+    @Override
+    public ITextComponent getDisplayName() {
+        return new TextComponentString(name);
     }
 }

@@ -4,9 +4,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import scapecraft.Scapecraft;
 import scapecraft.economy.market.Listing;
 import scapecraft.economy.market.PlayerLister;
@@ -30,7 +30,7 @@ public class ScapecraftEconomy implements Economy
 	public void setBalance(UUID uuid, double amount)
 	{
 		balances.put(uuid, amount);
-		for(World world : MinecraftServer.getServer().worldServers)
+		for(World world : FMLCommonHandler.instance().getMinecraftServerInstance().worldServers)
 		{
 			EntityPlayer player;
 			if((player = world.getPlayerEntityByUUID(uuid)) != null)

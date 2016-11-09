@@ -1,22 +1,22 @@
 package scapecraft.entity;
 
-import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.command.IEntitySelector;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import scapecraft.economy.EconomyHandler;
 import scapecraft.item.ItemWeapon;
 import scapecraft.item.QualityItem;
@@ -27,7 +27,7 @@ import scapecraft.util.Stats;
 import java.util.*;
 import java.util.Map.Entry;
 
-public abstract class EntityScapecraft extends EntityCreature implements XpDropper, IEntitySelector, IMob, IEntityAdditionalSpawnData
+public abstract class EntityScapecraft extends EntityCreature implements XpDropper, IEntityAdditionalSpawnData
 {
 	protected HashMap<EntityPlayer, Float> attackers = new HashMap<EntityPlayer, Float>();
 	protected HashMap<EntityPlayer, HashMap<Stat, Float>> statDamage = new HashMap<EntityPlayer, HashMap<Stat, Float>>();
@@ -35,9 +35,7 @@ public abstract class EntityScapecraft extends EntityCreature implements XpDropp
 	public boolean passive = true;
 	public MobSpawner mobSpawner = null;
 	public boolean fromSpawner = false;
-	public int mobSpawnerX;
-	public int mobSpawnerY;
-	public int mobSpawnerZ;
+	public BlockPos mobSpawnerPos;
 	protected int textureNum;
 	protected boolean hero = false;
 
@@ -77,6 +75,9 @@ public abstract class EntityScapecraft extends EntityCreature implements XpDropp
 		this.setLevel(minLevel + rand.nextInt(maxLevel - minLevel + 1));
 		this.setHealth(this.getMaxHealth());
 		this.setTexture(-1);
+		//These probably won't be used but the chance is set to 0 just in case
+		this.inventoryArmorDropChances = new float[] {0.0F, 0.0F, 0.0F, 0.0F};
+		this.inventoryHandsDropChances = new float[] {0.0F, 0.0F};
 	}
 
 	public void setTexture(int textureNum)
@@ -96,9 +97,9 @@ public abstract class EntityScapecraft extends EntityCreature implements XpDropp
 	protected void applyEntityAttributes()
 	{
 		super.applyEntityAttributes();
-		this.getAttributeMap().registerAttribute(SharedMonsterAttributes.attackDamage);
-		this.getEntityAttribute(SharedMonsterAttributes.followRange).setBaseValue(32.0D);
-		this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.27D);
+		this.getAttributeMap().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE);
+		this.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(32.0D);
+		this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.27D);
 	}
 
 	@Override
@@ -135,7 +136,7 @@ public abstract class EntityScapecraft extends EntityCreature implements XpDropp
 		if(fromSpawner && mobSpawner == null)
 		{
 			TileEntity te;
-			if ((((te = this.worldObj.getTileEntity(mobSpawnerX, mobSpawnerY, mobSpawnerZ))) instanceof TileEntityScapecraftMobSpawner))
+			if ((((te = this.worldObj.getTileEntity(mobSpawnerPos))) instanceof TileEntityScapecraftMobSpawner))
 			{
 				((TileEntityScapecraftMobSpawner) te).addSpawned(this);
 				if(((TileEntityScapecraftMobSpawner) te).maxSpawn <= ((TileEntityScapecraftMobSpawner) te).spawnedIds.size())
@@ -170,7 +171,7 @@ public abstract class EntityScapecraft extends EntityCreature implements XpDropp
 								{
 									stack.setTagCompound(new NBTTagCompound());
 								}
-								stack.getTagCompound().setString("source", "Dropped by " + this.getCommandSenderName());
+								stack.getTagCompound().setString("source", "Dropped by " + this.getName());
 								stack.getTagCompound().setInteger("level", this.getLevel());
 							}
 							entityDropItem(stack, 1);
@@ -202,7 +203,7 @@ public abstract class EntityScapecraft extends EntityCreature implements XpDropp
 							{
 								EntityDrop entityDrop = entityDropHashMap.containsKey(entry.getKey()) ? entityDropHashMap.get(entry.getKey()) : new EntityDrop(this.worldObj);
 								entityDrop.addItem(capturedDrops.remove(0));
-								entityDrop.owner = entry.getKey().getCommandSenderName();
+								entityDrop.owner = entry.getKey().getName();
 								entityDropHashMap.put(entry.getKey(), entityDrop);
 								break;
 							}
@@ -219,27 +220,10 @@ public abstract class EntityScapecraft extends EntityCreature implements XpDropp
 		}
 	}
 
-	@Override
-	protected void attackEntity(Entity entity, float f)
-	{
-		if (this.attackTime <= 0 && f < 2.0F && entity.boundingBox.maxY > this.boundingBox.minY && entity.boundingBox.minY < this.boundingBox.maxY)
-		{
-			this.attackTime = 20;
-			this.attackEntityAsMob(entity);
-		}
-	}
-
 	public float getAttackStrength(Entity entity)
 	{
-		//float damage = (float)this.getEntityAttribute(SharedMonsterAttributes.attackDamage).getAttributeValue();
-		float damage = attackBase + attackGrowth * level;
-
-		if (entity instanceof EntityLivingBase)
-		{
-			damage += EnchantmentHelper.getEnchantmentModifierLiving(this, (EntityLivingBase) entity);
-		}
-
-		return damage;
+		//float damage = (float)this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue();
+		return attackBase + attackGrowth * level;
 	}
 
 	@Override
@@ -249,15 +233,13 @@ public abstract class EntityScapecraft extends EntityCreature implements XpDropp
 		{
 			if(entity instanceof EntityLivingBase)
 			{
-				int knockback = EnchantmentHelper.getKnockbackModifier(this, (EntityLivingBase) entity);
+				int knockback = EnchantmentHelper.getKnockbackModifier(this);
 				if(knockback > 0)
 				{
 					entity.addVelocity((double)(-MathHelper.sin(this.rotationYaw * (float)Math.PI / 180.0F) * (float)knockback* 0.5F), 0.1D, (double)(MathHelper.cos(this.rotationYaw * (float)Math.PI / 180.0F) * (float)knockback* 0.5F));
 					this.motionX *= 0.6D;
 					this.motionZ *= 0.6D;
 				}
-
-				EnchantmentHelper.func_151384_a((EntityLivingBase) entity, this);
 			}
 
 			int fire = EnchantmentHelper.getFireAspectModifier(this) * 4;
@@ -265,9 +247,6 @@ public abstract class EntityScapecraft extends EntityCreature implements XpDropp
 			{
 				entity.setFire(fire);
 			}
-
-			EnchantmentHelper.func_151385_b(this, entity);
-
 			return true;
 		}
 		return false;
@@ -316,14 +295,13 @@ public abstract class EntityScapecraft extends EntityCreature implements XpDropp
 		return damage;
 	}
 
-	@Override
-	public boolean isEntityApplicable(Entity entity)
+	//TODO AI change
+	public boolean isEntityApplicable(EntityLivingBase entity)
 	{
 		return entity instanceof EntityPlayer && !passive || targetClasses.contains(entity.getClass());
 	}
 
-	@Override
-	protected Entity findPlayerToAttack()
+	protected EntityPlayer findPlayerToAttack()
 	{
 		if(passive)
 		{
@@ -336,7 +314,7 @@ public abstract class EntityScapecraft extends EntityCreature implements XpDropp
 			double maxDistance = 16;
 			for(int i = 0; i < this.worldObj.playerEntities.size(); i++)
 			{
-				EntityPlayer possiblePlayer = (EntityPlayer) this.worldObj.playerEntities.get(i);
+				EntityPlayer possiblePlayer = this.worldObj.playerEntities.get(i);
 				if(!possiblePlayer.capabilities.disableDamage && possiblePlayer.isEntityAlive())
 				{
 					double distance = possiblePlayer.getDistanceSq(this.posX, this.posY, this.posZ);
@@ -412,12 +390,12 @@ public abstract class EntityScapecraft extends EntityCreature implements XpDropp
 
 		if(this.hero)
 		{
-			this.setCustomNameTag(heroPrefix() + " " + this.getCommandSenderName());
+			this.setCustomNameTag(heroPrefix() + " " + this.getName());
 		}
 		if(maxLevel == 0)
 		{
 			maxLevel = minLevel;
-			EntityPlayer player = worldObj.getClosestVulnerablePlayerToEntity(this, 80);
+			EntityPlayer player = worldObj.getNearestPlayerNotCreative(this, 80);
 			if(player != null)
 			{
 				maxLevel = Stats.getCombatLevel(player);
@@ -516,14 +494,14 @@ public abstract class EntityScapecraft extends EntityCreature implements XpDropp
 		this.level = level;
 		if (hero)
 		{
-			this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(healthBase + healthGrowth * level * 2);
-			this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(attackBase + attackGrowth * level * 1.2);
+			this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(healthBase + healthGrowth * level * 2);
+			this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(attackBase + attackGrowth * level * 1.2);
 			this.defense = this.defenseBase + this.defenseGrowth * level * 1.5f;
 		}
 		else
 		{
-			this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(healthBase + healthGrowth * level);
-			this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(attackBase + attackGrowth * level);
+			this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(healthBase + healthGrowth * level);
+			this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(attackBase + attackGrowth * level);
 			this.defense = this.defenseBase + this.defenseGrowth * level;
 		}
 	}
@@ -538,19 +516,9 @@ public abstract class EntityScapecraft extends EntityCreature implements XpDropp
 	}
 
 	@Override
-	public void addRandomArmor()
+	public void setEquipmentBasedOnDifficulty(DifficultyInstance difficulty)
 	{
 		this.addArmor();
-		for(int i = 0; i < equipmentDropChances.length; i++)
-		{
-			equipmentDropChances[i] = 0F;
-		}
-	}
-
-	@Override
-	public void setEquipmentDropChance(int slot, float chance)
-	{
-		equipmentDropChances[slot] = 0F;
 	}
 
 	@Override
@@ -594,9 +562,9 @@ public abstract class EntityScapecraft extends EntityCreature implements XpDropp
 		if(fromSpawner)
 		{
 			tagCompound.setBoolean("fromSpawner", true);
-			tagCompound.setInteger("spawnerX", mobSpawnerX);
-			tagCompound.setInteger("spawnerY", mobSpawnerY);
-			tagCompound.setInteger("spawnerZ", mobSpawnerZ);
+			tagCompound.setInteger("spawnerX", mobSpawnerPos.getX());
+			tagCompound.setInteger("spawnerY", mobSpawnerPos.getY());
+			tagCompound.setInteger("spawnerZ", mobSpawnerPos.getZ());
 		}
 		tagCompound.setFloat("healthBase", healthBase);
 		tagCompound.setFloat("healthGrowth", healthGrowth);
@@ -623,9 +591,11 @@ public abstract class EntityScapecraft extends EntityCreature implements XpDropp
 		if(tagCompound.getBoolean("fromSpawner"))
 		{
 			fromSpawner = true;
-			this.mobSpawnerX = tagCompound.getInteger("spawnerX");
-			this.mobSpawnerY = tagCompound.getInteger("spawnerY");
-			this.mobSpawnerZ = tagCompound.getInteger("spawnerZ");
+			this.mobSpawnerPos = new BlockPos(
+					tagCompound.getInteger("spawnerX"),
+					tagCompound.getInteger("spawnerY"),
+					tagCompound.getInteger("spawnerZ")
+			);
 		}
 		this.healthBase = tagCompound.getFloat("healthBase");
 		this.healthGrowth = tagCompound.getFloat("healthGrowth");
@@ -643,9 +613,9 @@ public abstract class EntityScapecraft extends EntityCreature implements XpDropp
 	public void setWorld(World worldIn)
 	{
 		super.setWorld(worldIn);
-		if(fromSpawner && worldObj != null && worldObj.getTileEntity(mobSpawnerX, mobSpawnerY, mobSpawnerZ) instanceof MobSpawner)
+		if(fromSpawner && worldObj != null && worldObj.getTileEntity(mobSpawnerPos) instanceof MobSpawner)
 		{
-			mobSpawner = (MobSpawner) worldObj.getTileEntity(mobSpawnerX, mobSpawnerY, mobSpawnerZ);
+			mobSpawner = (MobSpawner) worldObj.getTileEntity(mobSpawnerPos);
 		}
 	}
 
@@ -664,7 +634,7 @@ public abstract class EntityScapecraft extends EntityCreature implements XpDropp
 	@Override
 	public void knockBack(Entity attacker, float damage, double distanceX, double distanceZ)
 	{
-		if (this.rand.nextDouble() >= this.getEntityAttribute(SharedMonsterAttributes.knockbackResistance).getAttributeValue())
+		if (this.rand.nextDouble() >= this.getEntityAttribute(SharedMonsterAttributes.KNOCKBACK_RESISTANCE).getAttributeValue())
 		{
 			this.isAirBorne = true;
 			float distance = MathHelper.sqrt_double(distanceX * distanceX + distanceZ * distanceZ);
@@ -676,9 +646,9 @@ public abstract class EntityScapecraft extends EntityCreature implements XpDropp
 			if(attacker instanceof EntityLivingBase)
 			{
 				EntityLivingBase entityLivingBase = (EntityLivingBase) attacker;
-				if(entityLivingBase.getHeldItem() != null && entityLivingBase.getHeldItem().getItem() instanceof ItemWeapon)
+				if(entityLivingBase.getHeldItemMainhand() != null && entityLivingBase.getHeldItemMainhand().getItem() instanceof ItemWeapon)
 				{
-					power *= ((ItemWeapon) entityLivingBase.getHeldItem().getItem()).getAttackTime();
+					power *= ((ItemWeapon) entityLivingBase.getHeldItemMainhand().getItem()).getAttackTime();
 				}
 			}
 			this.motionX /= 2.0D;

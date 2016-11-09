@@ -98,4 +98,10 @@ public abstract class ContainerScapecraft extends Container
             super.putStackInSlot(slot, stack);
         }
     }
+
+    @Override
+    public void updateProgressBar(int id, int value)
+    {
+        this.inventoryPlayer.setField(id, value);
+    }
 }

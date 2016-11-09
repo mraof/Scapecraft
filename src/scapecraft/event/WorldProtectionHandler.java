@@ -1,20 +1,21 @@
 package scapecraft.event;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagIntArray;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.player.FillBucketEvent;
 import net.minecraftforge.event.entity.player.PlayerDropsEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import scapecraft.compat.Compat;
 import scapecraft.entity.EntityDrop;
 
@@ -42,16 +43,16 @@ public class WorldProtectionHandler
     @SubscribeEvent
     public void onPlayerBreakSpeed(PlayerEvent.BreakSpeed event)
     {
-        if(event.block instanceof IRegionBlock)
+        if(event.getState().getBlock() instanceof IRegionBlock)
         {
-            ((IRegionBlock) event.block).onPlayerBreakBlock(event);
+            ((IRegionBlock) event.getState().getBlock()).onPlayerBreakBlock(event);
         }
         else
         {
-            Region region = getRegion(event.entity.dimension, event.x, event.y, event.z);
+            Region region = getRegion(event.getEntity().dimension, event.getPos());
             if (region != null && !region.isEditable())
             {
-                event.newSpeed = -1;
+                event.setNewSpeed(-1);
             }
         }
     }
@@ -59,7 +60,7 @@ public class WorldProtectionHandler
     @SubscribeEvent
     public void onBucketFill(FillBucketEvent event)
     {
-        Region region = getRegion(event.entity.dimension, event.target.blockX, event.target.blockY, event.target.blockZ);
+        Region region = getRegion(event.getEntity().dimension, event.getTarget().getBlockPos());
         if (region != null && !region.isEditable())
         {
             event.setCanceled(true);
@@ -69,8 +70,8 @@ public class WorldProtectionHandler
     @SubscribeEvent
     public void onItemFrameAttack(ItemFrameEvent.Attack event)
     {
-        Region region = getRegion(event.world.provider.dimensionId, event.x, event.y, event.z);
-        if((region != null) && !region.isEditable() && !(event.source.getEntity() instanceof EntityPlayer && ((EntityPlayer) event.source.getEntity()).capabilities.isCreativeMode))
+        Region region = getRegion(event.getWorld().provider.getDimension(), event.getPos());
+        if((region != null) && !region.isEditable() && !(event.getSource().getEntity() instanceof EntityPlayer && ((EntityPlayer) event.getSource().getEntity()).capabilities.isCreativeMode))
         {
             event.setCanceled(true);
         }
@@ -79,8 +80,8 @@ public class WorldProtectionHandler
     @SubscribeEvent
     public void onPlayerBreakBlock(BlockEvent.BreakEvent event)
     {
-        Region region = getRegion(event.getPlayer().dimension, event.x, event.y, event.z);
-        if(!(event.getPlayer().worldObj.getBlock(event.x, event.y, event.z) instanceof IRegionBlock) && (region != null) && !region.isEditable() && !event.getPlayer().capabilities.isCreativeMode)
+        Region region = getRegion(event.getPlayer().dimension, event.getPos());
+        if(!(event.getPlayer().worldObj.getBlockState(event.getPos()).getBlock() instanceof IRegionBlock) && (region != null) && !region.isEditable() && !event.getPlayer().capabilities.isCreativeMode)
         {
             event.setCanceled(true);
         }
@@ -88,8 +89,8 @@ public class WorldProtectionHandler
     @SubscribeEvent
     public void onPlayerPlaceBlock(BlockEvent.PlaceEvent event)
     {
-        Region region = getRegion(event.player.dimension, event.x, event.y, event.z);
-        if(region != null && !region.isEditable() && !event.player.capabilities.isCreativeMode)
+        Region region = getRegion(event.getPlayer().dimension, event.getPos());
+        if(region != null && !region.isEditable() && !event.getPlayer().capabilities.isCreativeMode)
         {
             event.setCanceled(true);
         }
@@ -98,8 +99,8 @@ public class WorldProtectionHandler
     @SubscribeEvent
     public void onItemFramePlace(ItemFrameEvent.Place event)
     {
-        Region region = getRegion(event.entityPlayer.dimension, event.x, event.y, event.z);
-        if(region != null && !region.isEditable() && !event.entityPlayer.capabilities.isCreativeMode)
+        Region region = getRegion(event.getEntityPlayer().dimension, event.getPos());
+        if(region != null && !region.isEditable() && !event.getEntityPlayer().capabilities.isCreativeMode)
         {
             event.setCanceled(true);
         }
@@ -108,8 +109,8 @@ public class WorldProtectionHandler
     @SubscribeEvent
     public void onItemFrameInteract(ItemFrameEvent.Interact event)
     {
-        Region region = getRegion(event.entityPlayer.dimension, event.x, event.y, event.z);
-        if(region != null && !region.isEditable() && !event.entityPlayer.capabilities.isCreativeMode)
+        Region region = getRegion(event.getEntityPlayer().dimension, event.getPos());
+        if(region != null && !region.isEditable() && !event.getEntityPlayer().capabilities.isCreativeMode)
         {
             event.setCanceled(true);
         }
@@ -118,16 +119,16 @@ public class WorldProtectionHandler
     @SubscribeEvent
     public void onLivingAttack(LivingAttackEvent event)
     {
-        Region targetRegion = getRegion(event.entity.dimension, (int) event.entity.posX, (int) event.entity.posY, (int) event.entity.posZ);
-        Region sourceRegion = (event.source.getEntity() == null) ? null : getRegion(event.source.getEntity().dimension, (int) event.source.getEntity().posX, (int) event.source.getEntity().posY, (int) event.source.getEntity().posZ);
-        if(event.source.getEntity() instanceof EntityPlayer && event.entity instanceof EntityPlayer)
+        Region targetRegion = getRegion(event.getEntity().dimension, event.getEntity().getPosition());
+        Region sourceRegion = (event.getSource().getEntity() == null) ? null : getRegion(event.getSource().getEntity().dimension, event.getSource().getEntity().getPosition());
+        if(event.getSource().getEntity() instanceof EntityPlayer && event.getEntity() instanceof EntityPlayer)
         {
             if(!(((targetRegion == null) || targetRegion.pvp) && ((sourceRegion == null) || sourceRegion.pvp)))
             {
                 event.setCanceled(true);
             }
         }
-        else if((event.source.getEntity() instanceof EntityPlayer) != (event.entity instanceof EntityPlayer))
+        else if((event.getSource().getEntity() instanceof EntityPlayer) != (event.getEntity() instanceof EntityPlayer))
         {
             if(!(((targetRegion == null) || targetRegion.pve) && ((sourceRegion == null) || sourceRegion.pve)))
             {
@@ -139,17 +140,17 @@ public class WorldProtectionHandler
     @SubscribeEvent
     public void onLivingUpdateEvent(LivingUpdateEvent event)
     {
-        if ((event.entityLiving instanceof EntityPlayer) && !event.entityLiving.worldObj.isRemote && ((MinecraftServer.getServer().getTickCounter() % 10) == 0) && !((EntityPlayer) event.entityLiving).capabilities.isCreativeMode)
+        if ((event.getEntityLiving() instanceof EntityPlayer) && !event.getEntityLiving().worldObj.isRemote && ((FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter() % 10) == 0) && !((EntityPlayer) event.getEntityLiving()).capabilities.isCreativeMode)
         {
-            Region region = getRegion(event.entityLiving.dimension, (int) event.entityLiving.posX, (int) event.entityLiving.posY, (int) event.entityLiving.posZ);
+            Region region = getRegion(event.getEntityLiving().dimension, event.getEntityLiving().getPosition());
             if (region.isNoEntry())
             {
-                event.entityLiving.attackEntityFrom(DamageSource.outOfWorld, event.entityLiving.getMaxHealth() / 10);
-                ((EntityPlayer) event.entityLiving).addChatMessage(new ChatComponentText("§4You are not allowed here, return or die"));
+                event.getEntityLiving().attackEntityFrom(DamageSource.outOfWorld, event.getEntityLiving().getMaxHealth() / 10);
+                event.getEntityLiving().addChatMessage(new TextComponentString("§4You are not allowed here, return or die"));
             }
             if(Compat.dynmap)
             {
-                scapecraft.compat.dynmap.DynmapHandler.api.assertPlayerInvisibility(event.entityLiving.getCommandSenderName(), region.getPvp(), "Scapecraft");
+                scapecraft.compat.dynmap.DynmapHandler.api.assertPlayerInvisibility(event.getEntityLiving().getName(), region.getPvp(), "Scapecraft");
             }
         }
     }
@@ -157,27 +158,27 @@ public class WorldProtectionHandler
     @SubscribeEvent
     public void onPlayerDrops(PlayerDropsEvent event)
     {
-        Region region = getRegion(event.entityPlayer.dimension, (int) event.entityPlayer.posX, (int) event.entityPlayer.posY, (int) event.entityPlayer.posZ);
-        if(!event.drops.isEmpty())
+        Region region = getRegion(event.getEntityPlayer().dimension, event.getEntityPlayer().getPosition());
+        if(!event.getDrops().isEmpty())
         {
             /*if(region.getKeepInventorySize() > 0)
             {
-                for(int i = 0; i < region.getKeepInventorySize() && !event.drops.isEmpty(); i++)
+                for(int i = 0; i < region.getKeepInventorySize() && !event.getDrops().isEmpty(); i++)
                 {
-                    event.entityPlayer.inventory.addItemStackToInventory(event.drops.remove(0).getEntityItem().copy());
+                    event.getEntityPlayer().inventory.addItemStackToInventory(event.getDrops().remove(0).getEntityItem().copy());
                 }
             }*/
             if(!region.getPvp())
             {
-                EntityDrop entityDrop = new EntityDrop(event.entityPlayer.worldObj);
-                for (EntityItem entityItem : event.drops)
+                EntityDrop entityDrop = new EntityDrop(event.getEntityPlayer().worldObj);
+                for (EntityItem entityItem : event.getDrops())
                 {
                     entityDrop.addItem(entityItem);
                 }
-                entityDrop.owner = event.entityPlayer.getCommandSenderName();
-                entityDrop.setPosition(event.drops.get(0).posX, event.drops.get(0).posY, event.drops.get(0).posZ);
+                entityDrop.owner = event.getEntityPlayer().getName();
+                entityDrop.setPosition(event.getDrops().get(0).posX, event.getDrops().get(0).posY, event.getDrops().get(0).posZ);
                 entityDrop.forceSpawn = true;
-                if(event.entityPlayer.worldObj.spawnEntityInWorld(entityDrop))
+                if(event.getEntityPlayer().worldObj.spawnEntityInWorld(entityDrop))
                 {
                     event.setCanceled(true);
                 }
@@ -185,13 +186,13 @@ public class WorldProtectionHandler
         }
     }
 
-    public Region getRegion(int dimension, int x, int y, int z)
+    public Region getRegion(int dimension, BlockPos pos)
     {
         Region region = getRegionByName("default");
         int tier = -1;
         for (Region currentRegion : regions)
         {
-            int currentTier = currentRegion.regionTier(dimension, x, y, z);
+            int currentTier = currentRegion.regionTier(dimension, pos);
             if (currentTier > tier)
             {
                 region = currentRegion;
@@ -251,12 +252,12 @@ public class WorldProtectionHandler
             this.name = name;
         }
 
-        public int regionTier(int dimension, int x, int y, int z)
+        public int regionTier(int dimension, BlockPos pos)
         {
             int tier = -1;
             for(int[] area : areas)
             {
-                if(area[0] == dimension && area[1] <= x && area[2] >= x && area[3] <= y && area[4] >= y && area[5] <= z && area[6] >= z && area[7] > tier)
+                if(area[0] == dimension && area[1] <= pos.getX() && area[2] >= pos.getX() && area[3] <= pos.getY() && area[4] >= pos.getY() && area[5] <= pos.getZ() && area[6] >= pos.getZ() && area[7] > tier)
                 {
                     tier = area[7];
                 }

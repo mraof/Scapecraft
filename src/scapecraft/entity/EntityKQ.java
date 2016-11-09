@@ -8,7 +8,9 @@ import net.minecraft.entity.monster.EntitySkeleton;
 import net.minecraft.entity.monster.EntitySpider;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
 
 public class EntityKQ extends EntityScapecraft 
@@ -25,34 +27,32 @@ public class EntityKQ extends EntityScapecraft
 	protected void applyEntityAttributes()
 	{
 		super.applyEntityAttributes();
-		this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(500.0D);
-		this.getEntityAttribute(SharedMonsterAttributes.followRange).setBaseValue(32.0D);
-		this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.42D);
-		this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(40.0D);
+		this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(500.0D);
+		this.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(32.0D);
+		this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.42D);
+		this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(40.0D);
+	}
+
+
+	@Override
+	protected SoundEvent getAmbientSound()
+	{
+		//return "mob.spider.say";
+		return SoundEvents.ENTITY_SPIDER_AMBIENT;
 	}
 
 	@Override
-	public boolean isAIEnabled()
+	protected SoundEvent getHurtSound()
 	{
-		return true;
+		//return "mob.spider.say";
+		return SoundEvents.ENTITY_SPIDER_HURT;
 	}
 
 	@Override
-	protected String getLivingSound()
+	protected SoundEvent getDeathSound()
 	{
-		return "mob.spider.say";
-	}
-
-	@Override
-	protected String getHurtSound()
-	{
-		return "mob.spider.say";
-	}
-
-	@Override
-	protected String getDeathSound()
-	{
-		return "mob.spider.death";
+		//return "mob.spider.death";
+		return SoundEvents.ENTITY_SPIDER_DEATH;
 	}
 
 	@Override

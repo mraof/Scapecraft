@@ -1,7 +1,7 @@
 package scapecraft.item;
 
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.Entity;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -16,7 +16,7 @@ public class ItemArmorColored extends ItemArmorScapecraft
 {
     ArrayList<ItemStack> subItems = new ArrayList<ItemStack>();
 
-    public ItemArmorColored(int level, float damageReduction, int type, String armorName)
+    public ItemArmorColored(int level, float damageReduction, EntityEquipmentSlot type, String armorName)
     {
         super(level, damageReduction, type, armorName);
     }
@@ -25,12 +25,6 @@ public class ItemArmorColored extends ItemArmorScapecraft
     public boolean hasColor(ItemStack stack)
     {
         return true;
-    }
-
-    @Override
-    public int getColorFromItemStack(ItemStack stack, int pass)
-    {
-        return this.getColor(stack);
     }
 
     @Override
@@ -61,11 +55,5 @@ public class ItemArmorColored extends ItemArmorScapecraft
         stack.setTagCompound(tag);
         subItems.add(stack);
         return this;
-    }
-
-    @Override
-    public String getArmorTexture(ItemStack stack, Entity entity, int slot, String type)
-    {
-        return "overlay".equals(type) ? "scapecraft:textures/blocks/Clear.png" : this.textureName;
     }
 }

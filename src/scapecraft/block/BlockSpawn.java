@@ -1,19 +1,18 @@
 package scapecraft.block;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.Minecraft;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import scapecraft.Scapecraft;
 import scapecraft.client.gui.GuiHandler;
@@ -22,48 +21,33 @@ import scapecraft.item.ScapecraftItems;
 import scapecraft.network.TileEntityGuiPacket;
 import scapecraft.tileentity.TileEntityScapecraftMobSpawner;
 
+import javax.annotation.Nullable;
+
 public class BlockSpawn extends BlockContainer
 {
 	public BlockSpawn()
 	{
-		super(Material.rock);
+		super(Material.ROCK);
 		this.setCreativeTab(Scapecraft.tabScapecraftBlock);
 		setHardness(200000.0F);
 		setResistance(5000.0F);
-		this.setTextureName("minecraft:portal");
 		this.setUnlocalizedName("scapecraftSpawner");
 	}
 
-	@Override
-	public boolean canProvidePower()
-	{
-		return true;
-	}
+//TODO provide redstone power when all are spawned
 
 	@Override
-	public int isProvidingWeakPower(IBlockAccess world, int x, int y, int z, int side)
-	{
-		return world.getBlockMetadata(x, y, z) * 15;
-	}
-
-	@Override
-	public int isProvidingStrongPower(IBlockAccess world, int x, int y, int z, int side)
-	{
-		return world.getBlockMetadata(x, y, z) * 15;
-	}
-
-	@Override
-	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float subX, float subY, float subZ)
+	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ)
 	{
 		if(player.capabilities.isCreativeMode && !player.isSneaking())
 		{
 			if(!world.isRemote)
 			{
-				if(player.getHeldItem() != null && player.getHeldItem().getItem() == ScapecraftItems.scapecraftSpawnEgg)
+				if(player.getHeldItem(hand) != null && player.getHeldItem(hand).getItem() == ScapecraftItems.scapecraftSpawnEgg)
 				{
-					((TileEntityScapecraftMobSpawner) world.getTileEntity(x, y, z)).entityName = ScapecraftEntities.entities.get(player.getHeldItem().getMetadata());
+					((TileEntityScapecraftMobSpawner) world.getTileEntity(pos)).entityName = ScapecraftEntities.entities.get(player.getHeldItem(hand).getMetadata());
 				}
-				TileEntityGuiPacket packet = new TileEntityGuiPacket(world.getTileEntity(x, y, z), GuiHandler.GuiId.SPAWNER);
+				TileEntityGuiPacket packet = new TileEntityGuiPacket(world.getTileEntity(pos), GuiHandler.GuiId.SPAWNER);
 				Scapecraft.network.sendTo(packet, (EntityPlayerMP) player);
 			}
 			return true;
@@ -71,46 +55,22 @@ public class BlockSpawn extends BlockContainer
 		return false;
 	}
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public IIcon getIcon(IBlockAccess worldIn, int x, int y, int z, int side)
-	{
-		if(Minecraft.getMinecraft().thePlayer.capabilities.isCreativeMode || y == 0)
-		{
-			return this.blockIcon;
-		}
-		return worldIn.getBlock(x, y - 1, z).getIcon(worldIn, x, y - 1, z, side);
-	}
-
-	@Override
-	public int colorMultiplier(IBlockAccess world, int x, int y, int z)
-	{
-		if(y > 0)
-		{
-			return world.getBlock(x, y - 1, z).colorMultiplier(world, x, y - 1, z);
-		}
-		return getRenderColor(world.getBlockMetadata(x, y, z));
-	}
+//TODO disguise as the block underneath except in creative
 
 	@Override
 	public TileEntity createNewTileEntity(World world, int metadata)
 	{
-		return createTileEntity(world, metadata);
+		return createTileEntity(world, this.getDefaultState());
 	}
 
-	@Override
-	public TileEntity createTileEntity(World world, int metadata)
-	{
-		return new TileEntityScapecraftMobSpawner();
-	}
 
 	@Override
-	public ItemStack getPickBlock(MovingObjectPosition target, World world, int x, int y, int z, EntityPlayer player)
+	public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player)
 	{
-		TileEntity te = world.getTileEntity(x, y, z);
+		TileEntity te = world.getTileEntity(pos);
 		if(te == null)
 		{
-			System.out.printf("Mob spawner at %d, %d, %d in dimension %d is null, this should not happen\n", x, y, z, world.provider.dimensionId);
+			System.out.printf("Mob spawner at %s in dimension %d is null, this should not happen\n", pos, world.provider.getDimension());
 			return null;
 		}
 
@@ -121,15 +81,13 @@ public class BlockSpawn extends BlockContainer
 	}
 
 	@Override
-	public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase placer, ItemStack stack)
+	public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack)
 	{
 		if(stack.hasTagCompound())
 		{
-			TileEntity tileEntity = world.getTileEntity(x, y, z);
+			TileEntity tileEntity = world.getTileEntity(pos);
 			tileEntity.readFromNBT(stack.getTagCompound());
-			tileEntity.xCoord = x;
-			tileEntity.yCoord = y;
-			tileEntity.zCoord = z;
+			tileEntity.setPos(pos);
 		}
 	}
 }

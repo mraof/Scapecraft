@@ -13,30 +13,12 @@ public class BlockScapecraftPortal extends BlockScapecraft implements ITileEntit
 {
     public BlockScapecraftPortal()
     {
-        super(Material.portal);
+        super(Material.PORTAL);
     }
 
     @Override
     public TileEntity createNewTileEntity(World worldIn, int meta)
     {
         return new TileEntityScapecraftPortal();
-    }
-
-    @Override
-    public int getRenderType()
-    {
-        return -1;
-    }
-
-    @Override
-    public boolean isOpaqueCube()
-    {
-        return false;
-    }
-
-    @Override
-    public boolean renderAsNormalBlock()
-    {
-        return false;
     }
 }

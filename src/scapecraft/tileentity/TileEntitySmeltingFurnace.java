@@ -2,6 +2,7 @@ package scapecraft.tileentity;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ITickable;
 import scapecraft.inventory.InventoryScapecraft;
 import scapecraft.util.SmeltingRecipe;
 import scapecraft.util.Stat;
@@ -12,7 +13,7 @@ import java.util.*;
 /**
  * Created by mraof on 2016 March 02.
  */
-public class TileEntitySmeltingFurnace extends TileEntityInstanced
+public class TileEntitySmeltingFurnace extends TileEntityInstanced implements ITickable
 {
     private HashMap<UUID, Result> progressMap = new HashMap<UUID, Result>();
 
@@ -32,7 +33,7 @@ public class TileEntitySmeltingFurnace extends TileEntityInstanced
     }
 
     @Override
-    public void updateEntity()
+    public void update()
     {
         for(Map.Entry<UUID, InventoryScapecraft> entry : inventories.entrySet())
         {

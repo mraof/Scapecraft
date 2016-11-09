@@ -1,28 +1,28 @@
 package scapecraft.item;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBiped;
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.SoundEvents;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.StatCollector;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import scapecraft.Scapecraft;
 
-import java.io.IOException;
 import java.util.List;
+
+import static net.minecraft.inventory.EntityEquipmentSlot.*;
 
 public class ItemArmorScapecraft extends ItemArmor implements QualityItem
 {
 	public String armorName;
-	private static ArmorMaterial fakeMaterial = EnumHelper.addArmorMaterial("SCAPECRAFTARMOR", 1000, new int[] {1, 1, 1, 1}, 1); //Values are all totally arbitrary
+	private static ArmorMaterial fakeMaterial = EnumHelper.addArmorMaterial("SCAPECRAFTARMOR", "SCAPECRAFTARMOR", 1, new int[] {1, 1, 1, 1}, 1, SoundEvents.ITEM_ARMOR_EQUIP_GENERIC, 1); //Values are all totally arbitrary
 	@SideOnly(Side.CLIENT)
 	public ModelBiped armorModel;
 	protected float damageReduction;
@@ -31,15 +31,16 @@ public class ItemArmorScapecraft extends ItemArmor implements QualityItem
 	public String textureName;
 	protected double healthBoost = 0;
 
-	public ItemArmorScapecraft(int level, float damageReduction, int type, String armorName)
+	public ItemArmorScapecraft(int level, float damageReduction, EntityEquipmentSlot type, String armorName)
 	{
-		super(fakeMaterial, type, type);
+		super(fakeMaterial, type.getIndex(), type);
 		this.minLevel = level;
 		this.damageReduction = damageReduction;
 		this.armorName = armorName;
 		this.setUnlocalizedName(armorName);
+		this.setRegistryName(armorName);
 		this.setCreativeTab(Scapecraft.tabScapecraftArmor);
-		this.setMaxDurability(damageReduction > 0 ? (level / 5 + 1) * 125 : 0);
+		this.setMaxDamage(damageReduction > 0 ? (level / 5 + 1) * 125 : 0);
 		this.textureName = "scapecraft:textures/armor/" + armorName + ".png";
 	}
 
@@ -50,40 +51,13 @@ public class ItemArmorScapecraft extends ItemArmor implements QualityItem
 	}
 
 	@Override
-	public int getColorFromItemStack(ItemStack stack, int pass)
-	{
-		return this.getColor(stack);
-	}
-
-	@Override
 	public int getColor(ItemStack stack)
 	{
 		return 0xFFFFFF;
 	}
 
-	@Override
-	public String getArmorTexture(ItemStack stack, Entity entity, int slot, String type)
-	{
-		return "overlay".equals(type) && stack.hasTagCompound() && stack.getTagCompound().hasKey("overlay") ? stack.getTagCompound().getString("overlay") : this.textureName;
-	}
-
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerIcons(IIconRegister iconReg) 
-	{
-		itemIcon = iconReg.registerIcon("scapecraft:" + armorName);
-		try
-		{
-			Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation(textureName));
-		} catch (IOException e)
-		{
-			System.err.printf("Missing armor texture: %s%n", textureName);
-		}
-	}
 
 	//Overriding ItemArmor for using ScapecraftArmorMaterial instead of ArmorMaterial
-
 
 	/**
 	 * Return the enchantability factor of the item, most of the time is based on material.
@@ -121,13 +95,13 @@ public class ItemArmorScapecraft extends ItemArmor implements QualityItem
 	@Override
 	public int getMaxDamage(ItemStack stack)
 	{
-		int durability = this.getMaxDurability();
+		int durability = this.getMaxDamage();
 		if (stack.getTagCompound() != null)
 		{
-			durability = this.getMaxDurability() + (2 * this.minLevel * (stack.getTagCompound().getInteger("level") - this.minLevel));
-			if (durability < this.getMaxDurability() / 3)
+			durability = this.getMaxDamage() + (2 * this.minLevel * (stack.getTagCompound().getInteger("level") - this.minLevel));
+			if (durability < this.getMaxDamage() / 3)
 			{
-				durability = this.getMaxDurability() / 3;
+				durability = this.getMaxDamage() / 3;
 			}
 		}
 		return durability;
@@ -164,12 +138,12 @@ public class ItemArmorScapecraft extends ItemArmor implements QualityItem
 	public void addInformation(ItemStack itemStack, EntityPlayer player, List lines, boolean advancedTooltips)
 	{
 		super.addInformation(itemStack, player, lines, advancedTooltips);
-		lines.add(StatCollector.translateToLocal("weapon.minlevel") + " " + this.getMinLevel());
+		lines.add(I18n.translateToLocal("weapon.minlevel") + " " + this.getMinLevel());
 		if(this.getHealthBoost() > 0)
 		{
-			lines.add(StatCollector.translateToLocal("armor.healthboost") + " " + this.getHealthBoost());
+			lines.add(I18n.translateToLocal("armor.healthboost") + " " + this.getHealthBoost());
 		}
-		lines.add(StatCollector.translateToLocalFormatted("armor.defense", this.getDamageReduction()));
+		lines.add(I18n.translateToLocalFormatted("armor.defense", this.getDamageReduction()));
 
 		if(itemStack.getTagCompound() != null)
 		{
@@ -180,34 +154,33 @@ public class ItemArmorScapecraft extends ItemArmor implements QualityItem
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, int armorSlot) 
+	public ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, EntityEquipmentSlot armorSlot, ModelBiped _default)
 	{
 		if(armorModel == null)
 		{
-			return super.getArmorModel(entityLiving, itemStack, armorSlot);
+			return null;
 		}
 
-		armorModel.bipedHead.showModel = armorSlot == 0;
-		armorModel.bipedHeadwear.showModel = armorSlot == 0;
-		armorModel.bipedBody.showModel = armorSlot == 1 || armorSlot == 2;
-		armorModel.bipedRightArm.showModel = armorSlot == 1;
-		armorModel.bipedLeftArm.showModel = armorSlot == 1;
-		armorModel.bipedRightLeg.showModel = armorSlot == 2 || armorSlot == 3;
-		armorModel.bipedLeftLeg.showModel = armorSlot == 2 || armorSlot == 3;
+		armorModel.bipedHead.showModel = armorSlot == HEAD;
+		armorModel.bipedHeadwear.showModel = armorSlot == HEAD;
+		armorModel.bipedBody.showModel = armorSlot == CHEST || armorSlot == LEGS;
+		armorModel.bipedRightArm.showModel = armorSlot == CHEST;
+		armorModel.bipedLeftArm.showModel = armorSlot == CHEST;
+		armorModel.bipedRightLeg.showModel = armorSlot == LEGS || armorSlot == FEET;
+		armorModel.bipedLeftLeg.showModel = armorSlot == LEGS || armorSlot == FEET;
 
-		armorModel.isSneak = entityLiving.isSneaking();
-		armorModel.isRiding = entityLiving.isRiding();
-		armorModel.isChild = entityLiving.isChild();
-		armorModel.heldItemRight = entityLiving.getEquipmentInSlot(0) != null ? 1 :0;
-		if(entityLiving instanceof EntityPlayer)
-		{
-			armorModel.aimedBow = ((EntityPlayer)entityLiving).getItemInUseDuration() > 2;
-		}
+		armorModel.setModelAttributes(_default);
+
 		return armorModel;
 	}
 
 	public float getDamageReduction()
 	{
 		return damageReduction;
+	}
+
+	@Override
+	public String getArmorTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot, String type) {
+		return this.textureName;
 	}
 }

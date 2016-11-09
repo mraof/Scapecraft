@@ -1,17 +1,18 @@
 package scapecraft.entity;
 
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.*;
+import net.minecraft.entity.ai.EntityAILookIdle;
+import net.minecraft.entity.ai.EntityAISwimming;
+import net.minecraft.entity.ai.EntityAIWander;
+import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.monster.EntitySkeleton;
 import net.minecraft.entity.monster.EntitySpider;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
-import net.minecraft.potion.Potion;
-import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
 import scapecraft.entity.ai.EntityAIAttackWithDistance;
 import scapecraft.entity.ai.EntityAIHurtByLevelTarget;
@@ -19,15 +20,11 @@ import scapecraft.item.ScapecraftItems;
 
 public class EntityBarbarian extends EntityScapecraft
 {
-	private float moveSpeed;
-	
 	public EntityBarbarian(World par1World)
 	{
 		super(par1World);
 
-		this.moveSpeed = 0.5F;
 		this.targetTasks.addTask(1, new EntityAIHurtByLevelTarget(this));
-		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityLivingBase.class, 0, true, false, this));
 		this.tasks.addTask(1, new EntityAISwimming(this));
 		this.tasks.addTask(2, new EntityAIAttackWithDistance(this, 1.1, 1.44));
 		this.tasks.addTask(5, new EntityAIWander(this, 1));
@@ -37,34 +34,31 @@ public class EntityBarbarian extends EntityScapecraft
 	}
 
 	@Override
-	public boolean isAIEnabled()
+	protected SoundEvent getAmbientSound()
 	{
-		return true;
+		//return "mob.villager.default";
+		return SoundEvents.ENTITY_VILLAGER_AMBIENT;
 	}
 
 	@Override
-	protected String getLivingSound()
+	protected SoundEvent getHurtSound()
 	{
-		return "mob.villager.default";
+		//return "mob.villager.defaulthurt";
+		return SoundEvents.ENTITY_VILLAGER_HURT;
 	}
 
 	@Override
-	protected String getHurtSound()
+	protected SoundEvent getDeathSound()
 	{
-		return "mob.villager.defaulthurt";
-	}
-
-	@Override
-	protected String getDeathSound()
-	{
-		return "mob.villager.defaultdeath";
+		//return "mob.villager.defaultdeath";
+		return SoundEvents.ENTITY_VILLAGER_DEATH;
 	}
 
 	private static final ItemStack defaultHeldItem = new ItemStack(ScapecraftItems.equipmentSets.get("steelHammer"), 1);
 
 
 	@Override
-	public ItemStack getHeldItem()
+	public ItemStack getHeldItemMainhand()
 	{
 		return defaultHeldItem;
 	}

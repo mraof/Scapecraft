@@ -1,8 +1,5 @@
 package scapecraft.entity;
 
-import cpw.mods.fml.common.network.ByteBufUtils;
-import cpw.mods.fml.common.network.simpleimpl.IMessage;
-import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
@@ -12,6 +9,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import scapecraft.Scapecraft;
 import scapecraft.network.SpawnDataPacket;
 
@@ -103,7 +103,7 @@ public class EntityDrop extends Entity implements IEntityAdditionalSpawnData
     @Override
     public void onCollideWithPlayer(EntityPlayer entityIn)
     {
-        if(!this.worldObj.isRemote && entityIn.getCommandSenderName().equals(this.owner))
+        if(!this.worldObj.isRemote && entityIn.getName().equals(this.owner))
         {
             boolean update = false;
             for (EntityItem entityItem : items)

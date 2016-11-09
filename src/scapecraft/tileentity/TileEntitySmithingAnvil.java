@@ -3,6 +3,7 @@ package scapecraft.tileentity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ITickable;
 import scapecraft.inventory.InventoryScapecraft;
 import scapecraft.item.QualityItem;
 import scapecraft.util.SmithingRecipe;
@@ -17,7 +18,7 @@ import java.util.UUID;
 /**
  * Created by mraof on 2016 March 02.
  */
-public class TileEntitySmithingAnvil extends TileEntityInstanced
+public class TileEntitySmithingAnvil extends TileEntityInstanced implements ITickable
 {
     private HashMap<UUID, Result> progressMap = new HashMap<UUID, Result>();
     @Override
@@ -36,7 +37,7 @@ public class TileEntitySmithingAnvil extends TileEntityInstanced
     }
 
     @Override
-    public void updateEntity()
+    public void update()
     {
         for(Map.Entry<UUID, InventoryScapecraft> entry : inventories.entrySet())
         {
@@ -57,7 +58,7 @@ public class TileEntitySmithingAnvil extends TileEntityInstanced
                         {
                             stack.setTagCompound(new NBTTagCompound());
                             stack.getTagCompound().setInteger("level", Stats.getLevel(player, Stat.SMITHING));
-                            stack.getTagCompound().setString("source", "Smithed by " + player.getCommandSenderName());
+                            stack.getTagCompound().setString("source", "Smithed by " + player.getName());
                         }
                         entry.getValue().setInventorySlotContents(2, stack);
                     }

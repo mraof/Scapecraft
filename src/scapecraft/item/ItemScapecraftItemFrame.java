@@ -3,7 +3,10 @@ package scapecraft.item;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemHangingEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Direction;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import scapecraft.entity.EntityScapecraftItemFrame;
@@ -20,14 +23,14 @@ public class ItemScapecraftItemFrame extends ItemHangingEntity
     }
 
     @Override
-    public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ)
+    public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
     {
-        ItemFrameEvent.Place event = new ItemFrameEvent.Place(x, y, z, world, player);
-        if(MinecraftForge.EVENT_BUS.post(event) || (side == 0) || (side == 1) || !player.canPlayerEdit(x, y, z, side, stack))
+        ItemFrameEvent.Place event = new ItemFrameEvent.Place(pos, world, player);
+        if(MinecraftForge.EVENT_BUS.post(event) || (facing == EnumFacing.UP) || (facing == EnumFacing.DOWN) || !player.canPlayerEdit(pos, facing, stack))
         {
-            return false;
+            return EnumActionResult.FAIL;
         }
-        EntityScapecraftItemFrame entity = new EntityScapecraftItemFrame(world, x, y, z, Direction.facingToDirection[side]);
+        EntityScapecraftItemFrame entity = new EntityScapecraftItemFrame(world, pos, facing);
         if(entity.onValidSurface())
         {
             if(!world.isRemote)
@@ -36,6 +39,6 @@ public class ItemScapecraftItemFrame extends ItemHangingEntity
             }
             stack.stackSize--;
         }
-        return true;
+        return EnumActionResult.SUCCESS;
     }
 }

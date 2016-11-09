@@ -2,6 +2,7 @@ package scapecraft.block;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import scapecraft.Scapecraft;
 
@@ -25,7 +26,7 @@ public class BlockScapecraft extends Block
 	}
 
 	@Override
-	public boolean isBeaconBase(IBlockAccess world, int x, int y, int z, int beaconX, int beaconY, int beaconZ)
+	public boolean isBeaconBase(IBlockAccess world, BlockPos pos, BlockPos beaconPos)
 	{
 		return this.beaconBase;
 	}

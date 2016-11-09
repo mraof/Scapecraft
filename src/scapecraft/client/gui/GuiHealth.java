@@ -1,14 +1,14 @@
 package scapecraft.client.gui;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.potion.Potion;
+import net.minecraft.init.MobEffects;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.GuiIngameForge;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 import scapecraft.util.Stat;
 import scapecraft.util.Stats;
@@ -27,17 +27,17 @@ public class GuiHealth extends Gui
 		int height = resolution.getScaledHeight();
 		this.mc.mcProfiler.startSection("health");
 		
-		float maxHealth = (float) this.mc.thePlayer.getEntityAttribute(SharedMonsterAttributes.maxHealth).getAttributeValue();
+		float maxHealth = (float) this.mc.thePlayer.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).getAttributeValue();
 		float health = this.mc.thePlayer.getHealth();
 		float absorb = this.mc.thePlayer.getAbsorptionAmount();
 		health += absorb;
 		int green = ((int) (health / maxHealth * 0xFF)) << 8;
 		int healthColor = ((green > 0x00FF00 ? 0x00FF00 : green & 0x00FF00) | ((green & 0xFF0000) >> 9) | ((maxHealth - health > 0 ? (int) ((maxHealth - health) / maxHealth * 0xFF) << 16 : 0) & 0xFF0000)) & 0xFFFFFF;
-		if(this.mc.thePlayer.isPotionActive(Potion.poison))
+		if(this.mc.thePlayer.isPotionActive(MobEffects.POISON))
 		{
 			healthColor = healthColor & 0xcccccc;
 		}
-		if(this.mc.thePlayer.isPotionActive(Potion.wither))
+		if(this.mc.thePlayer.isPotionActive(MobEffects.WITHER))
 		{
 			healthColor = healthColor & 0x444444;
 		}
@@ -69,7 +69,7 @@ public class GuiHealth extends Gui
 		GL11.glDisable(GL11.GL_ALPHA_TEST);
 		GL11.glPopMatrix();
 
-		mc.getTextureManager().bindTexture(Gui.icons);
+		mc.getTextureManager().bindTexture(Gui.ICONS);
 		GuiIngameForge.left_height += 20;
 
 		this.mc.mcProfiler.endSection();

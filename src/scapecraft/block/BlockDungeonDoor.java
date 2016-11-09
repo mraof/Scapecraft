@@ -2,20 +2,17 @@ package scapecraft.block;
 
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import scapecraft.tileentity.TileEntityDungeonDoor;
-import scapecraft.world.gen.dungeon.Dungeon;
 
 public class BlockDungeonDoor extends BlockScapecraft implements ITileEntityProvider
 {
 	public BlockDungeonDoor()
 	{
-		super(Material.glass);
+		super(Material.GLASS);
 		this.setBlockUnbreakable();
 		this.setUnlocalizedName("dungeonDoor");
 	}
@@ -23,35 +20,19 @@ public class BlockDungeonDoor extends BlockScapecraft implements ITileEntityProv
 	@Override
 	public TileEntity createNewTileEntity(World world, int metadata)
 	{
-		return createTileEntity(world, metadata);
-	}
-
-	@Override
-	public TileEntity createTileEntity(World world, int metadata)
-	{
-		if(metadata == 0)
-		{
+		if(metadata == 0) {
 			return new TileEntityDungeonDoor();
 		}
-		else
-		{
-			return null;
-		}
+		return null;
 	}
 
 	@Override
-	public boolean hasTileEntity(int metadata)
-	{
-		return true;
-	}
-
-	@Override
-	public void onBlockExploded(World world, int x, int y, int z, Explosion explosion)
+	public void onBlockExploded(World world, BlockPos pos, Explosion explosion)
 	{
 	}
 
-	@Override
-	public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase placer, ItemStack itemStack)
+/*	@Override
+	public void onBlockPlacedBy(World world, BlockPos pos, EntityLivingBase placer, ItemStack itemStack)
 	{
 		if(itemStack.getMetadata() != 0)
 		{
@@ -60,7 +41,7 @@ public class BlockDungeonDoor extends BlockScapecraft implements ITileEntityProv
 	}
 
 	@Override
-	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float subX, float subY, float subZ)
+	public boolean onBlockActivated(World world, BlockPos pos, EntityPlayer player, int side, float subX, float subY, float subZ)
 	{
 		if(!world.isRemote)
 		{
@@ -94,5 +75,5 @@ public class BlockDungeonDoor extends BlockScapecraft implements ITileEntityProv
 			System.out.println(nanotime);
 		}
 		return true;
-	}
+	}*/
 }

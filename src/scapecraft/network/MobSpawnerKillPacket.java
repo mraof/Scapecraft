@@ -1,15 +1,16 @@
 package scapecraft.network;
 
-import cpw.mods.fml.common.network.simpleimpl.IMessage;
-import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
-import cpw.mods.fml.common.network.simpleimpl.MessageContext;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import scapecraft.tileentity.TileEntityScapecraftMobSpawner;
 
 import java.util.LinkedHashSet;
@@ -26,10 +27,10 @@ public class MobSpawnerKillPacket implements IMessage
 	@SideOnly(Side.CLIENT)
 	public MobSpawnerKillPacket(TileEntity te)
 	{
-		x = te.xCoord;
-		y = te.yCoord;
-		z = te.zCoord;
-		dimensionId = te.getWorld().provider.dimensionId;
+		x = te.getPos().getX();
+		y = te.getPos().getY();
+		z = te.getPos().getZ();
+		dimensionId = te.getWorld().provider.getDimension();
 	}
 
 	@Override
@@ -59,7 +60,7 @@ public class MobSpawnerKillPacket implements IMessage
 
 			if (player != null && player.capabilities.isCreativeMode)
 			{
-				TileEntity te = MinecraftServer.getServer().worldServers[message.dimensionId].getTileEntity(message.x, message.y, message.z);
+				TileEntity te = FMLCommonHandler.instance().getMinecraftServerInstance().worldServers[message.dimensionId].getTileEntity(new BlockPos(message.x, message.y, message.z));
 				if (te instanceof TileEntityScapecraftMobSpawner)
 				{
 					Set<Integer> spawnedIds = new LinkedHashSet<Integer>(((TileEntityScapecraftMobSpawner) te).spawnedIds);

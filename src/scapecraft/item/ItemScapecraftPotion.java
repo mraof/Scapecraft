@@ -1,5 +1,6 @@
 package scapecraft.item;
 
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.Item;
@@ -25,20 +26,7 @@ public class ItemScapecraftPotion extends Item
 	@Override
 	public EnumAction getItemUseAction(ItemStack stack)
 	{
-		return EnumAction.drink;
-	}
-
-	@Override
-	public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player)
-	{
-		player.setItemInUse(stack, this.getMaxItemUseDuration(stack));
-		return stack;
-	}
-
-	@Override
-	public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ)
-	{
-		return false;
+		return EnumAction.DRINK;
 	}
 
 	@Override
@@ -48,8 +36,9 @@ public class ItemScapecraftPotion extends Item
 	}
 
 	@Override
-	public ItemStack onItemUseFinish(ItemStack stack, World world, EntityPlayer player)
+	public ItemStack onItemUseFinish(ItemStack stack, World world, EntityLivingBase entityLiving)
 	{
+		EntityPlayer player = entityLiving instanceof EntityPlayer ? (EntityPlayer)entityLiving : null;
 		if(!player.capabilities.isCreativeMode)
 		{
 			stack.stackSize--;

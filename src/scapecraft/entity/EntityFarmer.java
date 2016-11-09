@@ -1,7 +1,5 @@
 package scapecraft.entity;
 
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.monster.EntityCreeper;
@@ -9,7 +7,9 @@ import net.minecraft.entity.monster.EntitySkeleton;
 import net.minecraft.entity.monster.EntitySpider;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
 import scapecraft.item.ScapecraftItems;
 
@@ -22,9 +22,8 @@ public class EntityFarmer extends EntityScapecraft
 		super(par1World);
 
 		this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
-		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityLivingBase.class, 0, true, false, this));
 		this.tasks.addTask(1, new EntityAISwimming(this));
-		this.tasks.addTask(2, new EntityAIAttackOnCollide(this, EntityLivingBase.class, 1.1D, false));
+		this.tasks.addTask(2, new EntityAIAttackMelee(this, 1.1D, false));
 		this.tasks.addTask(5, new EntityAIWander(this, 1D));
 		this.tasks.addTask(6, new EntityAILookIdle(this));
 		this.tasks.addTask(6, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
@@ -33,25 +32,21 @@ public class EntityFarmer extends EntityScapecraft
 	}
 
 	@Override
-	public boolean isAIEnabled()
+	protected SoundEvent getHurtSound()
 	{
-		return true;
+		//return "mob.villager.defaulthurt";
+		return SoundEvents.ENTITY_VILLAGER_HURT;
 	}
 
 	@Override
-	protected String getHurtSound()
+	protected SoundEvent getDeathSound()
 	{
-		return "mob.villager.defaulthurt";
+		//return "mob.villager.defaultdeath";
+		return SoundEvents.ENTITY_VILLAGER_DEATH;
 	}
 
 	@Override
-	protected String getDeathSound()
-	{
-		return "mob.villager.defaultdeath";
-	}
-
-	@Override
-	public ItemStack getHeldItem()
+	public ItemStack getHeldItemMainhand()
 	{
 		return defaultHeldItem;
 	}

@@ -1,16 +1,20 @@
 package scapecraft.block;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import scapecraft.Scapecraft;
 import scapecraft.client.gui.GuiHandler;
 import scapecraft.tileentity.TileEntitySmithingAnvil;
+
+import javax.annotation.Nullable;
 
 /**
  * Created by mraof on 2016 March 02.
@@ -19,7 +23,7 @@ public class BlockSmithingAnvil extends BlockContainer
 {
     protected BlockSmithingAnvil()
     {
-        super(Material.iron);
+        super(Material.IRON);
         this.setBlockUnbreakable();
         this.setCreativeTab(Scapecraft.tabScapecraftBlock);
         this.setUnlocalizedName("smithingAnvil");
@@ -32,39 +36,14 @@ public class BlockSmithingAnvil extends BlockContainer
     }
 
     @Override
-    public int getRenderType()
-    {
-        return -1;
-    }
-
-    @Override
-    public boolean renderAsNormalBlock()
-    {
-        return false;
-    }
-
-    @Override
-    public boolean isOpaqueCube()
-    {
-        return false;
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public boolean shouldSideBeRendered(IBlockAccess worldIn, int x, int y, int z, int side)
-    {
-        return true;
-    }
-
-    @Override
-    public boolean onBlockActivated(World worldIn, int x, int y, int z, EntityPlayer player, int side, float subX, float subY, float subZ)
+    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ)
     {
         if(!worldIn.isRemote)
         {
-            TileEntity tileEntity = worldIn.getTileEntity(x, y, z);
+            TileEntity tileEntity = worldIn.getTileEntity(pos);
             if (tileEntity instanceof TileEntitySmithingAnvil && !player.isSneaking())
             {
-                player.openGui(Scapecraft.instance, GuiHandler.GuiId.SMITHING.ordinal(), worldIn, x, y, z);
+                player.openGui(Scapecraft.instance, GuiHandler.GuiId.SMITHING.ordinal(), worldIn, pos.getX(), pos.getY(), pos.getZ());
                 return true;
             }
         }

@@ -5,7 +5,8 @@ import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.text.TextComponentString;
 import scapecraft.economy.EconomyHandler;
 
 import java.util.UUID;
@@ -28,7 +29,7 @@ public class MoneyCommand extends CommandBase
     }
 
     @Override
-    public void processCommand(ICommandSender sender, String[] args)
+    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
     {
         if(args.length == 0 || !sender.canCommandSenderUseCommand(2, "money"))
         {
@@ -37,7 +38,7 @@ public class MoneyCommand extends CommandBase
             {
                 balance = EconomyHandler.getBalance(((EntityPlayerMP) sender).getUniqueID());
             }
-            sender.addChatMessage(new ChatComponentText("Balance: " + balance));
+            sender.addChatMessage(new TextComponentString("Balance: " + balance));
         }
         else
         {
@@ -45,7 +46,7 @@ public class MoneyCommand extends CommandBase
             int offset = 0;
             if(!args[0].matches("^[-\\d]\\d*$"))
             {
-                EntityPlayerMP player = getPlayer(sender, args[0]);
+                EntityPlayerMP player = getPlayer(server, sender, args[0]);
                 if(player != null)
                 {
                     uuid = player.getUniqueID();
@@ -76,7 +77,7 @@ public class MoneyCommand extends CommandBase
             }
             else
             {
-                sender.addChatMessage(new ChatComponentText("Balance: " + EconomyHandler.getBalance(uuid)));
+                sender.addChatMessage(new TextComponentString("Balance: " + EconomyHandler.getBalance(uuid)));
             }
         }
     }

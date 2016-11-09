@@ -8,9 +8,10 @@ import net.minecraft.item.ItemBlock;
  */
 public class ItemBlockBlockSpawner extends ItemBlock
 {
-    public ItemBlockBlockSpawner(Block p_i45328_1_)
+    public ItemBlockBlockSpawner(Block block)
     {
-        super(p_i45328_1_);
+        super(block);
         this.setHasSubtypes(true);
+        this.setRegistryName(block.getRegistryName());
     }
 }

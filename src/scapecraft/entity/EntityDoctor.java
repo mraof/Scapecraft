@@ -5,8 +5,11 @@ import net.minecraft.entity.ai.EntityAILookIdle;
 import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import scapecraft.item.ScapecraftItems;
 
@@ -25,48 +28,44 @@ public class EntityDoctor extends EntityScapecraft
 	protected void applyEntityAttributes()
 	{
 		super.applyEntityAttributes();
-		this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(9001.0D);
-		this.getEntityAttribute(SharedMonsterAttributes.followRange).setBaseValue(32.0D);
-		this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.0D);
-		this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(0.0D);
-		this.getEntityAttribute(SharedMonsterAttributes.knockbackResistance).setBaseValue(1.0D);
+		this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(9001.0D);
+		this.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(32.0D);
+		this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.0D);
+		this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(0.0D);
+		this.getEntityAttribute(SharedMonsterAttributes.KNOCKBACK_RESISTANCE).setBaseValue(1.0D);
 	}
 
 	@Override
-	public boolean isAIEnabled()
+	protected SoundEvent getHurtSound()
 	{
-		return true;
+		//return "mob.villager.defaulthurt";
+		return SoundEvents.ENTITY_VILLAGER_HURT;
 	}
 
 	@Override
-	protected String getHurtSound()
+	protected SoundEvent getDeathSound()
 	{
-		return "mob.villager.defaulthurt";
+		//return "mob.villager.defaultdeath";
+		return SoundEvents.ENTITY_VILLAGER_DEATH;
 	}
 
 	@Override
-	protected String getDeathSound()
-	{
-		return "mob.villager.defaultdeath";
-	}
-
-	@Override
-	public boolean interact(EntityPlayer par1EntityPlayer)
+	public boolean processInteract(EntityPlayer player, EnumHand hand, ItemStack stack)
 	{
 
-		ItemStack itemstack = par1EntityPlayer.inventory.getCurrentItem();
+		ItemStack itemstack = player.inventory.getCurrentItem();
 
-		if (itemstack != null && itemstack.getItem() == ScapecraftItems.beer && !par1EntityPlayer.capabilities.isCreativeMode)
+		if (itemstack != null && itemstack.getItem() == ScapecraftItems.beer && !player.capabilities.isCreativeMode)
 		{
 			if (itemstack.stackSize-- == 1)
 			{
-				par1EntityPlayer.inventory.setInventorySlotContents(par1EntityPlayer.inventory.currentItem, new ItemStack(ScapecraftItems.stake));
-				par1EntityPlayer.addChatComponentMessage(new ChatComponentText("\u00a7EDr Harlow: Take this, it should allow you to kill the vampire, but you will still need your best armor"));
+				player.inventory.setInventorySlotContents(player.inventory.currentItem, new ItemStack(ScapecraftItems.stake));
+				player.addChatComponentMessage(new TextComponentString("\u00a7EDr Harlow: Take this, it should allow you to kill the vampire, but you will still need your best armor"));
 
 			}
-			else if (!par1EntityPlayer.inventory.addItemStackToInventory(new ItemStack(ScapecraftItems.stake)))
+			else if (!player.inventory.addItemStackToInventory(new ItemStack(ScapecraftItems.stake)))
 			{
-				par1EntityPlayer.entityDropItem(new ItemStack(ScapecraftItems.stake, 1, 0), 0.5F);
+				player.entityDropItem(new ItemStack(ScapecraftItems.stake, 1, 0), 0.5F);
 			}
 
 			return true;
@@ -76,9 +75,9 @@ public class EntityDoctor extends EntityScapecraft
 
 		else
 		{
-			par1EntityPlayer.addChatComponentMessage(new ChatComponentText("\u00a7EDr Harlow: Bring me a beer and then we can talk"));
+			player.addChatComponentMessage(new TextComponentString("\u00a7EDr Harlow: Bring me a beer and then we can talk"));
 		}
 
-		return super.interact(par1EntityPlayer);
+		return super.processInteract(player, hand, stack);
 	}
 }
